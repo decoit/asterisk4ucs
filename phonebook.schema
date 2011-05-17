@@ -1,0 +1,19 @@
+
+objectIdentifier Phonebook 1.3.6.1.4.1.10176.1042
+objectIdentifier PhonebookAttr Phonebook:1
+
+objectclass ( Phonebook:2 NAME 'phonebookContact'
+	DESC 'Contact information for a phonebook entry'
+	SUP top
+	MUST (
+		cn
+	)
+	MAY (
+		telephoneNumber $
+		title $
+		o $
+		mail
+	) )
+
+
+

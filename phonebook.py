@@ -1,0 +1,115 @@
+import univention.admin.filter
+import univention.admin.handlers
+import univention.admin.syntax
+
+module = "phonebook/contact"
+childs = 0
+short_description = u"Kontakt"
+long_description = u"Kontakt"
+operations = ['add', 'edit', 'remove', 'search', 'move']
+options = {}
+
+layout = [
+	univention.admin.tab('Allgemein', 'Allgemeine Kontaktdaten', [
+		[ univention.admin.field("commonName") ],
+		[ univention.admin.field("title"),
+			univention.admin.field("organisation") ],
+		[ univention.admin.field("telephoneNumber"),
+			univention.admin.field("mail") ],
+	])
+]
+
+property_descriptions = {
+	"commonName": univention.admin.property(
+		short_description="Name",
+		syntax=univention.admin.syntax.string,
+		identifies=True,
+		required=True
+	),
+	"title": univention.admin.property(
+		short_description="Titel",
+		syntax=univention.admin.syntax.string
+	),
+	"organisation": univention.admin.property(
+		short_description="Organisation",
+		syntax=univention.admin.syntax.string
+	),
+	"telephoneNumber": univention.admin.property(
+		short_description="Telefonnummer",
+		syntax=univention.admin.syntax.phone
+	),
+	"mail": univention.admin.property(
+		short_description="eMail-Adresse",
+		syntax=univention.admin.syntax.emailAddress
+	),
+}
+
+mapping = univention.admin.mapping.mapping()
+mapping.register("commonName", "cn",
+	None, univention.admin.mapping.ListToString)
+mapping.register("title", "title",
+	None, univention.admin.mapping.ListToString)
+mapping.register("organisation", "o",
+	None, univention.admin.mapping.ListToString)
+mapping.register("telephoneNumber", "telephoneNumber",
+	None, univention.admin.mapping.ListToString)
+mapping.register("mail", "mail",
+	None, univention.admin.mapping.ListToString)
+
+class object(univention.admin.handlers.simpleLdap):
+	module=module
+
+	def __init__(self, co, lo, position, dn='', superordinate=None,
+			arg=None):
+		global mapping
+		global property_descriptions
+		self.co = co
+		self.lo = lo
+		self.dn = dn
+		self.position = position
+		self._exists = 0
+		self.mapping = mapping
+		self.descriptions = property_descriptions
+		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
+			position, dn, superordinate)
+
+	def exists(self):
+		return self._exists
+
+	def open(self):
+		univention.admin.handlers.simpleLdap.open(self)
+		self.save()
+
+	def _ldap_pre_create(self):
+		self.dn = '%s=%s,%s' % (
+			mapping.mapName('commonName'),
+			mapping.mapValue('commonName', self.info['commonName']),
+			self.position.getDn()
+		)
+
+	def _ldap_addlist(self):
+		return [('objectClass', ['top', 'phonebookContact' ])]
+
+
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+		unique=False, required=False, timeout=-1, sizelimit=0):
+	filter = univention.admin.filter.conjunction('&', [
+		univention.admin.filter.expression(
+			'objectClass', "phonebookContact")
+	])
+ 
+	if filter_s:
+		filter_p = univention.admin.filter.parse(filter_s)
+		univention.admin.filter.walk(filter_p, 
+			univention.admin.mapping.mapRewrite, arg=mapping)
+		filter.expressions.append(filter_p)
+ 
+	res = []
+	for dn in lo.searchDn(unicode(filter), base, scope, unique, required, 
+			timeout, sizelimit):
+		res.append(object(co, lo, None, dn))
+	return res
+
+def identify(dn, attr, canonical=0):
+	return 'phonebookContact' in attr.get('objectClass', [])
+
