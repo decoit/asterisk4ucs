@@ -32,4 +32,21 @@ objectclass ( Phonebook:3 NAME 'phoneGroup'
 		phoneGroupMember
 	) )
 
+attributetype ( PhonebookAttr:2 NAME 'waitingLoopMember'
+	DESC 'Member of a waiting loop'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( Phonebook:4 NAME 'waitingLoop'
+	DESC 'A group containing multiple phones'
+	SUP top
+	MUST (
+		cn
+	)
+	MAY (
+		AstExtension $
+		waitingLoopMember
+	) )
+
 
