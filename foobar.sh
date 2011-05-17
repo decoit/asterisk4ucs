@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# zieht die verschiedenen dateien in ein einziges verzeichnis und
+# erleichtert damit das versionieren und debuggen
+
 cd "`dirname %0`"
 
 cp /usr/lib/python2.4/site-packages/univention/admin/handlers/asterisk/{asterisk.py,contact.py,phonegroup.py,waitingloop.py} .
