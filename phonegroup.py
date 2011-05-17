@@ -34,7 +34,6 @@ mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
 mapping.register("members", "phoneGroupMember")
-#	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
