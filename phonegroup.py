@@ -12,6 +12,7 @@ options = {}
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("commonName") ],
+		[ univention.admin.field("members") ],
 	])
 ]
 
@@ -22,10 +23,17 @@ property_descriptions = {
 		identifies=True,
 		required=True
 	),
+	"members": univention.admin.property(
+		short_description="Teilnehmer",
+		syntax=univention.admin.syntax.userDn,
+		multivalue=True
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
+	None, univention.admin.mapping.ListToString)
+mapping.register("members", "phoneGroupMember",
 	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
