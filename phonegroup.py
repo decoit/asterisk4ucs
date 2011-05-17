@@ -1,13 +1,20 @@
+# coding=utf-8
+
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
 
-module = "phonebook/phonegroup"
+module = "asterisk/phonegroup"
 childs = 0
 short_description = u"Telefongruppe"
 long_description = u"Telefongruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
+
+usewizard = 1
+wizardmenustring="Telefongruppen"
+wizarddescription="Telefongruppen hinzufügen, editieren und löschen"
+wizardoperations={"add":["Add", "Add User"],"find":["Search", "Search for user(s)"]}
 
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [

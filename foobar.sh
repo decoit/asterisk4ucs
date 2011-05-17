@@ -2,11 +2,7 @@
 
 cd "`dirname %0`"
 
-cp /usr/lib/python2.4/site-packages/univention/admin/handlers/phonebook/phonebook.py .
-
-cp /usr/lib/python2.4/site-packages/univention/admin/handlers/phonebook/phonegroup.py .
-
-cp /usr/lib/python2.4/site-packages/univention/admin/handlers/phonebook/waitingloop.py .
+cp /usr/lib/python2.4/site-packages/univention/admin/handlers/asterisk/{asterisk.py,contact.py,phonegroup.py,waitingloop.py} .
 
 cp /etc/univention/templates/files/etc/ldap/slapd.conf.d/99test .
 

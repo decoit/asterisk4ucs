@@ -49,4 +49,16 @@ objectclass ( Phonebook:4 NAME 'waitingLoop'
 		waitingLoopMember
 	) )
 
+# dirty hack
+# allows us to define a default directory for the asterisk stuff
+
+attributetype ( PhonebookAttr:3 NAME 'univentionAsteriskObject'
+	DESC 'default path for asterisk stuff'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( Phonebook:5 NAME 'univentionDirectoryWithAsterisk'
+	DESC 'adds univentionAsteriskObject to univentionDirectory'
+	SUP top AUXILIARY
+	MAY ( univentionAsteriskObject ) )
 

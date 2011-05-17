@@ -1,8 +1,10 @@
+# coding=utf-8
+
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
 
-module = "phonebook/contact"
+module = "asterisk/contact"
 childs = 0
 short_description = u"Kontakt"
 long_description = u"Kontakt"

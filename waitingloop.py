@@ -1,8 +1,10 @@
+# coding=utf-8
+
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
 
-module = "phonebook/waitingloop"
+module = "asterisk/waitingloop"
 childs = 0
 short_description = u"Warteschlange"
 long_description = u"Warteschlange"
