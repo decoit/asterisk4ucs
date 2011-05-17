@@ -4,6 +4,8 @@ cd "`dirname %0`"
 
 cp /usr/lib/python2.4/site-packages/univention/admin/handlers/phonebook/phonebook.py .
 
+cp /usr/lib/python2.4/site-packages/univention/admin/handlers/phonebook/phonegroup.py .
+
 cp /etc/univention/templates/files/etc/ldap/slapd.conf.d/99test .
 
 cp /etc/univention/templates/info/univention-ldap-server.info .

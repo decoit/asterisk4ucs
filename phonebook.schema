@@ -15,5 +15,15 @@ objectclass ( Phonebook:2 NAME 'phonebookContact'
 		mail
 	) )
 
+objectclass ( Phonebook:3 NAME 'phoneGroup'
+	DESC 'A group containing multiple phones'
+	SUP top
+	MUST (
+		cn
+	)
+	MAY (
+		telephoneNumber 
+	) )
+
 
 
