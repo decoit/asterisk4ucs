@@ -10,7 +10,7 @@ UNI_SCHEMA_PATH=/usr/share/univention-ldap/schema
 UNI_MODULE_PATH=/usr/lib/python2.4/site-packages/univention/admin/handers
 UNI_ICON_PATH=/usr/share/univention-webui-style/icon
 
-echo -en "Installing schema...\t\ŧ"
+echo -en "Installing schema...\t\t"
 cd schema/
 install -m664 asterisk.schema "$UNI_SCHEMA_PATH/"
 install -m664 80asterisk "$UNI_TEMPLATE_PATH/files/etc/ldap/slapd.conf.d/"
