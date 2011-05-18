@@ -28,6 +28,8 @@ mkdir -p "$UNI_MODULE_PATH/asterisk"
 install -m664 frontend/asterisk/* "$UNI_MODULE_PATH/asterisk/"
 echo "done."
 
+# umc extended attributes
+
 # ldap dir object default dings
 
 # neustarten
