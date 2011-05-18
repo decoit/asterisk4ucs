@@ -20,20 +20,6 @@ ldap = univention.admin.uldap.access(host=ldap_master, base=ldap_base,
 dcDn = "cn=default containers,cn=univention,%s"%ldap.base
 asteriskDefaultDn = "cn=asterisk,%s"%ldap.base
 
-## What should be done with the data inside the container?
-# config = univention.admin.config.config()
-# base = univention.admin.uldap.position(ldap.base)
-# foo = container.object(config, ldap, base)
-# foo.info['name'] = "asterisk"
-# foo.open()
-# try:
-# 	foo.create()
-# except univention.admin.uexceptions.objectExists:
-# 	print "Asterisk container already existed."
-print "###"
-print "###  Please delete the asterisk container manually if you do not need"
-print "###  the contents any longer."
-print "###"
 
 dc = ldap.get(dcDn)
 if asteriskDefaultDn in dc.get("univentionAsteriskObject", []):
@@ -47,4 +33,10 @@ if "univentionDirectoryWithAsterisk" in dc.get("objectClass", []):
 		"univentionDirectoryWithAsterisk", None)])
 else:
 	print "ObjectClass was not set."
+
+
+config = univention.admin.config.config()
+base = univention.admin.uldap.position(ldap.base)
+astContainer = container.object(config, ldap, base, asteriskDefaultDn)
+astContainer.remove()
 
