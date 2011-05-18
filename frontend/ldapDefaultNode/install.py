@@ -35,11 +35,11 @@ if "univentionDirectoryWithAsterisk" not in dc.get("objectClass", []):
 	ldap.modify(dcDn, [("objectClass", None,
 		"univentionDirectoryWithAsterisk")])
 else:
-	print "ObjectClass already set."
+	print "ObjectClass was already set."
 
 if "univentionAsteriskObject" not in dc.keys():
 	ldap.modify(dcDn, [("univentionAsteriskObject", None,
 		asteriskDefaultDn)])
 else:
-	print "UniventionAsteriskObject already set."
+	print "UniventionAsteriskObject was already set."
 
