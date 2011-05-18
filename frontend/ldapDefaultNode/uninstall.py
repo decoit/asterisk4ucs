@@ -37,6 +37,9 @@ else:
 
 config = univention.admin.config.config()
 base = univention.admin.uldap.position(ldap.base)
-astContainer = container.object(config, ldap, base, asteriskDefaultDn)
-astContainer.remove()
+try:
+	astContainer = container.object(config, ldap, base, asteriskDefaultDn)
+	astContainer.remove()
+except univention.admin.uexceptions.noObject:
+	print "Asterisk default container was already removed."
 
