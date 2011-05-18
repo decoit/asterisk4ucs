@@ -28,7 +28,6 @@ objectclass ( Phonebook:3 NAME 'phoneGroup'
 		cn
 	)
 	MAY (
-		telephoneNumber $
 		phoneGroupMember
 	) )
 
