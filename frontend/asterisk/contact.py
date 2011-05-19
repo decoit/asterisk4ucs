@@ -14,8 +14,8 @@ options = {}
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Kontaktdaten', [
 		[ univention.admin.field("commonName"),
-			univention.admin.field("telephoneNumber") ],
-		[ univention.admin.field("title"),
+			univention.admin.field("title")],
+		[ univention.admin.field("telephoneNumber"),
 			univention.admin.field("organisation") ],
 	])
 ]
@@ -37,7 +37,8 @@ property_descriptions = {
 	),
 	"telephoneNumber": univention.admin.property(
 		short_description="Telefonnummer",
-		syntax=univention.admin.syntax.phone
+		syntax=univention.admin.syntax.phone,
+		multivalue=True
 	),
 }
 
@@ -48,8 +49,7 @@ mapping.register("title", "title",
 	None, univention.admin.mapping.ListToString)
 mapping.register("organisation", "o",
 	None, univention.admin.mapping.ListToString)
-mapping.register("telephoneNumber", "telephoneNumber",
-	None, univention.admin.mapping.ListToString)
+mapping.register("telephoneNumber", "telephoneNumber")
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
