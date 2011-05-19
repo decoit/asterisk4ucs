@@ -1,3 +1,10 @@
 
+* Uninstall:
+  * Fehlermeldung, wenn noch Daten vorhanden
+  * Atomaritaet fehlt
+* Kontakt: E-Mail-Feld entfernen
 * Asterisk integrieren
+* Telefone auslagern
+  * Benutzer zuordnen koennen
+  * Zuordnung Gruppen <-> Telefone per GUI-widget???!
 
