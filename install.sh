@@ -44,9 +44,10 @@ mkdir -p "$UNI_MODULE_PATH/asterisk"
 install -m664 frontend/asterisk/* "$UNI_MODULE_PATH/asterisk/"
 echo -e "\t\t\t\t\t\t\tdone."
 
-echo "Creating extended attributes for UMC user module..."
-sh frontend/user-phone-extension/install.sh
-echo -e "\t\t\t\t\t\t\tdone."
+## Currently not needed
+# echo "Creating extended attributes for UMC user module..."
+# sh frontend/user-phone-extension/install.sh
+# echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Creating default container for asterisk data..."
 python2.4 frontend/ldapDefaultNode/install.py

@@ -14,9 +14,10 @@ echo "Deleting default container for asterisk data..."
 python2.4 frontend/ldapDefaultNode/uninstall.py
 echo -e "\t\t\t\t\t\t\tdone."
 
-echo "Deleting extended attributes for UMC user module..."
-sh frontend/user-phone-extension/uninstall.sh
-echo -e "\t\t\t\t\t\t\tdone."
+## Currently not needed
+# echo "Deleting extended attributes for UMC user module..."
+# sh frontend/user-phone-extension/uninstall.sh
+# echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstalling schemata..."
 rm "$UNI_SCHEMA_PATH/asterisk.schema"
