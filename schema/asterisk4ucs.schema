@@ -11,8 +11,7 @@ objectclass ( Phonebook:2 NAME 'phonebookContact'
 	MAY (
 		telephoneNumber $
 		title $
-		o $
-		mail
+		o
 	) )
 
 attributetype ( PhonebookAttr:1 NAME 'phoneGroupMember'
