@@ -32,6 +32,10 @@ echo "Creating extended attributes for UMC user module..."
 sh frontend/user-phone-extension/install.sh
 echo -e "\t\t\t\t\t\t\tdone."
 
+echo "Updating slapd.conf..."
+univention-config-registry commit /etc/ldap/slapd.conf
+echo -e "\t\t\t\t\t\t\tdone."
+
 echo "Restarting slapd..."
 invoke-rc.d slapd restart
 echo -e "\t\t\t\t\t\t\tdone."
