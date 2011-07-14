@@ -1,5 +1,6 @@
 
 installscript
+* erstellen des asterisk-defaultverzeichnises im LDAP
 
 uninstallscript
 

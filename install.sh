@@ -28,9 +28,19 @@ mkdir -p "$UNI_MODULE_PATH/asterisk"
 install -m664 frontend/asterisk/* "$UNI_MODULE_PATH/asterisk/"
 echo "done."
 
-# umc extended attributes
+echo -en "Creating extended attributes for UMC user module... \t\t"
+sh frontend/user-phone-extension/install.sh
+echo "done."
+
+echo "Restarting slapd..."
+invoke-rc.d slapd restart
+echo "done."
 
 # ldap dir object default dings
 
-# neustarten
+echo "Restarting apache2..."
+invoke-rc.d apache2 restart
+echo "done."
+
+echo "Installation successful."
 
