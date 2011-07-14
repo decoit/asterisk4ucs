@@ -1,0 +1,15 @@
+
+Asterisk-logo:
+raubkopiert von wikipedia
+
+
+contact: kde-icons
+
+
+phonegroup: zusammengeschnippelt aus icons von linphone
+ 
+waitingloop: kde-icon
+
+gifs wurden erzeugt mit:
+for file in * ; do convert $file -background white -flatten ${file%.png}.gif ; done
+
