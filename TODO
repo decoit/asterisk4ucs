@@ -1,7 +1,9 @@
 
 * Asterisk integrieren
 * Telefone auslagern
-  * Benutzer zuordnen koennen
   * Zuordnung Gruppen <-> Telefone per GUI-widget???!
 * Decoit-OIDs verwenden
+* sipPhone:
+  * mehrfachauswahl des benutzers ist unsinnig
+  * kann die durchwahl zur identifikation herangezogen werden?
 

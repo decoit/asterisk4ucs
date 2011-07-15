@@ -1,10 +1,10 @@
 
-objectIdentifier Phonebook 1.3.6.1.4.1.10176.1042
-objectIdentifier PhonebookAttr Phonebook:1
+objectIdentifier ast4ucsRoot 1.3.6.1.4.1.10176.1042
+objectIdentifier ast4ucsAttr ast4ucsRoot:1
 
 # --------------------- Contact ---------------------------
 
-objectclass ( Phonebook:2 NAME 'phonebookContact'
+objectclass ( ast4ucsRoot:2 NAME 'phonebookContact'
 	DESC 'Contact information for a phonebook entry'
 	SUP top
 	MUST (
@@ -18,13 +18,13 @@ objectclass ( Phonebook:2 NAME 'phonebookContact'
 
 # ----------------------- Phone Groups -----------------------------
 
-attributetype ( PhonebookAttr:1 NAME 'phoneGroupMember'
+attributetype ( ast4ucsAttr:1 NAME 'phoneGroupMember'
 	DESC 'Member of a phone group'
 	EQUALITY caseIgnoreMatch
 	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-objectclass ( Phonebook:3 NAME 'phoneGroup'
+objectclass ( ast4ucsRoot:3 NAME 'phoneGroup'
 	DESC 'A group containing multiple phones'
 	SUP top
 	MUST (
@@ -36,13 +36,13 @@ objectclass ( Phonebook:3 NAME 'phoneGroup'
 
 # ---------------- Waiting Loops  ---------------------------
 
-attributetype ( PhonebookAttr:2 NAME 'waitingLoopMember'
+attributetype ( ast4ucsAttr:2 NAME 'waitingLoopMember'
 	DESC 'Member of a waiting loop'
 	EQUALITY caseIgnoreMatch
 	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-objectclass ( Phonebook:4 NAME 'waitingLoop'
+objectclass ( ast4ucsRoot:4 NAME 'waitingLoop'
 	DESC 'A group containing multiple phones'
 	SUP top
 	MUST (
@@ -58,12 +58,12 @@ objectclass ( Phonebook:4 NAME 'waitingLoop'
 # dirty hack
 # allows us to define a default directory for the asterisk stuff
 
-attributetype ( PhonebookAttr:3 NAME 'univentionAsteriskObject'
+attributetype ( ast4ucsAttr:3 NAME 'univentionAsteriskObject'
 	DESC 'default path for asterisk stuff'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-objectclass ( Phonebook:5 NAME 'univentionDirectoryWithAsterisk'
+objectclass ( ast4ucsRoot:5 NAME 'univentionDirectoryWithAsterisk'
 	DESC 'adds univentionAsteriskObject to univentionDirectory'
 	SUP top AUXILIARY
 	MAY ( univentionAsteriskObject ) )
@@ -71,7 +71,7 @@ objectclass ( Phonebook:5 NAME 'univentionDirectoryWithAsterisk'
 
 # -------------- SIP Phones -------------------------
 
-objectclass ( Phonebook:6 NAME 'ast4ucsPhone'
+objectclass ( ast4ucsRoot:6 NAME 'ast4ucsPhone'
 	DESC 'Asterisk4ucs: phone'
 	SUP top STRUCTURAL
 	MUST ( cn )
