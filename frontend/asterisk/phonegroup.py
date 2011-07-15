@@ -2,6 +2,7 @@
 
 import univention.admin.filter
 import univention.admin.handlers
+import univention.admin.handlers.asterisk
 import univention.admin.syntax
 
 module = "asterisk/phonegroup"
@@ -32,7 +33,11 @@ property_descriptions = {
 	),
 	"members": univention.admin.property(
 		short_description="Teilnehmer",
-		syntax=univention.admin.syntax.userDn,
+		syntax=univention.admin.syntax.LDAP_Search(
+			filter="objectClass=ast4ucsPhone",
+			attribute=['asterisk/sipPhone: name'],
+			value='asterisk/sipPhone: dn'
+		),
 		multivalue=True
 	),
 }
