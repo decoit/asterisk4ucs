@@ -7,6 +7,7 @@ import univention.admin.handlers.asterisk
 import univention.admin.handlers.asterisk.contact
 import univention.admin.handlers.asterisk.phonegroup
 import univention.admin.handlers.asterisk.waitingloop
+import univention.admin.handlers.asterisk.sipPhone
 
 module = "asterisk/asterisk"
 childs = 0
@@ -28,7 +29,8 @@ wizardpath="univentionAsteriskObject"
 childmodules = [
 	"asterisk/contact",
 	"asterisk/phonegroup",
-	"asterisk/waitingloop"
+	"asterisk/waitingloop",
+	"asterisk/sipPhone"
 ]
 
 virtual = True
@@ -64,6 +66,8 @@ def lookup(*args, **kwargs):
 		univention.admin.handlers.asterisk.phonegroup.lookup(
 			*args, **kwargs) +
 		univention.admin.handlers.asterisk.waitingloop.lookup(
+			*args, **kwargs) +
+		univention.admin.handlers.asterisk.sipPhone.lookup(
 			*args, **kwargs) +
 		univention.admin.handlers.asterisk.contact.lookup(
 			*args, **kwargs)

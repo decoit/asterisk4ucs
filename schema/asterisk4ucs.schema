@@ -2,6 +2,8 @@
 objectIdentifier Phonebook 1.3.6.1.4.1.10176.1042
 objectIdentifier PhonebookAttr Phonebook:1
 
+# --------------------- Contact ---------------------------
+
 objectclass ( Phonebook:2 NAME 'phonebookContact'
 	DESC 'Contact information for a phonebook entry'
 	SUP top
@@ -13,6 +15,8 @@ objectclass ( Phonebook:2 NAME 'phonebookContact'
 		title $
 		o
 	) )
+
+# ----------------------- Phone Groups -----------------------------
 
 attributetype ( PhonebookAttr:1 NAME 'phoneGroupMember'
 	DESC 'Member of a phone group'
@@ -29,6 +33,8 @@ objectclass ( Phonebook:3 NAME 'phoneGroup'
 	MAY (
 		phoneGroupMember
 	) )
+
+# ---------------- Waiting Loops  ---------------------------
 
 attributetype ( PhonebookAttr:2 NAME 'waitingLoopMember'
 	DESC 'Member of a waiting loop'
@@ -47,6 +53,8 @@ objectclass ( Phonebook:4 NAME 'waitingLoop'
 		waitingLoopMember
 	) )
 
+# --------------------- Default container ---------------
+
 # dirty hack
 # allows us to define a default directory for the asterisk stuff
 
@@ -59,4 +67,16 @@ objectclass ( Phonebook:5 NAME 'univentionDirectoryWithAsterisk'
 	DESC 'adds univentionAsteriskObject to univentionDirectory'
 	SUP top AUXILIARY
 	MAY ( univentionAsteriskObject ) )
+
+
+# -------------- SIP Phones -------------------------
+
+objectclass ( Phonebook:6 NAME 'ast4ucsPhone'
+	DESC 'Asterisk4ucs: phone'
+	SUP top STRUCTURAL
+	MUST ( cn )
+	MAY (
+		macAddress $
+		owner
+	))
 
