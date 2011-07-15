@@ -1,9 +1,15 @@
 
 * Asterisk integrieren
-* Telefone auslagern
-  * Zuordnung Gruppen <-> Telefone per GUI-widget???!
 * Decoit-OIDs verwenden
-* sipPhone:
-  * mehrfachauswahl des benutzers ist unsinnig
-  * kann die durchwahl zur identifikation herangezogen werden?
+* rueckwaertszuweisung koennen eventuell realisiert werden
+* Mailboxen:
+  * AsteriskVoicemail
+  * Eine pro telefon liesze sich leicht durch verschmelzung der beiden objekte
+    realisieren
+* Warteschleifen:
+  * AsteriskQueue
+* Konferenzraum:
+  * AsteriskMeetme
+* Telefongruppen:
+  * AstAccountCallGroup / AstAccountPickupGroup
 
