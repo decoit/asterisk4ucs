@@ -10,6 +10,10 @@ phonegroup: zusammengeschnippelt aus icons von linphone
  
 waitingloop: kde-icon
 
+phone: http://brsev.deviantart.com/art/Token-128429570
+
+
+
 gifs wurden erzeugt mit:
 for file in * ; do convert $file -background white -flatten ${file%.png}.gif ; done
 
