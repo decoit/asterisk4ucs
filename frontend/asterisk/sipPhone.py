@@ -13,7 +13,6 @@ options = {}
 
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("name") ],
 		[ univention.admin.field("extension"),
 			univention.admin.field("ipaddress")],
 		[ univention.admin.field("macaddress"),
@@ -22,8 +21,8 @@ layout = [
 			univention.admin.field("maxrings") ],
 		[ univention.admin.field("phonetype"),
 			univention.admin.field("profile") ],
-		[ univention.admin.field("password") ],
-		[ univention.admin.field("owner", colspan=2) ],
+		[ univention.admin.field("password"),
+			univention.admin.field("owner") ],
 	])
 ]
 
@@ -36,7 +35,8 @@ property_descriptions = {
 	),
 	"extension": univention.admin.property(
 		short_description="Durchwahl",
-		syntax=univention.admin.syntax.phone
+		syntax=univention.admin.syntax.phone,
+		required=True
 	),
 	"ipaddress": univention.admin.property(
 		short_description="IP-Adresse",
@@ -74,8 +74,12 @@ property_descriptions = {
 	),
 	"owner": univention.admin.property(
 		short_description="Benutzer",
-		syntax=univention.admin.syntax.userDn,
-		multivalue=True
+		syntax=univention.admin.syntax.LDAP_Search(
+                        filter="objectClass=inetOrgPerson",
+                        attribute=['users/user: username'],
+                        value='users/user: dn'
+                ),
+		required=True,
 	),
 }
 
@@ -100,7 +104,8 @@ mapping.register("mailbox", "AstAccountMailbox",
 #	None, univention.admin.mapping.ListToString)
 mapping.register("password", "AstAccountSecret",
 	None, univention.admin.mapping.ListToString)
-mapping.register("owner", "owner")
+mapping.register("owner", "owner",
+	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -125,14 +130,17 @@ class object(univention.admin.handlers.simpleLdap):
 	def open(self):
 		univention.admin.handlers.simpleLdap.open(self)
 		self.save()
-
+	
+	def _ldap_pre_ready(self):
+		self.info['name'] = self.info["extension"]
+	
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
 			mapping.mapName('name'),
 			mapping.mapValue('name', self.info['name']),
 			self.position.getDn()
 		)
-
+	
 	def _ldap_addlist(self):
 		return [('objectClass', ['top', 'ast4ucsPhone',
 			'AsteriskExtension', 'AsteriskSIPUser' ])]
