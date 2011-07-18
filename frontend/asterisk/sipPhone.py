@@ -23,6 +23,8 @@ layout = [
 			univention.admin.field("profile") ],
 		[ univention.admin.field("password"),
 			univention.admin.field("owner") ],
+		[ univention.admin.field("phonegroups"),
+			univention.admin.field("waitingloops") ],
 	])
 ]
 
@@ -52,7 +54,11 @@ property_descriptions = {
 	),
 	"mailbox": univention.admin.property(
 		short_description="Mailbox",
-		syntax=univention.admin.syntax.phone
+		syntax=univention.admin.syntax.LDAP_Search(
+                        filter="objectClass=ast4ucsMailbox",
+                        attribute=['asterisk/mailbox: commonName'],
+                        value='asterisk/mailbox: dn'
+                ),
 	),
 	"maxrings": univention.admin.property(
 		short_description=u"Höchstzahl Klingeln",
@@ -85,6 +91,26 @@ property_descriptions = {
                 ),
 		required=True,
 	),
+	"phonegroups": univention.admin.property(
+		short_description="Telefongruppen",
+		syntax=univention.admin.syntax.LDAP_Search(
+                        filter="objectClass=ast4ucsPhonegroup",
+                        attribute=['asterisk/phoneGroup: commonName'],
+                        value='asterisk/phoneGroup: dn'
+                ),
+		required=True,
+		multivalue=True,
+	),
+	"waitingloops": univention.admin.property(
+		short_description="Warteschleifen",
+		syntax=univention.admin.syntax.LDAP_Search(
+                        filter="objectClass=ast4ucsWaitingloop",
+                        attribute=['asterisk/waitingLoop: commonName'],
+                        value='asterisk/waitingLoop: dn'
+                ),
+		required=True,
+		multivalue=True,
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -110,6 +136,8 @@ mapping.register("password", "AstAccountSecret",
 	None, univention.admin.mapping.ListToString)
 mapping.register("owner", "owner",
 	None, univention.admin.mapping.ListToString)
+mapping.register("phonegroups", "ast4ucsPhonePhonegroup")
+mapping.register("waitingloops", "ast4ucsPhoneWaitingloop")
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module

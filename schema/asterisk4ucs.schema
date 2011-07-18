@@ -44,6 +44,16 @@ attributetype ( ast4ucsPhone:3 NAME 'ast4ucsPhoneProfile'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( ast4ucsPhone:4 NAME 'ast4ucsPhonePhonegroup'
+	DESC 'Asterisk4ucs: Phone Phonegroup'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsPhone:5 NAME 'ast4ucsPhoneWaitingloop'
+	DESC 'Asterisk4ucs: Phone Waitingloop'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 	DESC 'Asterisk4ucs: phone'
 	SUP top STRUCTURAL
@@ -53,6 +63,8 @@ objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 		ast4ucsPhoneMaxrings $
 		ast4ucsPhonePhonetype $
 		ast4ucsPhoneProfile $
+		ast4ucsPhonePhonegroup $
+		ast4ucsPhoneWaitingloop $
 		owner
 	))
 
