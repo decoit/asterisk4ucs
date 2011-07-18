@@ -9,6 +9,7 @@ import univention.admin.handlers.asterisk.phonegroup
 import univention.admin.handlers.asterisk.waitingloop
 import univention.admin.handlers.asterisk.sipPhone
 import univention.admin.handlers.asterisk.conferenceRoom
+import univention.admin.handlers.asterisk.phoneType
 
 module = "asterisk/asterisk"
 childs = 0
@@ -19,20 +20,14 @@ operations = ['search']
 usewizard = 1
 wizardmenustring="Asterisk"
 wizarddescription="Asterisk verwalten"
-#wizardoperations={"add":["Add", "Add"],"find":["Search", "Search"]}
 wizardpath="univentionAsteriskObject"
-#wizardsuperordinates = ["None"]
-#wizardtypesforsuper = ["None": [
-#	"asterisk/contact",
-#	"asterisk/phonegroup",
-#	"asterisk/waitingloop"
-#]]
 childmodules = [
 	"asterisk/contact",
 	"asterisk/phonegroup",
 	"asterisk/waitingloop",
 	"asterisk/sipPhone",
 	"asterisk/conferenceRoom",
+	"asterisk/phoneType",
 ]
 
 virtual = True
@@ -62,8 +57,6 @@ class object(univention.admin.handlers.simpleLdap):
 		return self._exists
 
 def lookup(*args, **kwargs):
-	# TODO!!!!
-	# siehe dns/dns.py
 	return ( 
 		univention.admin.handlers.asterisk.phonegroup.lookup(
 			*args, **kwargs) +
@@ -72,6 +65,8 @@ def lookup(*args, **kwargs):
 		univention.admin.handlers.asterisk.sipPhone.lookup(
 			*args, **kwargs) +
 		univention.admin.handlers.asterisk.conferenceRoom.lookup(
+			*args, **kwargs) +
+		univention.admin.handlers.asterisk.phoneType.lookup(
 			*args, **kwargs) +
 		univention.admin.handlers.asterisk.contact.lookup(
 			*args, **kwargs)

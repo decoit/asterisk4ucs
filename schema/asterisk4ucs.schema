@@ -71,12 +71,30 @@ objectclass ( ast4ucsRoot:5 NAME 'univentionDirectoryWithAsterisk'
 
 # -------------- SIP Phones -------------------------
 
+attributetype ( ast4ucsAttr:5 NAME 'ast4ucsPhoneMaxrings'
+	DESC 'Asterisk4ucs: Phone maxrings'
+	EQUALITY integerMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+attributetype ( ast4ucsAttr:6 NAME 'ast4ucsPhonePhonetype'
+	DESC 'Asterisk4ucs: Phone phonetype'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsAttr:7 NAME 'ast4ucsPhoneProfile'
+	DESC 'Asterisk4ucs: Phone profile'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsRoot:6 NAME 'ast4ucsPhone'
 	DESC 'Asterisk4ucs: phone'
 	SUP top STRUCTURAL
 	MUST ( cn )
 	MAY (
 		macAddress $
+		ast4ucsPhoneMaxrings $
+		ast4ucsPhonePhonetype $
+		ast4ucsPhoneProfile $
 		owner
 	))
 
@@ -94,4 +112,33 @@ objectclass ( ast4ucsRoot:7 NAME 'ast4ucsConferenceRoom'
 	MAY (
 		ast4ucsConfRoomOptions
 	))
+
+
+# --------------------- Phone Type ----------------------
+
+attributetype ( ast4ucsAttr:8 NAME 'ast4ucsPhonetypeDisplaysize'
+	DESC 'Asterisk4ucs: Phonetype Displaysize'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsAttr:9 NAME 'ast4ucsPhonetypeManufacturer'
+	DESC 'Asterisk4ucs: Phonetype Manufacturer'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsAttr:10 NAME 'ast4ucsPhonetypeType'
+	DESC 'Asterisk4ucs: Phonetype type'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( ast4ucsRoot:8 NAME 'ast4ucsPhonetype'
+	DESC 'Asterisk4ucs: phonetype'
+	SUP top STRUCTURAL
+	MUST ( cn )
+	MAY (
+		ast4ucsPhonetypeDisplaysize $
+		ast4ucsPhonetypeManufacturer $
+		ast4ucsPhonetypeType
+	))
+
 

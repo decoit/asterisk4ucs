@@ -2,20 +2,21 @@
 
 import univention.admin.filter
 import univention.admin.handlers
-import univention.admin.handlers.asterisk
 import univention.admin.syntax
 
-module = "asterisk/phonegroup"
+module = "asterisk/phoneType"
 childs = 0
-short_description = u"Telefongruppe"
-long_description = u"Telefongruppe"
+short_description = u"Telefontyp"
+long_description = u"Telefontyp"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
+	univention.admin.tab('Allgemein', 'Allgemeine Kenndaten', [
 		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("members") ],
+		[ univention.admin.field("displaySize"),
+			univention.admin.field("manufacturer") ],
+		[ univention.admin.field("type") ],
 	])
 ]
 
@@ -26,21 +27,29 @@ property_descriptions = {
 		identifies=True,
 		required=True
 	),
-	"members": univention.admin.property(
-		short_description="Teilnehmer",
-		syntax=univention.admin.syntax.LDAP_Search(
-			filter="objectClass=ast4ucsPhone",
-			attribute=['asterisk/sipPhone: name'],
-			value='asterisk/sipPhone: dn'
-		),
-		multivalue=True
+	"displaySize": univention.admin.property(
+		short_description=u"Displaygröße",
+		syntax=univention.admin.syntax.string,
+	),
+	"manufacturer": univention.admin.property(
+		short_description="Hersteller",
+		syntax=univention.admin.syntax.string,
+	),
+	"type": univention.admin.property(
+		short_description="Typ",
+		syntax=univention.admin.syntax.string,
 	),
 }
 
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
-mapping.register("members", "phoneGroupMember")
+mapping.register("displaySize", "ast4ucsPhonetypeDisplaysize",
+	None, univention.admin.mapping.ListToString)
+mapping.register("manufacturer", "ast4ucsPhonetypeManufacturer",
+	None, univention.admin.mapping.ListToString)
+mapping.register("type", "ast4ucsPhonetypeType",
+	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -74,14 +83,14 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'phoneGroup' ])]
+		return [('objectClass', ['top', 'ast4ucsPhonetype' ])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
-			'objectClass', "phoneGroup")
+			'objectClass', "ast4ucsPhonetype")
 	])
  
 	if filter_s:
@@ -97,5 +106,5 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	return res
 
 def identify(dn, attr, canonical=0):
-	return 'phoneGroup' in attr.get('objectClass', [])
+	return 'ast4ucsPhonetype' in attr.get('objectClass', [])
 
