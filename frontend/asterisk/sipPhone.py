@@ -98,7 +98,6 @@ property_descriptions = {
                         attribute=['asterisk/phoneGroup: commonName'],
                         value='asterisk/phoneGroup: dn'
                 ),
-		required=True,
 		multivalue=True,
 	),
 	"waitingloops": univention.admin.property(
@@ -108,7 +107,6 @@ property_descriptions = {
                         attribute=['asterisk/waitingLoop: commonName'],
                         value='asterisk/waitingLoop: dn'
                 ),
-		required=True,
 		multivalue=True,
 	),
 }
