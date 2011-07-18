@@ -12,6 +12,9 @@ waitingloop: kde-icon
 
 phone: http://brsev.deviantart.com/art/Token-128429570
 
+conference: http://www.iconshut.com/business-icons/164-business-toolbar-icons.html
+(c) By Aha Soft Business Icons
+
 
 
 gifs wurden erzeugt mit:
