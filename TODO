@@ -8,8 +8,6 @@
     realisieren
 * Warteschleifen:
   * AsteriskQueue
-* Konferenzraum:
-  * AsteriskMeetme
 * Telefongruppen:
   * AstAccountCallGroup / AstAccountPickupGroup
 * Doppelte Extensions erkennen und warnen
