@@ -15,7 +15,7 @@ phone: http://brsev.deviantart.com/art/Token-128429570
 conference: http://www.iconshut.com/business-icons/164-business-toolbar-icons.html
 (c) By Aha Soft Business Icons
 
-
+phoneType: durch invertieren des alpha-channels aus dem phone-icon generiert
 
 gifs wurden erzeugt mit:
 for file in * ; do convert $file -background white -flatten ${file%.png}.gif ; done
