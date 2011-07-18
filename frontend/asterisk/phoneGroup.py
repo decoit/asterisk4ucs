@@ -15,7 +15,8 @@ options = {}
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("members") ],
+		[ univention.admin.field("jointRinging"),
+			univention.admin.field("takeover") ],
 	])
 ]
 
@@ -26,21 +27,23 @@ property_descriptions = {
 		identifies=True,
 		required=True
 	),
-	"members": univention.admin.property(
-		short_description="Teilnehmer",
-		syntax=univention.admin.syntax.LDAP_Search(
-			filter="objectClass=ast4ucsPhone",
-			attribute=['asterisk/sipPhone: name'],
-			value='asterisk/sipPhone: dn'
-		),
-		multivalue=True
+	"jointRinging": univention.admin.property(
+		short_description="Gemeinsames Klingeln",
+		syntax=univention.admin.syntax.boolean,
+	),
+	"takeover": univention.admin.property(
+		short_description=u"Anrufübernahme aus Gruppe",
+		syntax=univention.admin.syntax.boolean,
 	),
 }
 
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
-mapping.register("members", "phoneGroupMember")
+mapping.register("jointRinging", "ast4ucsPhonegroupJointringing",
+	None, univention.admin.mapping.ListToString)
+mapping.register("takeover", "ast4ucsPhonegroupTakeover",
+	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -74,14 +77,14 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'phoneGroup' ])]
+		return [('objectClass', ['top', 'ast4ucsPhonegroup' ])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
-			'objectClass', "phoneGroup")
+			'objectClass', "ast4ucsPhonegroup")
 	])
  
 	if filter_s:
@@ -97,5 +100,5 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	return res
 
 def identify(dn, attr, canonical=0):
-	return 'phoneGroup' in attr.get('objectClass', [])
+	return 'ast4ucsPhonegroup' in attr.get('objectClass', [])
 

@@ -123,20 +123,25 @@ objectclass ( ast4ucsWaitingloop NAME 'ast4ucsWaitingloop'
 
 # ----------------------- Phone Groups -----------------------------
 
-attributetype ( ast4ucsPhonegroup:1 NAME 'phoneGroupMember'
-	DESC 'Member of a phone group'
+attributetype ( ast4ucsPhonegroup:1 NAME 'ast4ucsPhonegroupJointringing'
+	DESC 'Asterisk4ucs: Phonegoup Jointringing'
 	EQUALITY caseIgnoreMatch
 	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-objectclass ( ast4ucsPhonegroup NAME 'phoneGroup'
-	DESC 'A group containing multiple phones'
+attributetype ( ast4ucsPhonegroup:2 NAME 'ast4ucsPhonegroupTakeover'
+	DESC 'Asterisk4ucs: Phonegoup Takeover'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( ast4ucsPhonegroup NAME 'ast4ucsPhonegroup'
+	DESC 'Asterisk4ucs: Phonegroup'
 	SUP top
-	MUST (
-		cn
-	)
+	MUST ( cn )
 	MAY (
-		phoneGroupMember 
+		ast4ucsPhonegroupJointringing $
+		ast4ucsPhonegroupTakeover
 	) )
 
 
