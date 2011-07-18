@@ -17,6 +17,10 @@ conference: http://www.iconshut.com/business-icons/164-business-toolbar-icons.ht
 
 phoneType: durch invertieren des alpha-channels aus dem phone-icon generiert
 
+mailbox: kombiniert aus linphone-icon und univention-mail-icon
+
+
+
 gifs wurden erzeugt mit:
 for file in * ; do convert $file -background white -flatten ${file%.png}.gif ; done
 
