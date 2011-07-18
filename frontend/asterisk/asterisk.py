@@ -20,14 +20,7 @@ operations = ['search']
 usewizard = 1
 wizardmenustring="Asterisk"
 wizarddescription="Asterisk verwalten"
-#wizardoperations={"add":["Add", "Add"],"find":["Search", "Search"]}
 wizardpath="univentionAsteriskObject"
-#wizardsuperordinates = ["None"]
-#wizardtypesforsuper = ["None": [
-#	"asterisk/contact",
-#	"asterisk/phonegroup",
-#	"asterisk/waitingloop"
-#]]
 childmodules = [
 	"asterisk/contact",
 	"asterisk/phonegroup",
@@ -64,8 +57,6 @@ class object(univention.admin.handlers.simpleLdap):
 		return self._exists
 
 def lookup(*args, **kwargs):
-	# TODO!!!!
-	# siehe dns/dns.py
 	return ( 
 		univention.admin.handlers.asterisk.phonegroup.lookup(
 			*args, **kwargs) +

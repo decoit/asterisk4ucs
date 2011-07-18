@@ -12,11 +12,6 @@ long_description = u"Telefongruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
-usewizard = 1
-wizardmenustring="Telefongruppen"
-wizarddescription="Telefongruppen hinzufügen, editieren und löschen"
-wizardoperations={"add":["Add", "Add User"],"find":["Search", "Search for user(s)"]}
-
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("commonName") ],
