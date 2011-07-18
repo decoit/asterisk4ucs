@@ -2,6 +2,8 @@
 * Asterisk integrieren
 * Decoit-OIDs verwenden
 * rueckwaertszuweisung koennen eventuell realisiert werden
+* Doppelte Extensions erkennen und warnen
+
 * Mailboxen:
   * AsteriskVoicemail
   * Eine pro telefon liesze sich leicht durch verschmelzung der beiden objekte
@@ -10,6 +12,4 @@
   * AsteriskQueue
 * Telefongruppen:
   * AstAccountCallGroup / AstAccountPickupGroup
-* Doppelte Extensions erkennen und warnen
-
 
