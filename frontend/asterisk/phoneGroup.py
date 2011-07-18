@@ -2,23 +2,20 @@
 
 import univention.admin.filter
 import univention.admin.handlers
+import univention.admin.handlers.asterisk
 import univention.admin.syntax
 
-module = "asterisk/waitingloop"
+module = "asterisk/phoneGroup"
 childs = 0
-short_description = u"Warteschlange"
-long_description = u"Warteschlange"
+short_description = u"Telefongruppe"
+long_description = u"Telefongruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("extension"),
-			univention.admin.field("type") ],
-		[ univention.admin.field("maxCalls"),
-			univention.admin.field("memberDelay") ],
-		[ univention.admin.field("delayMusic") ],
+		[ univention.admin.field("members") ],
 	])
 ]
 
@@ -29,41 +26,21 @@ property_descriptions = {
 		identifies=True,
 		required=True
 	),
-	"extension": univention.admin.property(
-		short_description="Durchwahl",
-		syntax=univention.admin.syntax.phone,
-	),
-	"type": univention.admin.property(
-		short_description="Typ",
-		syntax=univention.admin.syntax.string,
-	),
-	"maxCalls": univention.admin.property(
-		short_description="Maximalzahl gleichzeitiger Anrufe",
-		syntax=univention.admin.syntax.integer,
-	),
-	"memberDelay": univention.admin.property(
-		short_description="Wartezeit zwischen Anrufen",
-		syntax=univention.admin.syntax.integer,
-	),
-	"delayMusic": univention.admin.property(
-		short_description="Warteschlangenmusik",
-		syntax=univention.admin.syntax.string,
+	"members": univention.admin.property(
+		short_description="Teilnehmer",
+		syntax=univention.admin.syntax.LDAP_Search(
+			filter="objectClass=ast4ucsPhone",
+			attribute=['asterisk/sipPhone: name'],
+			value='asterisk/sipPhone: dn'
+		),
+		multivalue=True
 	),
 }
 
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
-mapping.register("extension", "AstExtension",
-	None, univention.admin.mapping.ListToString)
-mapping.register("type", "ast4ucsWaitingloopType",
-	None, univention.admin.mapping.ListToString)
-mapping.register("maxCalls", "ast4ucsWaitingloopMaxcalls",
-	None, univention.admin.mapping.ListToString)
-mapping.register("memberDelay", "ast4ucsWaitingloopMemberdelay",
-	None, univention.admin.mapping.ListToString)
-mapping.register("delayMusic", "ast4ucsWaitingloopDelaymusic",
-	None, univention.admin.mapping.ListToString)
+mapping.register("members", "phoneGroupMember")
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -97,15 +74,14 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsWaitingloop',
-			'AsteriskExtension' ])]
+		return [('objectClass', ['top', 'phoneGroup' ])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
-			'objectClass', "ast4ucsWaitingloop")
+			'objectClass', "phoneGroup")
 	])
  
 	if filter_s:
@@ -121,5 +97,5 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	return res
 
 def identify(dn, attr, canonical=0):
-	return 'ast4ucsWaitingloop' in attr.get('objectClass', [])
+	return 'phoneGroup' in attr.get('objectClass', [])
 

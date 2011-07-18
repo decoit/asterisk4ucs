@@ -5,8 +5,8 @@ import univention.admin.syntax
 import univention.admin.handlers
 import univention.admin.handlers.asterisk
 import univention.admin.handlers.asterisk.contact
-import univention.admin.handlers.asterisk.phonegroup
-import univention.admin.handlers.asterisk.waitingloop
+import univention.admin.handlers.asterisk.phoneGroup
+import univention.admin.handlers.asterisk.waitingLoop
 import univention.admin.handlers.asterisk.sipPhone
 import univention.admin.handlers.asterisk.conferenceRoom
 import univention.admin.handlers.asterisk.phoneType
@@ -23,8 +23,8 @@ wizarddescription="Asterisk verwalten"
 wizardpath="univentionAsteriskObject"
 childmodules = [
 	"asterisk/contact",
-	"asterisk/phonegroup",
-	"asterisk/waitingloop",
+	"asterisk/phoneGroup",
+	"asterisk/waitingLoop",
 	"asterisk/sipPhone",
 	"asterisk/conferenceRoom",
 	"asterisk/phoneType",
@@ -58,9 +58,9 @@ class object(univention.admin.handlers.simpleLdap):
 
 def lookup(*args, **kwargs):
 	return ( 
-		univention.admin.handlers.asterisk.phonegroup.lookup(
+		univention.admin.handlers.asterisk.phoneGroup.lookup(
 			*args, **kwargs) +
-		univention.admin.handlers.asterisk.waitingloop.lookup(
+		univention.admin.handlers.asterisk.waitingLoop.lookup(
 			*args, **kwargs) +
 		univention.admin.handlers.asterisk.sipPhone.lookup(
 			*args, **kwargs) +
