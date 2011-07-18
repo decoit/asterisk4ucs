@@ -98,7 +98,7 @@ mapping.register("mailbox", "AstAccountMailbox",
 	None, univention.admin.mapping.ListToString)
 mapping.register("maxrings", "ast4ucsPhoneMaxrings",
 	None, univention.admin.mapping.ListToString)
-mapping.register("phonetype", "ast4ucsPhoneType",
+mapping.register("phonetype", "ast4ucsPhonePhonetype",
 	None, univention.admin.mapping.ListToString)
 mapping.register("profile", "ast4ucsPhoneProfile",
 	None, univention.admin.mapping.ListToString)
