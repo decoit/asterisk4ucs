@@ -62,7 +62,11 @@ property_descriptions = {
 	),
 	"phonetype": univention.admin.property(
 		short_description="Telefontyp",
-		syntax=univention.admin.syntax.string
+		syntax=univention.admin.syntax.LDAP_Search(
+                        filter="objectClass=ast4ucsPhonetype",
+                        attribute=['asterisk/phoneType: commonName'],
+                        value='asterisk/phoneType: dn'
+                ),
 	),
 	"profile": univention.admin.property(
 		short_description="Profil",
