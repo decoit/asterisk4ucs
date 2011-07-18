@@ -55,7 +55,7 @@ property_descriptions = {
 		syntax=univention.admin.syntax.phone
 	),
 	"maxrings": univention.admin.property(
-		short_description="Max. rings",
+		short_description=u"Höchstzahl Klingeln",
 		long_description=(u"Nach wievielmaligem Klingeln soll die" + 
 			u"Mailbox den Anruf entgegennehmen?"),
 		syntax=univention.admin.syntax.integer
@@ -96,12 +96,12 @@ mapping.register("hostname", "AstAccountHost",
 	None, univention.admin.mapping.ListToString)
 mapping.register("mailbox", "AstAccountMailbox",
 	None, univention.admin.mapping.ListToString)
-#mapping.register("maxrings", "",
-#	None, univention.admin.mapping.ListToString)
-#mapping.register("phonetype", "",
-#	None, univention.admin.mapping.ListToString)
-#mapping.register("profile", "",
-#	None, univention.admin.mapping.ListToString)
+mapping.register("maxrings", "ast4ucsPhoneMaxrings",
+	None, univention.admin.mapping.ListToString)
+mapping.register("phonetype", "ast4ucsPhoneType",
+	None, univention.admin.mapping.ListToString)
+mapping.register("profile", "ast4ucsPhoneProfile",
+	None, univention.admin.mapping.ListToString)
 mapping.register("password", "AstAccountSecret",
 	None, univention.admin.mapping.ListToString)
 mapping.register("owner", "owner",
