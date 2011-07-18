@@ -4,8 +4,3 @@
 * rueckwaertszuweisung koennen eventuell realisiert werden
 * Doppelte Extensions erkennen und warnen
 
-* Warteschleifen:
-  * AsteriskQueue
-* Telefongruppen:
-  * AstAccountCallGroup / AstAccountPickupGroup
-
