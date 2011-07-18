@@ -57,6 +57,53 @@ objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 	))
 
 
+# ---------------------- Mailbox ------------------
+
+attributetype ( ast4ucsMailbox:1 NAME 'ast4ucsMailboxPassword'
+	DESC 'Asterisk4ucs: Mailbox Password'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsMailbox:2 NAME 'ast4ucsMailboxMaxlength'
+	DESC 'Asterisk4ucs: Mailbox Maxlength'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsMailbox:3 NAME 'ast4ucsMailboxNotifybymail'
+	DESC 'Asterisk4ucs: Mailbox Notifybymail'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsMailbox:4 NAME 'ast4ucsMailboxMailsubject'
+	DESC 'Asterisk4ucs: Mailbox Mailsubject'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsMailbox:5 NAME 'ast4ucsMailboxMailbody'
+	DESC 'Asterisk4ucs: Mailbox Mailbody'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsMailbox:6 NAME 'ast4ucsMailboxMaildatetype'
+	DESC 'Asterisk4ucs: Mailbox Maildatetype'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( ast4ucsMailbox NAME 'ast4ucsMailbox'
+	DESC 'Asterisk4ucs: Mailbox'
+	SUP top STRUCTURAL
+	MUST ( cn )
+	MAY (
+		ast4ucsMailboxPassword $
+		ast4ucsMailboxMaxlength $
+		ast4ucsMailboxNotifybymail $
+		ast4ucsMailboxMailsubject $
+		ast4ucsMailboxMailbody $
+		ast4ucsMailboxMaildatetype $
+		owner
+	) )
+
+
 # --------------------- Phone Type ----------------------
 
 attributetype ( ast4ucsPhonetype:1 NAME 'ast4ucsPhonetypeDisplaysize'
