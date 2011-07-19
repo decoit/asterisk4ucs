@@ -38,12 +38,13 @@ echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Creating folder for asterisk configuration files..."
 mkdir -p "$AST4UCS_ASTCONF_PATH"
+chown www-data:www-data "$AST4UCS_ASTCONF_PATH"
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Setting default values for UCR variables..."
 ucr set asterisk/sipconf="$ast4ucs_ucr_sipconf"
 ucr set asterisk/voicemailconf="$ast4ucs_ucr_voicemailconf"
-ucr set asterisk/backup="$ast4ucs_ucr_backup"
+ucr set asterisk/backupsuffix="$ast4ucs_ucr_backupsuffix"
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Installing UMC module..."

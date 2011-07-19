@@ -3,9 +3,10 @@ from univention.admin.handlers.users import user
 import univention.config_registry
 import traceback
 import re
+import shutil
+import time
 
 ucr = univention.config_registry.ConfigRegistry()
-ucr.load()
 
 def getNameFromUser(userinfo):
 	if userinfo.get("firstname"):
@@ -45,8 +46,10 @@ def genSipconfEntry(co, lo, phone):
 	return res
 
 def genSipconf(co, lo):
+	ucr.load()
 	confpath = ucr.get("asterisk/sipconf", False)
-	if not confpath: return
+	if not confpath:
+		return
 	conf = open(confpath, "w")
 	print >> conf, "; Automatisch generierte sip.conf von asterisk4UCS"
 	print >> conf, ""
@@ -60,6 +63,9 @@ def genSipconf(co, lo):
 				traceback.format_exc()[:-1] ) + "\n"
 	
 	conf.close()
+	if ucr.get("asterisk/backupsuffix", ""):
+		shutil.copyfile(confpath, confpath + time.strftime(
+			ucr.get("asterisk/backupsuffix", "")))
 
 def genVoicemailconfEntry(co, lo, box):
 	box = box.info
@@ -80,6 +86,7 @@ def genVoicemailconfEntry(co, lo, box):
 		)
 
 def genVoicemailconf(co, lo):
+	ucr.load()
 	confpath = ucr.get("asterisk/voicemailconf", False)
 	if not confpath: return
 	conf = open(confpath, "w")
@@ -96,6 +103,9 @@ def genVoicemailconf(co, lo):
 				traceback.format_exc()[:-1] ) + "\n"
 	
 	conf.close()
+	if ucr.get("asterisk/backupsuffix", ""):
+		shutil.copyfile(confpath, confpath + time.strftime(
+			ucr.get("asterisk/backupsuffix", "")))
 
 def genConfigs(co, lo):
 	pass

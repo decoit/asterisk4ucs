@@ -9,8 +9,6 @@
 
 * Einstellungsdatei fuer Installation
 * Bei Neugenerierung der Config:
-  * Alte ueberschreiben
-  * Backup machen
   * Per ssh verschicken
 
 * Hilfetexte fuer UCR-variablen
