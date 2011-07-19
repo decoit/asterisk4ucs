@@ -15,8 +15,7 @@ options = {}
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("jointRinging"),
-			univention.admin.field("takeover") ],
+		[ univention.admin.field("id") ]
 	])
 ]
 
@@ -27,22 +26,17 @@ property_descriptions = {
 		identifies=True,
 		required=True
 	),
-	"jointRinging": univention.admin.property(
-		short_description="Gemeinsames Klingeln",
-		syntax=univention.admin.syntax.boolean,
-	),
-	"takeover": univention.admin.property(
-		short_description=u"Anrufübernahme aus Gruppe",
-		syntax=univention.admin.syntax.boolean,
+	"id": univention.admin.property(
+		short_description="Telefongruppen-Nummer",
+		syntax=univention.admin.syntax.integer,
+		required=True
 	),
 }
 
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
-mapping.register("jointRinging", "ast4ucsPhonegroupJointringing",
-	None, univention.admin.mapping.ListToString)
-mapping.register("takeover", "ast4ucsPhonegroupTakeover",
+mapping.register("id", "ast4ucsPhonegroupId",
 	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):

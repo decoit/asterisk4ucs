@@ -44,12 +44,17 @@ attributetype ( ast4ucsPhone:3 NAME 'ast4ucsPhoneProfile'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-attributetype ( ast4ucsPhone:4 NAME 'ast4ucsPhonePhonegroup'
-	DESC 'Asterisk4ucs: Phone Phonegroup'
+attributetype ( ast4ucsPhone:4 NAME 'ast4ucsPhoneCallgroup'
+	DESC 'Asterisk4ucs: Phone Callgroup'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-attributetype ( ast4ucsPhone:5 NAME 'ast4ucsPhoneWaitingloop'
+attributetype ( ast4ucsPhone:5 NAME 'ast4ucsPhonePickupgroup'
+	DESC 'Asterisk4ucs: Phone Pickupgroup'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsPhone:6 NAME 'ast4ucsPhoneWaitingloop'
 	DESC 'Asterisk4ucs: Phone Waitingloop'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
@@ -63,7 +68,8 @@ objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 		ast4ucsPhoneMaxrings $
 		ast4ucsPhonePhonetype $
 		ast4ucsPhoneProfile $
-		ast4ucsPhonePhonegroup $
+		ast4ucsPhoneCallgroup $
+		ast4ucsPhonePickupgroup $
 		ast4ucsPhoneWaitingloop $
 		owner
 	))
@@ -101,10 +107,19 @@ attributetype ( ast4ucsMailbox:6 NAME 'ast4ucsMailboxMaildatetype'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( ast4ucsMailbox:7 NAME 'ast4ucsMailboxId'
+	DESC 'Asterisk4ucs: Mailbox Id'
+	EQUALITY integerMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	SINGLE-VALUE )
+
 objectclass ( ast4ucsMailbox NAME 'ast4ucsMailbox'
 	DESC 'Asterisk4ucs: Mailbox'
 	SUP top STRUCTURAL
-	MUST ( cn )
+	MUST (
+		cn $
+		ast4ucsMailboxId
+	)
 	MAY (
 		ast4ucsMailboxPassword $
 		ast4ucsMailboxMaxlength $
@@ -182,25 +197,18 @@ objectclass ( ast4ucsWaitingloop NAME 'ast4ucsWaitingloop'
 
 # ----------------------- Phone Groups -----------------------------
 
-attributetype ( ast4ucsPhonegroup:1 NAME 'ast4ucsPhonegroupJointringing'
-	DESC 'Asterisk4ucs: Phonegoup Jointringing'
-	EQUALITY caseIgnoreMatch
-	SUBSTR caseIgnoreSubstringsMatch
-	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
-attributetype ( ast4ucsPhonegroup:2 NAME 'ast4ucsPhonegroupTakeover'
-	DESC 'Asterisk4ucs: Phonegoup Takeover'
-	EQUALITY caseIgnoreMatch
-	SUBSTR caseIgnoreSubstringsMatch
-	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributetype ( ast4ucsPhonegroup:1 NAME 'ast4ucsPhonegroupId'
+	DESC 'Asterisk4ucs: Phonegoup Id'
+	EQUALITY integerMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	SINGLE-VALUE )
 
 objectclass ( ast4ucsPhonegroup NAME 'ast4ucsPhonegroup'
 	DESC 'Asterisk4ucs: Phonegroup'
 	SUP top
-	MUST ( cn )
-	MAY (
-		ast4ucsPhonegroupJointringing $
-		ast4ucsPhonegroupTakeover
+	MUST (
+		cn $
+		ast4ucsPhonegroupId
 	) )
 
 

@@ -22,10 +22,11 @@ layout = [
 			univention.admin.field("maxrings") ],
 		[ univention.admin.field("phonetype"),
 			univention.admin.field("profile") ],
+		[ univention.admin.field("owner") ],
 		[ univention.admin.field("password"),
-			univention.admin.field("owner") ],
-		[ univention.admin.field("phonegroups"),
 			univention.admin.field("waitingloops") ],
+		[ univention.admin.field("callgroups"),
+			univention.admin.field("pickupgroups") ],
 	])
 ]
 
@@ -81,7 +82,8 @@ property_descriptions = {
 	),
 	"password": univention.admin.property(
 		short_description="Passwort",
-		syntax=univention.admin.syntax.userPasswd
+		syntax=univention.admin.syntax.userPasswd,
+		required=True,
 	),
 	"owner": univention.admin.property(
 		short_description="Benutzer",
@@ -92,8 +94,17 @@ property_descriptions = {
                 ),
 		required=True,
 	),
-	"phonegroups": univention.admin.property(
-		short_description="Telefongruppen",
+	"callgroups": univention.admin.property(
+		short_description="Callgroups",
+		syntax=univention.admin.syntax.LDAP_Search(
+                        filter="objectClass=ast4ucsPhonegroup",
+                        attribute=['asterisk/phoneGroup: commonName'],
+                        value='asterisk/phoneGroup: dn'
+                ),
+		multivalue=True,
+	),
+	"pickupgroups": univention.admin.property(
+		short_description="Pickupgroups",
 		syntax=univention.admin.syntax.LDAP_Search(
                         filter="objectClass=ast4ucsPhonegroup",
                         attribute=['asterisk/phoneGroup: commonName'],
@@ -135,7 +146,8 @@ mapping.register("password", "AstAccountSecret",
 	None, univention.admin.mapping.ListToString)
 mapping.register("owner", "owner",
 	None, univention.admin.mapping.ListToString)
-mapping.register("phonegroups", "ast4ucsPhonePhonegroup")
+mapping.register("callgroups", "ast4ucsPhoneCallgroup")
+mapping.register("pickupgroups", "ast4ucsPhonePickupgroup")
 mapping.register("waitingloops", "ast4ucsPhoneWaitingloop")
 
 class object(univention.admin.handlers.simpleLdap):
@@ -163,7 +175,7 @@ class object(univention.admin.handlers.simpleLdap):
 		self.save()
 	
 	def _ldap_pre_ready(self):
-		self.info['name'] = self.info["extension"]
+		self.info['name'] = "phone " + self.info["extension"]
 	
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (

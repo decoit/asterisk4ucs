@@ -1,7 +1,17 @@
 from univention.admin.handlers.asterisk import sipPhone, mailbox, phoneGroup
 from univention.admin.handlers.users import user
+import univention.config_registry
 import traceback
 import re
+
+ucr = univention.config_registry.ConfigRegistry()
+ucr.load()
+
+def getNameFromUser(userinfo):
+	if userinfo.get("firstname"):
+		return "%s %s" % (userinfo["firstname"], userinfo["lastname"])
+	else:
+		return userinfo["lastname"]
 
 def genSipconfEntry(co, lo, phone):
 	phone = phone.info
@@ -9,36 +19,85 @@ def genSipconfEntry(co, lo, phone):
 	phoneMailbox = mailbox.object(co, lo, None, phone["mailbox"]).info
 	
 	callgroups = []
-	for group in phone.get("phonegroups", []):
+	for group in phone.get("callgroups", []):
 		group = phoneGroup.object(co, lo, None, group).info
-		callgroups.append(group["commonName"])
+		callgroups.append(group["id"])
+	
+	pickupgroups = []
+	for group in phone.get("pickupgroups", []):
+		group = phoneGroup.object(co, lo, None, group).info
+		pickupgroups.append(group["id"])
 	
 	res  = "[%s]\n" % (phone["extension"])
 	res += "type=friend\n"
 	res += "secret=%s\n" % (phone["password"])
-	res += "callerid=\"%s %s\" <%s>\n" % (
-		phoneUser["firstname"],
-		phoneUser["lastname"],
+	res += "callerid=\"%s\" <%s>\n" % (
+		getNameFromUser(phoneUser),
 		phone["extension"] )
-	res += "mailbox=%s\n" % (phoneMailbox["commonName"])
-	res += "callgroup=%s\n" % (','.join(callgroups))
-	res += "pickupgroup=%s\n" % (','.join(callgroups))
+	res += "mailbox=%s\n" % (phoneMailbox["id"])
+
+	if callgroups:
+		res += "callgroup=%s\n" % (','.join(callgroups))
+
+	if pickupgroups:
+		res += "pickupgroup=%s\n" % (','.join(pickupgroups))
+	
 	return res
 
 def genSipconf(co, lo):
-	sipconf = open("/tmp/sip.conf", "w")
-	print >> sipconf, "# Automatisch generierte sip.conf von asterisk4UCS"
-	print >> sipconf, ""
+	confpath = ucr.get("asterisk/sipconf", False)
+	if not confpath: return
+	conf = open(confpath, "w")
+	print >> conf, "; Automatisch generierte sip.conf von asterisk4UCS"
+	print >> conf, ""
 	
 	for phone in sipPhone.lookup(co, lo, False):
-		print >> sipconf, "; dn=%s" % (phone.dn)
+		print >> conf, "; dn: %s" % (phone.dn)
 		try:
-			print >> sipconf, genSipconfEntry(co, lo, phone)
+			print >> conf, genSipconfEntry(co, lo, phone)
 		except:
-			print >> sipconf, re.sub("(?m)^", ";",
+			print >> conf, re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] ) + "\n"
-			#traceback.print_exc(file=sipconf)
 	
-	sipconf.close()
+	conf.close()
+
+def genVoicemailconfEntry(co, lo, box):
+	box = box.info
+	boxUser = user.object(co, lo, None, box["owner"]).info
+	
+	if box.get("email") and boxUser.get("e-mail", []):
+		return "%s => %s,%s,%s\n" % (
+			box["id"],
+			box["password"],
+			getNameFromUser(boxUser),
+			boxUser["e-mail"][0],
+		)
+	else:
+		return "%s => %s,%s\n" % (
+			box["id"],
+			box["password"],
+			getNameFromUser(boxUser),
+		)
+
+def genVoicemailconf(co, lo):
+	confpath = ucr.get("asterisk/voicemailconf", False)
+	if not confpath: return
+	conf = open(confpath, "w")
+	print >> conf, "; Automatisch generierte voicemail.conf von"
+	print >> conf, "; Asterisk4UCS"
+	print >> conf, ""
+	
+	for box in mailbox.lookup(co, lo, False):
+		print >> conf, "; dn: %s" % (box.dn)
+		try:
+			print >> conf, genVoicemailconfEntry(co, lo, box)
+		except:
+			print >> conf, re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] ) + "\n"
+	
+	conf.close()
+
+def genConfigs(co, lo):
+	pass
 
 

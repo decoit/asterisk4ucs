@@ -13,7 +13,8 @@ options = {}
 
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("commonName") ],
+#		[ univention.admin.field("commonName") ],
+		[ univention.admin.field("id") ],
 		[ univention.admin.field("password"),
 			univention.admin.field("maxMessageLength") ],
 		[ univention.admin.field("email"),
@@ -31,9 +32,15 @@ property_descriptions = {
 		identifies=True,
 		required=True
 	),
+	"id": univention.admin.property(
+		short_description="Mailbox-Nummer",
+		syntax=univention.admin.syntax.phone,
+		required=True
+	),
 	"password": univention.admin.property(
 		short_description=u"Passwort",
 		syntax=univention.admin.syntax.userPasswd,
+		required=True,
 	),
 	"maxMessageLength": univention.admin.property(
 		short_description=u"Maximallänge der Nachrichten",
@@ -58,22 +65,36 @@ property_descriptions = {
 	"owner": univention.admin.property(
 		short_description=u"Benutzer",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=inetOrgPerson",
-                        attribute=['users/user: username'],
-                        value='users/user: dn'
-                ),
+			filter="objectClass=inetOrgPerson",
+			attribute=['users/user: username'],
+			value='users/user: dn'
+		),
 		required=True,
 	),
 }
 
+def boolToString(foo):
+	if foo:
+		return "1"
+	else:
+		return "0"
+
+def stringToBool(foo):
+	if univention.admin.mapping.ListToString(foo) == "1":
+		return True
+	else:
+		return False
+
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
+	None, univention.admin.mapping.ListToString)
+mapping.register("id", "ast4ucsMailboxId",
 	None, univention.admin.mapping.ListToString)
 mapping.register("password", "ast4ucsMailboxPassword",
 	None, univention.admin.mapping.ListToString)
 mapping.register("maxMessageLength", "ast4ucsMailboxMaxlength",
 	None, univention.admin.mapping.ListToString)
-mapping.register("email", "ast4ucsMailboxNotifyByMail",
+mapping.register("email", "ast4ucsMailboxNotifybymail",
 	None, univention.admin.mapping.ListToString)
 mapping.register("emailSubject", "ast4ucsMailboxMailsubject",
 	None, univention.admin.mapping.ListToString)
@@ -108,6 +129,9 @@ class object(univention.admin.handlers.simpleLdap):
 		univention.admin.handlers.simpleLdap.open(self)
 		self.save()
 
+        def _ldap_pre_ready(self):
+                self.info['commonName'] = "mailbox " + self.info["id"]
+
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
 			mapping.mapName('commonName'),
@@ -117,6 +141,18 @@ class object(univention.admin.handlers.simpleLdap):
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['top', 'ast4ucsMailbox' ])]
+	
+        def _ldap_post_create(self):
+                univention.admin.handlers.asterisk.genVoicemailconf(
+			self.co, self.lo) 
+        
+        def _ldap_post_modify(self):
+                univention.admin.handlers.asterisk.genVoicemailconf(
+			self.co, self.lo) 
+        
+        def _ldap_post_delete(self):
+                univention.admin.handlers.asterisk.genVoicemailconf(
+			self.co, self.lo) 
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
