@@ -5,4 +5,6 @@ UNI_SCHEMA_PATH=/usr/share/univention-ldap/schema
 UNI_MODULE_PATH=/usr/lib/python2.4/site-packages/univention/admin/handlers
 UNI_ICON_PATH=/usr/share/univention-webui-style/icon
 
+AST4UCS_ASTCONF_PATH=/tmp/asterisk/
+
 

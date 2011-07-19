@@ -36,6 +36,15 @@ mkdir -p "$UNI_ICON_PATH/asterisk"
 install -m664 icons/asterisk/* "$UNI_ICON_PATH/asterisk/"
 echo -e "\t\t\t\t\t\t\tdone."
 
+echo "Creating folder for asterisk configuration files..."
+mkdir -p "$AST4UCS_ASTCONF_PATH"
+echo -e "\t\t\t\t\t\t\tdone."
+
+echo "Setting default values for UCR variables..."
+ucr set asterisk/sipconf="$AST4UCS_ASTCONF_PATH/sip.conf"
+ucr set asterisk/voicemailconf="$AST4UCS_ASTCONF_PATH/voicemail.conf"
+echo -e "\t\t\t\t\t\t\tdone."
+
 echo "Installing UMC module..."
 mkdir -p "$UNI_MODULE_PATH/asterisk"
 install -m664 frontend/asterisk/* "$UNI_MODULE_PATH/asterisk/"
