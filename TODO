@@ -7,3 +7,9 @@
 
 * sip.conf generieren
 
+* Einstellungsdatei fuer Installation
+* Bei Neugenerierung der Config:
+  * Alte ueberschreiben
+  * Backup machen
+  * Per ssh verschicken
+
