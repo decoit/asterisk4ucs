@@ -5,6 +5,7 @@ import traceback
 import re
 import shutil
 import time
+from subprocess import Popen
 
 ucr = univention.config_registry.ConfigRegistry()
 
@@ -13,6 +14,16 @@ def getNameFromUser(userinfo):
 		return "%s %s" % (userinfo["firstname"], userinfo["lastname"])
 	else:
 		return userinfo["lastname"]
+
+def callHook():
+	if not ucr.get("asterisk/hookcommand"):
+		return
+	
+	debuglog = open("/tmp/debug", "w")
+	#debuglog.close()
+	Popen(ucr.get("asterisk/hookcommand").split(),
+		stdout=debuglog, stderr=debuglog)
+	#Popen([ucr.get("asterisk/hookcommand")])
 
 def genSipconfEntry(co, lo, phone):
 	phone = phone.info
@@ -63,9 +74,10 @@ def genSipconf(co, lo):
 				traceback.format_exc()[:-1] ) + "\n"
 	
 	conf.close()
-	if ucr.get("asterisk/backupsuffix", ""):
+	if ucr.get("asterisk/backupsuffix"):
 		shutil.copyfile(confpath, confpath + time.strftime(
 			ucr.get("asterisk/backupsuffix", "")))
+	callHook()
 
 def genVoicemailconfEntry(co, lo, box):
 	box = box.info
@@ -103,9 +115,10 @@ def genVoicemailconf(co, lo):
 				traceback.format_exc()[:-1] ) + "\n"
 	
 	conf.close()
-	if ucr.get("asterisk/backupsuffix", ""):
+	if ucr.get("asterisk/backupsuffix"):
 		shutil.copyfile(confpath, confpath + time.strftime(
 			ucr.get("asterisk/backupsuffix", "")))
+	callHook()
 
 def genConfigs(co, lo):
 	pass
