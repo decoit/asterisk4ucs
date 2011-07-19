@@ -31,6 +31,16 @@ echo "Restarting slapd..."
 invoke-rc.d slapd restart
 echo -e "\t\t\t\t\t\t\tdone."
 
+echo "Deleting folder for asterisk configuration files..."
+rm -r "$AST4UCS_ASTCONF_PATH"
+echo -e "\t\t\t\t\t\t\tdone."
+
+echo "Removing UCR variables..."
+ucr unset asterisk/sipconf
+ucr unset asterisk/voicemailconf
+ucr unset asterisk/backup
+echo -e "\t\t\t\t\t\t\tdone."
+
 echo "Uninstalling UMC module..."
 rm -r "$UNI_MODULE_PATH/asterisk"
 echo -e "\t\t\t\t\t\t\tdone."

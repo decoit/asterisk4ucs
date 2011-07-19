@@ -7,4 +7,8 @@ UNI_ICON_PATH=/usr/share/univention-webui-style/icon
 
 AST4UCS_ASTCONF_PATH=/tmp/asterisk/
 
+ast4ucs_ucr_sipconf="$AST4UCS_ASTCONF_PATH/sip.conf"
+ast4ucs_ucr_voicemailconf="$AST4UCS_ASTCONF_PATH/voicemail.conf"
+ast4ucs_ucr_backup=timestamp
+
 

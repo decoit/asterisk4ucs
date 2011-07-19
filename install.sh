@@ -41,8 +41,9 @@ mkdir -p "$AST4UCS_ASTCONF_PATH"
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Setting default values for UCR variables..."
-ucr set asterisk/sipconf="$AST4UCS_ASTCONF_PATH/sip.conf"
-ucr set asterisk/voicemailconf="$AST4UCS_ASTCONF_PATH/voicemail.conf"
+ucr set asterisk/sipconf="$ast4ucs_ucr_sipconf"
+ucr set asterisk/voicemailconf="$ast4ucs_ucr_voicemailconf"
+ucr set asterisk/backup="$ast4ucs_ucr_backup"
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Installing UMC module..."
