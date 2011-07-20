@@ -228,7 +228,7 @@ class ConfRefreshMixin:
 	def _ldap_post_modify(self):
 		genConfigs(self.co, self.lo)
 	
-	def _ldap_post_delete(self):
+	def _ldap_post_remove(self):
 		genConfigs(self.co, self.lo)
 
 import sipPhone, mailbox, phoneGroup, waitingLoop
