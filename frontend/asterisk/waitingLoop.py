@@ -2,6 +2,7 @@
 
 import univention.admin.filter
 import univention.admin.handlers
+from univention.admin.handlers.asterisk import ConfRefreshMixin
 import univention.admin.syntax
 
 module = "asterisk/waitingLoop"
@@ -15,12 +16,24 @@ layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("commonName") ],
 		[ univention.admin.field("extension"),
-			univention.admin.field("type") ],
+			univention.admin.field("strategy") ],
 		[ univention.admin.field("maxCalls"),
 			univention.admin.field("memberDelay") ],
 		[ univention.admin.field("delayMusic") ],
 	])
 ]
+
+class SyntaxStrategy(univention.admin.syntax.select):
+	name="strategy"
+	choices = [
+		("ringall", u"Alle gleichzeitig anklingeln (ringall)"),
+		("roundrobin", u"Alle der Reihe nach anklingeln (roundrobin)"),
+		("leastrecent", u"Den am längsten inaktiven Anschluss " + 
+			u"anklingeln (leastrecent)"),
+		("fewestcalls", u"Den Anschluss mit den wenigsten "+
+			u"beantworteten Anrufen anklingeln (fewestcalls)"),
+		("random", u"Einen zufälligen Anschluss anklingeln"),
+	]
 
 property_descriptions = {
 	"commonName": univention.admin.property(
@@ -33,9 +46,9 @@ property_descriptions = {
 		short_description="Durchwahl",
 		syntax=univention.admin.syntax.phone,
 	),
-	"type": univention.admin.property(
-		short_description="Typ",
-		syntax=univention.admin.syntax.string,
+	"strategy": univention.admin.property(
+		short_description="Strategie",
+		syntax=SyntaxStrategy,
 	),
 	"maxCalls": univention.admin.property(
 		short_description="Maximalzahl gleichzeitiger Anrufe",
@@ -56,7 +69,7 @@ mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
 mapping.register("extension", "AstExtension",
 	None, univention.admin.mapping.ListToString)
-mapping.register("type", "ast4ucsWaitingloopType",
+mapping.register("strategie", "ast4ucsWaitingloopStrategy",
 	None, univention.admin.mapping.ListToString)
 mapping.register("maxCalls", "ast4ucsWaitingloopMaxcalls",
 	None, univention.admin.mapping.ListToString)
@@ -65,7 +78,7 @@ mapping.register("memberDelay", "ast4ucsWaitingloopMemberdelay",
 mapping.register("delayMusic", "ast4ucsWaitingloopDelaymusic",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap):
+class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,

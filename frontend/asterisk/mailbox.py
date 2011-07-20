@@ -2,6 +2,7 @@
 
 import univention.admin.filter
 import univention.admin.handlers
+from univention.admin.handlers.asterisk import ConfRefreshMixin
 import univention.admin.syntax
 
 module = "asterisk/mailbox"
@@ -13,7 +14,6 @@ options = {}
 
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-#		[ univention.admin.field("commonName") ],
 		[ univention.admin.field("id") ],
 		[ univention.admin.field("password"),
 			univention.admin.field("maxMessageLength") ],
@@ -73,18 +73,6 @@ property_descriptions = {
 	),
 }
 
-def boolToString(foo):
-	if foo:
-		return "1"
-	else:
-		return "0"
-
-def stringToBool(foo):
-	if univention.admin.mapping.ListToString(foo) == "1":
-		return True
-	else:
-		return False
-
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
@@ -105,7 +93,7 @@ mapping.register("emailDatetype", "ast4ucsMailboxMaildatetype",
 mapping.register("owner", "owner",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap):
+class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
@@ -141,18 +129,6 @@ class object(univention.admin.handlers.simpleLdap):
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['top', 'ast4ucsMailbox' ])]
-	
-        def _ldap_post_create(self):
-                univention.admin.handlers.asterisk.genVoicemailconf(
-			self.co, self.lo) 
-        
-        def _ldap_post_modify(self):
-                univention.admin.handlers.asterisk.genVoicemailconf(
-			self.co, self.lo) 
-        
-        def _ldap_post_delete(self):
-                univention.admin.handlers.asterisk.genVoicemailconf(
-			self.co, self.lo) 
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 

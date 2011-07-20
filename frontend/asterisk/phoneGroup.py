@@ -2,7 +2,6 @@
 
 import univention.admin.filter
 import univention.admin.handlers
-import univention.admin.handlers.asterisk
 import univention.admin.syntax
 
 module = "asterisk/phoneGroup"

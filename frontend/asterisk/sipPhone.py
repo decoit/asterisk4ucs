@@ -2,7 +2,7 @@
 
 import univention.admin.filter
 import univention.admin.handlers
-import univention.admin.handlers.asterisk
+from univention.admin.handlers.asterisk import ConfRefreshMixin
 import univention.admin.syntax
 
 module = "asterisk/sipPhone"
@@ -150,7 +150,7 @@ mapping.register("callgroups", "ast4ucsPhoneCallgroup")
 mapping.register("pickupgroups", "ast4ucsPhonePickupgroup")
 mapping.register("waitingloops", "ast4ucsPhoneWaitingloop")
 
-class object(univention.admin.handlers.simpleLdap):
+class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
@@ -187,15 +187,6 @@ class object(univention.admin.handlers.simpleLdap):
 	def _ldap_addlist(self):
 		return [('objectClass', ['top', 'ast4ucsPhone',
 			'AsteriskExtension', 'AsteriskSIPUser' ])]
-	
-	def _ldap_post_create(self):
-		univention.admin.handlers.asterisk.genSipconf(self.co, self.lo)	
-	
-	def _ldap_post_modify(self):
-		univention.admin.handlers.asterisk.genSipconf(self.co, self.lo)	
-	
-	def _ldap_post_delete(self):
-		univention.admin.handlers.asterisk.genSipconf(self.co, self.lo)
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 

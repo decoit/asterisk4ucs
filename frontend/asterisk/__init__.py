@@ -1,4 +1,5 @@
-from univention.admin.handlers.asterisk import sipPhone, mailbox, phoneGroup
+# imports for modules in univention.admin.handlers.asterisk are at the end of
+# this file to avoid problems with circular imports
 from univention.admin.handlers.users import user
 import univention.config_registry
 import traceback
@@ -55,7 +56,6 @@ def genSipconfEntry(co, lo, phone):
 	return res
 
 def genSipconf(co, lo):
-	ucr.load()
 	confpath = ucr.get("asterisk/sipconf", False)
 	if not confpath:
 		return
@@ -75,7 +75,6 @@ def genSipconf(co, lo):
 	if ucr.get("asterisk/backupsuffix"):
 		shutil.copyfile(confpath, confpath + time.strftime(
 			ucr.get("asterisk/backupsuffix", "")))
-	callHook()
 
 def genVoicemailconfEntry(co, lo, box):
 	box = box.info
@@ -96,7 +95,6 @@ def genVoicemailconfEntry(co, lo, box):
 		)
 
 def genVoicemailconf(co, lo):
-	ucr.load()
 	confpath = ucr.get("asterisk/voicemailconf", False)
 	if not confpath: return
 	conf = open(confpath, "w")
@@ -116,9 +114,71 @@ def genVoicemailconf(co, lo):
 	if ucr.get("asterisk/backupsuffix"):
 		shutil.copyfile(confpath, confpath + time.strftime(
 			ucr.get("asterisk/backupsuffix", "")))
-	callHook()
+
+def genQueuesconfEntry(co, lo, box):
+	box = box.info
+	boxUser = user.object(co, lo, None, box["owner"]).info
+	
+	if box.get("email") and boxUser.get("e-mail", []):
+		return "%s => %s,%s,%s\n" % (
+			box["id"],
+			box["password"],
+			getNameFromUser(boxUser),
+			boxUser["e-mail"][0],
+		)
+	else:
+		return "%s => %s,%s\n" % (
+			box["id"],
+			box["password"],
+			getNameFromUser(boxUser),
+		)
+
+def genQueuesconf(co, lo):
+	confpath = ucr.get("asterisk/queuesconf", False)
+	if not confpath: return
+	conf = open(confpath, "w")
+	print >> conf, "; Automatisch generierte queues.conf von Asterisk4UCS"
+	print >> conf, ""
+	
+	for box in mailbox.lookup(co, lo, False):
+		print >> conf, "; dn: %s" % (box.dn)
+		try:
+			print >> conf, genQueuesconfEntry(co, lo, box)
+		except:
+			print >> conf, re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] ) + "\n"
+	
+	conf.close()
+	if ucr.get("asterisk/backupsuffix"):
+		shutil.copyfile(confpath, confpath + time.strftime(
+			ucr.get("asterisk/backupsuffix", "")))
 
 def genConfigs(co, lo):
-	pass
+	ucr.load()
+	
+	genSipconf(co, lo)
+	genVoicemailconf(co, lo)
+	
+	callHook()
 
+# def fubar(self):
+# 	genConfigs(self.co, self.lo)
+# 
+# for foo in [sipPhone, mailbox, waitingLoop]:
+# 	foo.object._ldap_post_create = fubar
+# 	foo.object._ldap_post_modify = fubar
+# 	foo.object._ldap_post_delete = fubar
 
+class ConfRefreshMixin:
+	def _ldap_post_create(self):
+		genConfigs(self.co, self.lo)
+	
+	def _ldap_post_modify(self):
+		genConfigs(self.co, self.lo)
+	
+	def _ldap_post_delete(self):
+		genConfigs(self.co, self.lo)
+
+import sipPhone, mailbox, phoneGroup, waitingLoop
+
+ 
