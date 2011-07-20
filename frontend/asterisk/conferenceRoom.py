@@ -2,6 +2,7 @@
 
 import univention.admin.filter
 import univention.admin.handlers
+from univention.admin.handlers.asterisk import ConfRefreshMixin
 import univention.admin.syntax
 
 module = "asterisk/conferenceRoom"
@@ -70,7 +71,7 @@ mapping.register("adminPin", "AstMeetmeAdminpin",
 mapping.register("options", "ast4ucsConfRoomOptions",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap):
+class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,

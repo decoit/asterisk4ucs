@@ -69,7 +69,7 @@ mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
 mapping.register("extension", "AstExtension",
 	None, univention.admin.mapping.ListToString)
-mapping.register("strategie", "ast4ucsWaitingloopStrategy",
+mapping.register("strategy", "ast4ucsWaitingloopStrategy",
 	None, univention.admin.mapping.ListToString)
 mapping.register("maxCalls", "ast4ucsWaitingloopMaxcalls",
 	None, univention.admin.mapping.ListToString)

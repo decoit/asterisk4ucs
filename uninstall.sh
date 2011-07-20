@@ -38,6 +38,9 @@ echo -e "\t\t\t\t\t\t\tdone."
 echo "Removing UCR variables..."
 ucr unset asterisk/sipconf
 ucr unset asterisk/voicemailconf
+ucr unset asterisk/musiconholdconf
+ucr unset asterisk/queuesconf
+ucr unset asterisk/meetmeconf
 ucr unset asterisk/backupsuffix
 ucr unset asterisk/hookcommand
 echo -e "\t\t\t\t\t\t\tdone."

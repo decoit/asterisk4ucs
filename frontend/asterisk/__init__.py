@@ -115,23 +115,21 @@ def genVoicemailconf(co, lo):
 		shutil.copyfile(confpath, confpath + time.strftime(
 			ucr.get("asterisk/backupsuffix", "")))
 
-def genQueuesconfEntry(co, lo, box):
-	box = box.info
-	boxUser = user.object(co, lo, None, box["owner"]).info
+def genQueuesconfEntry(co, lo, queue):
+	members = sipPhone.lookup(co, lo, "(%s=%s)" % (
+		sipPhone.mapping.mapName("waitingloops"), queue.dn))
+	queue = queue.info
 	
-	if box.get("email") and boxUser.get("e-mail", []):
-		return "%s => %s,%s,%s\n" % (
-			box["id"],
-			box["password"],
-			getNameFromUser(boxUser),
-			boxUser["e-mail"][0],
-		)
-	else:
-		return "%s => %s,%s\n" % (
-			box["id"],
-			box["password"],
-			getNameFromUser(boxUser),
-		)
+	res  = "[%s]\n" % ( queue["extension"] )
+	res += "strategy = %s\n" % ( queue["strategy"] )
+	res += "maxlen = %s\n" % ( queue["maxCalls"] )
+	res += "wrapuptime = %s\n" % ( queue["memberDelay"] )
+	res += "musiconhold = %s\n" % ( queue["delayMusic"] )
+	
+	for member in members:
+		res += "member => SIP/%s\n" % (member.info["extension"])
+	
+	return res
 
 def genQueuesconf(co, lo):
 	confpath = ucr.get("asterisk/queuesconf", False)
@@ -139,11 +137,70 @@ def genQueuesconf(co, lo):
 	conf = open(confpath, "w")
 	print >> conf, "; Automatisch generierte queues.conf von Asterisk4UCS"
 	print >> conf, ""
+	print >> conf, "[general]"
+	print >> conf, "persistentmembers = yes"
+	print >> conf, ""
 	
-	for box in mailbox.lookup(co, lo, False):
-		print >> conf, "; dn: %s" % (box.dn)
+	for queue in waitingLoop.lookup(co, lo, False):
+		print >> conf, "; dn: %s" % (queue.dn)
 		try:
-			print >> conf, genQueuesconfEntry(co, lo, box)
+			print >> conf, genQueuesconfEntry(co, lo, queue)
+		except:
+			print >> conf, re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] ) + "\n"
+	
+	conf.close()
+	if ucr.get("asterisk/backupsuffix"):
+		shutil.copyfile(confpath, confpath + time.strftime(
+			ucr.get("asterisk/backupsuffix", "")))
+
+def genMusiconholdconfEntry(co, lo, queue):
+	queue = queue.info
+	
+	res  = "[%s]\n" % ( queue["delayMusic"] )
+	res += "mode = files\n"
+	res += "random = yes\n"
+	res += "directory = %s\n" % ( queue["delayMusic"] )
+	
+	return res
+
+def genMusiconholdconf(co, lo):
+	confpath = ucr.get("asterisk/musiconholdconf", False)
+	if not confpath: return
+	conf = open(confpath, "w")
+	print >> conf, "; Automatisch generierte musiconhold.conf von"
+	print >> conf, "; Asterisk4UCS"
+	print >> conf, ""
+	
+	for queue in waitingLoop.lookup(co, lo, False):
+		print >> conf, "; dn: %s" % (queue.dn)
+		try:
+			print >> conf, genMusiconholdconfEntry(co, lo, queue)
+		except:
+			print >> conf, re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] ) + "\n"
+	
+	conf.close()
+	if ucr.get("asterisk/backupsuffix"):
+		shutil.copyfile(confpath, confpath + time.strftime(
+			ucr.get("asterisk/backupsuffix", "")))
+
+def genMeetmeconf(co, lo):
+	confpath = ucr.get("asterisk/meetmeconf", False)
+	if not confpath: return
+	conf = open(confpath, "w")
+	print >> conf, "; Automatisch generierte meetme.conf von Asterisk4UCS"
+	print >> conf, ""
+	print >> conf, "[rooms]"
+	
+	for room in conferenceRoom.lookup(co, lo, False):
+		print >> conf, "; dn: %s" % (room.dn)
+		try:
+			print >> conf, "conf => %s,%s,%s"%(
+				room.info["extension"],
+				room.info.get("pin", ""),
+				room.info.get("adminPin", ""),
+			)
 		except:
 			print >> conf, re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] ) + "\n"
@@ -158,16 +215,11 @@ def genConfigs(co, lo):
 	
 	genSipconf(co, lo)
 	genVoicemailconf(co, lo)
+	genQueuesconf(co, lo)
+	genMusiconholdconf(co, lo)
+	genMeetmeconf(co, lo)
 	
 	callHook()
-
-# def fubar(self):
-# 	genConfigs(self.co, self.lo)
-# 
-# for foo in [sipPhone, mailbox, waitingLoop]:
-# 	foo.object._ldap_post_create = fubar
-# 	foo.object._ldap_post_modify = fubar
-# 	foo.object._ldap_post_delete = fubar
 
 class ConfRefreshMixin:
 	def _ldap_post_create(self):
@@ -180,5 +232,4 @@ class ConfRefreshMixin:
 		genConfigs(self.co, self.lo)
 
 import sipPhone, mailbox, phoneGroup, waitingLoop
-
  

@@ -12,6 +12,10 @@ AST4UCS_ASTCONF_PATH=/tmp/asterisk/
 
 ast4ucs_ucr_sipconf="$AST4UCS_ASTCONF_PATH/sip.conf"
 ast4ucs_ucr_voicemailconf="$AST4UCS_ASTCONF_PATH/voicemail.conf"
+ast4ucs_ucr_musiconholdconf="$AST4UCS_ASTCONF_PATH/musiconhold.conf"
+ast4ucs_ucr_queuesconf="$AST4UCS_ASTCONF_PATH/queues.conf"
+ast4ucs_ucr_meetmeconf="$AST4UCS_ASTCONF_PATH/meetme.conf"
+
 
 ## Backupsuffix:
 ## Akzeptiert die von strftime() bekannten Direktiven
