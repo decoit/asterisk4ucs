@@ -19,11 +19,9 @@ def callHook():
 	if not ucr.get("asterisk/hookcommand"):
 		return
 	
-	debuglog = open("/tmp/debug", "w")
-	#debuglog.close()
-	Popen(ucr.get("asterisk/hookcommand").split(),
-		stdout=debuglog, stderr=debuglog)
-	#Popen([ucr.get("asterisk/hookcommand")])
+	# The following call _does_ block until the child process exits.
+	# ( Unexpected behavior, probably a bug )
+	Popen(ucr.get("asterisk/hookcommand"), shell=True)
 
 def genSipconfEntry(co, lo, phone):
 	phone = phone.info
