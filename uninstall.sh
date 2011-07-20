@@ -39,6 +39,7 @@ echo "Removing UCR variables..."
 ucr unset asterisk/sipconf
 ucr unset asterisk/voicemailconf
 ucr unset asterisk/backupsuffix
+ucr unset asterisk/hookcommand
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstalling UMC module..."

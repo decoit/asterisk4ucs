@@ -45,6 +45,7 @@ echo "Setting default values for UCR variables..."
 ucr set asterisk/sipconf="$ast4ucs_ucr_sipconf"
 ucr set asterisk/voicemailconf="$ast4ucs_ucr_voicemailconf"
 ucr set asterisk/backupsuffix="$ast4ucs_ucr_backupsuffix"
+ucr set asterisk/hookcommand="$ast4ucs_ucr_hookcommand"
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Installing UMC module..."

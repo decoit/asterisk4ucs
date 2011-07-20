@@ -13,8 +13,18 @@ AST4UCS_ASTCONF_PATH=/tmp/asterisk/
 ast4ucs_ucr_sipconf="$AST4UCS_ASTCONF_PATH/sip.conf"
 ast4ucs_ucr_voicemailconf="$AST4UCS_ASTCONF_PATH/voicemail.conf"
 
+## Backupsuffix:
 ## Akzeptiert die von strftime() bekannten Direktiven
 # ast4ucs_ucr_backupsuffix=.bak
 ast4ucs_ucr_backupsuffix=.bak-%y%m%d-%H%M%S
+
+## Hookcommand:
+## Wird ausgeführt, nachdem die Konfigurationsdateien neu generiert wurden.
+## Der Befehl wird durch eine Shell ausgeführt, Umleitungen und Befehls-
+## verkettungen sollten also funktionieren. Während der Befehl läuft, ist die
+## UDM-Weboberfläche blockiert; der Befehl sollte sich also so schnell wie
+## möglich beenden.
+# ast4ucs_ucr_hookcommand="scp /tmp/asterisk/* asterisk:/etc/asterisk/ ; ssh asterisk invoke-rc.d asterisk restart"
+ast4ucs_ucr_hookcommand=""
 
 
