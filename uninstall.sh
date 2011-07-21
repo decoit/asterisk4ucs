@@ -35,6 +35,11 @@ echo "Deleting folder for asterisk configuration files..."
 rm -r "$AST4UCS_ASTCONF_PATH"
 echo -e "\t\t\t\t\t\t\tdone."
 
+echo "Removing info-texts for UCR variables..."
+rm "$UNI_REGINFO_PATH/categories/asterisk4ucs.cfg"
+rm "$UNI_REGINFO_PATH/variables/asterisk4ucs.cfg"
+echo -e "\t\t\t\t\t\t\tdone."
+
 echo "Removing UCR variables..."
 ucr unset asterisk/sipconf
 ucr unset asterisk/voicemailconf

@@ -41,6 +41,11 @@ mkdir -p "$AST4UCS_ASTCONF_PATH"
 chown www-data:www-data "$AST4UCS_ASTCONF_PATH"
 echo -e "\t\t\t\t\t\t\tdone."
 
+echo "Installing info-texts for UCR variables..."
+install -m664 ucr/category.cfg "$UNI_REGINFO_PATH/categories/asterisk4ucs.cfg"
+install -m664 ucr/variables.cfg "$UNI_REGINFO_PATH/variables/asterisk4ucs.cfg"
+echo -e "\t\t\t\t\t\t\tdone."
+
 echo "Setting default values for UCR variables..."
 ucr set asterisk/sipconf="$ast4ucs_ucr_sipconf"
 ucr set asterisk/voicemailconf="$ast4ucs_ucr_voicemailconf"
