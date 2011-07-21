@@ -64,10 +64,9 @@ ast4ucs_ucr_mailbox_attach=yes
 ## Weiterhin können im Body die folgenden Escapesequenzen verwendet werden:
 ## 	\n	Neue Zeile
 ## 	\t	Tabulator-Zeichen
-ast4ucs_ucr_mailbox_emailsubject="Neue Sprachnachricht von ${VM_CALLERID}"
-ast4ucs_ucr_mailbox_emailbody="Hallo ${VM_NAME},\n\n\
-Kannst du ${VM_DUR} Minuten erübrigen?\n\
-Dann rufe doch mal deine Voicemailbox ${VM_MAILBOX} ab..."
+## 
+ast4ucs_ucr_mailbox_emailsubject='Neue Sprachnachricht von ${VM_CALLERID}'
+ast4ucs_ucr_mailbox_emailbody='Hallo ${VM_NAME},\n\nKannst du ${VM_DUR} Minuten erübrigen?\nDann rufe doch mal deine Voicemailbox ${VM_MAILBOX} ab...'
 
 ## Mailbox/Emaildateformat:
 ## Definiert das Datumsformat des Platzhalters ${VM_DATE} in strftime-Notation
