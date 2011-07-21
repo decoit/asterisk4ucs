@@ -44,7 +44,7 @@ property_descriptions = {
 	),
 	"ipaddress": univention.admin.property(
 		short_description="IP-Adresse",
-		syntax=univention.admin.syntax.ipAddress
+		syntax=univention.admin.syntax.ipAddress,
 	),
 	"macaddress": univention.admin.property(
 		short_description="MAC-Adresse",
@@ -66,7 +66,8 @@ property_descriptions = {
 		short_description=u"Höchstzahl Klingeln",
 		long_description=(u"Nach wievielmaligem Klingeln soll die" + 
 			u"Mailbox den Anruf entgegennehmen?"),
-		syntax=univention.admin.syntax.integer
+		syntax=univention.admin.syntax.integer,
+		default="3",
 	),
 	"phonetype": univention.admin.property(
 		short_description="Telefontyp",

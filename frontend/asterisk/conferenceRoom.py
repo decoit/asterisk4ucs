@@ -42,14 +42,17 @@ property_descriptions = {
 	"maxMembers": univention.admin.property(
 		short_description="Maximalzahl der Benutzer",
 		syntax=univention.admin.syntax.integer,
+		default="100",
 	),
 	"pin": univention.admin.property(
 		short_description="Pin",
-		syntax=univention.admin.syntax.integer,
+		syntax=univention.admin.syntax.string,
+		default="1234",
 	),
 	"adminPin": univention.admin.property(
 		short_description="Admin-Pin",
-		syntax=univention.admin.syntax.integer,
+		syntax=univention.admin.syntax.string,
+		default="1234",
 	),
 	"options": univention.admin.property(
 		short_description="Optionen",

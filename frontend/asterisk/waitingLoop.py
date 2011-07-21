@@ -55,10 +55,12 @@ property_descriptions = {
 	"maxCalls": univention.admin.property(
 		short_description="Maximalzahl gleichzeitiger Anrufe",
 		syntax=univention.admin.syntax.integer,
+		default="50",
 	),
 	"memberDelay": univention.admin.property(
-		short_description="Wartezeit zwischen Anrufen",
+		short_description="Wartezeit zwischen Anrufen (in Sekunden)",
 		syntax=univention.admin.syntax.integer,
+		default="10",
 	),
 	"delayMusic": univention.admin.property(
 		short_description="Warteschlangenmusik",
