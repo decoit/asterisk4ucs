@@ -2,6 +2,8 @@
 
 import univention.admin.filter
 import univention.admin.handlers
+from univention.admin.handlers.asterisk \
+	import reverseFieldsLoad, reverseFieldsSave
 import univention.admin.syntax
 
 module = "asterisk/phoneGroup"
@@ -14,7 +16,9 @@ options = {}
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("id") ]
+		[ univention.admin.field("id") ],
+		[ univention.admin.field("callphones"),
+			univention.admin.field("pickupphones") ],
 	])
 ]
 
@@ -29,6 +33,24 @@ property_descriptions = {
 		short_description="Telefongruppen-Nummer",
 		syntax=univention.admin.syntax.integer,
 		required=True
+	),
+	"callphones": univention.admin.property(
+		short_description="'Callgroup'-Teilnehmer",
+		syntax=univention.admin.syntax.LDAP_Search(
+                        filter="objectClass=ast4ucsPhone",
+                        attribute=['asterisk/sipPhone: name'],
+                        value='asterisk/sipPhone: dn',
+                ),
+		multivalue=True,
+	),
+	"pickupphones": univention.admin.property(
+		short_description="'Pickupgroup'-Teilnehmer",
+		syntax=univention.admin.syntax.LDAP_Search(
+                        filter="objectClass=ast4ucsPhone",
+                        attribute=['asterisk/sipPhone: name'],
+                        value='asterisk/sipPhone: dn',
+                ),
+		multivalue=True,
 	),
 }
 
@@ -54,12 +76,18 @@ class object(univention.admin.handlers.simpleLdap):
 		self.descriptions = property_descriptions
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
 			position, dn, superordinate)
+		
+		self.reverseFields = [
+			("pickupphones", "asterisk/sipPhone", "pickupgroups"),
+			("callphones", "asterisk/sipPhone", "callgroups"),
+		]
 
 	def exists(self):
 		return self._exists
 
 	def open(self):
 		univention.admin.handlers.simpleLdap.open(self)
+		reverseFieldsLoad(self)
 		self.save()
 
 	def _ldap_pre_create(self):
@@ -68,6 +96,14 @@ class object(univention.admin.handlers.simpleLdap):
 			mapping.mapValue('commonName', self.info['commonName']),
 			self.position.getDn()
 		)
+		reverseFieldsSave(self)
+	
+	def _ldap_pre_modify(self):
+		reverseFieldsSave(self)
+	
+	def _ldap_pre_remove(self):
+		self.info = {}
+		reverseFieldsSave(self)
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['top', 'ast4ucsPhonegroup' ])]

@@ -1,7 +1,5 @@
-# imports for modules in univention.admin.handlers.asterisk are at the end of
-# this file to avoid problems with circular imports
-from univention.admin.handlers.users import user
 import univention.config_registry
+import univention.admin.filter
 import traceback
 import re
 import shutil
@@ -25,9 +23,14 @@ def callHook():
 	Popen(ucr.get("asterisk/hookcommand"), shell=True)
 
 def genSipconfEntry(co, lo, phone):
+	from univention.admin.handlers.users import user
+	import mailbox, phoneGroup
 	phone = phone.info
 	phoneUser = user.object(co, lo, None, phone["owner"]).info
-	phoneMailbox = mailbox.object(co, lo, None, phone["mailbox"]).info
+	
+	if phone.get("mailbox"):
+		phoneMailbox = mailbox.object(co, lo, None,
+			phone["mailbox"]).info
 	
 	callgroups = []
 	for group in phone.get("callgroups", []):
@@ -45,7 +48,9 @@ def genSipconfEntry(co, lo, phone):
 	res += "callerid=\"%s\" <%s>\n" % (
 		getNameFromUser(phoneUser),
 		phone["extension"] )
-	res += "mailbox=%s\n" % (phoneMailbox["id"])
+	
+	if phone.get("mailbox"):
+		res += "mailbox=%s\n" % (phoneMailbox["id"])
 
 	if callgroups:
 		res += "callgroup=%s\n" % (','.join(callgroups))
@@ -56,6 +61,7 @@ def genSipconfEntry(co, lo, phone):
 	return res
 
 def genSipconf(co, lo):
+	import sipPhone
 	confpath = ucr.get("asterisk/sipconf", False)
 	if not confpath:
 		return
@@ -77,6 +83,7 @@ def genSipconf(co, lo):
 			ucr.get("asterisk/backupsuffix", "")))
 
 def genVoicemailconfEntry(co, lo, box):
+	from univention.admin.handlers.users import user
 	box = box.info
 	boxUser = user.object(co, lo, None, box["owner"]).info
 	
@@ -95,6 +102,7 @@ def genVoicemailconfEntry(co, lo, box):
 		)
 
 def genVoicemailconf(co, lo):
+	import mailbox
 	confpath = ucr.get("asterisk/voicemailconf", False)
 	if not confpath: return
 	conf = open(confpath, "w")
@@ -116,6 +124,7 @@ def genVoicemailconf(co, lo):
 			ucr.get("asterisk/backupsuffix", "")))
 
 def genQueuesconfEntry(co, lo, queue):
+	import sipPhone
 	members = sipPhone.lookup(co, lo, "(%s=%s)" % (
 		sipPhone.mapping.mapName("waitingloops"), queue.dn))
 	queue = queue.info
@@ -132,6 +141,7 @@ def genQueuesconfEntry(co, lo, queue):
 	return res
 
 def genQueuesconf(co, lo):
+	import waitingLoop
 	confpath = ucr.get("asterisk/queuesconf", False)
 	if not confpath: return
 	conf = open(confpath, "w")
@@ -165,6 +175,7 @@ def genMusiconholdconfEntry(co, lo, queue):
 	return res
 
 def genMusiconholdconf(co, lo):
+	import waitingLoop
 	confpath = ucr.get("asterisk/musiconholdconf", False)
 	if not confpath: return
 	conf = open(confpath, "w")
@@ -186,6 +197,7 @@ def genMusiconholdconf(co, lo):
 			ucr.get("asterisk/backupsuffix", "")))
 
 def genMeetmeconf(co, lo):
+	import conferenceRoom
 	confpath = ucr.get("asterisk/meetmeconf", False)
 	if not confpath: return
 	conf = open(confpath, "w")
@@ -231,5 +243,41 @@ class ConfRefreshMixin:
 	def _ldap_post_remove(self):
 		genConfigs(self.co, self.lo)
 
-import sipPhone, mailbox, phoneGroup, waitingLoop
- 
+def reverseFieldsLoad(self):
+	if not self.dn:
+		return
+	for field, foreignModule, foreignField in self.reverseFields:
+		foreignModule = __import__("univention.admin.handlers.%s.%s" % (
+			tuple(foreignModule.split("/"))), globals, locals,
+			["lookup", "mapping"])
+		objects = foreignModule.lookup(self.co, self.lo, "%s=%s" % (
+			foreignModule.mapping.mapName(foreignField),
+			univention.admin.filter.escapeForLdapFilter(self.dn),
+		))
+		self.info[field] = [obj.dn for obj in objects]
+
+def reverseFieldsSave(self):
+	if not self.dn:
+		return
+	for field, foreignModule, foreignField in self.reverseFields:
+		foreignModule = __import__("univention.admin.handlers.%s.%s" % (
+			tuple(foreignModule.split("/"))), globals, locals,
+			["object"])
+		oldset = set(self.oldinfo.get(field, []))
+		newset = set(self.info.get(field, []))
+		
+		for dn in (oldset - newset):
+			obj = foreignModule.object(self.co, self.lo, None, dn)
+			obj.open()
+			try:
+				obj.info.get(foreignField, []).remove(self.dn)
+			except ValueError:
+				pass
+			obj.modify()
+		
+		for dn in (newset - oldset):
+			obj = foreignModule.object(self.co, self.lo, None, dn)
+			obj.open()
+			obj.info.setdefault(foreignField, []).append(self.dn)
+			obj.modify()
+
