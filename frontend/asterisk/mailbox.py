@@ -15,13 +15,9 @@ options = {}
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("id") ],
-		[ univention.admin.field("password"),
-			univention.admin.field("maxMessageLength") ],
-		[ univention.admin.field("email"),
-			univention.admin.field("emailSubject") ],
-		[ univention.admin.field("emailBody"),
-			univention.admin.field("emailDateType") ],
-		[ univention.admin.field("owner") ],
+		[ univention.admin.field("password") ],
+		[ univention.admin.field("owner"),
+			univention.admin.field("email") ],
 	])
 ]
 
@@ -38,29 +34,13 @@ property_descriptions = {
 		required=True
 	),
 	"password": univention.admin.property(
-		short_description=u"Passwort",
+		short_description=u"PIN",
 		syntax=univention.admin.syntax.userPasswd,
 		required=True,
-	),
-	"maxMessageLength": univention.admin.property(
-		short_description=u"Maximallänge der Nachrichten",
-		syntax=univention.admin.syntax.integer,
 	),
 	"email": univention.admin.property(
 		short_description=u"Per eMail benachrichtigen?",
 		syntax=univention.admin.syntax.boolean,
-	),
-	"emailSubject": univention.admin.property(
-		short_description=u"eMail Betreffzeile",
-		syntax=univention.admin.syntax.string,
-	),
-	"emailBody": univention.admin.property(
-		short_description=u"eMail Body",
-		syntax=univention.admin.syntax.string,
-	),
-	"emailDateType": univention.admin.property(
-		short_description=u"eMail Datumstyp",
-		syntax=univention.admin.syntax.string,
 	),
 	"owner": univention.admin.property(
 		short_description=u"Benutzer",
@@ -80,15 +60,7 @@ mapping.register("id", "ast4ucsMailboxId",
 	None, univention.admin.mapping.ListToString)
 mapping.register("password", "ast4ucsMailboxPassword",
 	None, univention.admin.mapping.ListToString)
-mapping.register("maxMessageLength", "ast4ucsMailboxMaxlength",
-	None, univention.admin.mapping.ListToString)
 mapping.register("email", "ast4ucsMailboxNotifybymail",
-	None, univention.admin.mapping.ListToString)
-mapping.register("emailSubject", "ast4ucsMailboxMailsubject",
-	None, univention.admin.mapping.ListToString)
-mapping.register("emailBody", "ast4ucsMailboxMailbody",
-	None, univention.admin.mapping.ListToString)
-mapping.register("emailDatetype", "ast4ucsMailboxMaildatetype",
 	None, univention.admin.mapping.ListToString)
 mapping.register("owner", "owner",
 	None, univention.admin.mapping.ListToString)
