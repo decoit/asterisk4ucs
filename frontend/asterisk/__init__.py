@@ -109,6 +109,20 @@ def genVoicemailconf(co, lo):
 	print >> conf, "; Automatisch generierte voicemail.conf von"
 	print >> conf, "; Asterisk4UCS"
 	print >> conf, ""
+	print >> conf, "[general]"
+	print >> conf, "maxmessage=%s" % (ucr.get(
+				"asterisk/mailbox/maxlength", "120"))
+	print >> conf, "attach=%s" % (ucr.get(
+				"asterisk/mailbox/attach", "yes"))
+	print >> conf, "emailsubject=%s" % (ucr.get(
+				"asterisk/mailbox/emailsubject", "-"))
+	print >> conf, "emailbody=%s" % (ucr.get(
+				"asterisk/mailbox/emailbody", "-"))
+	print >> conf, "emaildateformat=%s" % (ucr.get(
+				"asterisk/mailbox/emaildateformat", "-"))
+	print >> conf, "mailcommand=%s" % (ucr.get(
+				"asterisk/mailbox/mailcommand", "/bin/false"))
+	print >> conf, ""
 	
 	for box in mailbox.lookup(co, lo, False):
 		print >> conf, "; dn: %s" % (box.dn)
