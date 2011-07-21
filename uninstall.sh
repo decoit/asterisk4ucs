@@ -43,6 +43,12 @@ ucr unset asterisk/queuesconf
 ucr unset asterisk/meetmeconf
 ucr unset asterisk/backupsuffix
 ucr unset asterisk/hookcommand
+ucr unset asterisk/mailbox/maxlength
+ucr unset asterisk/mailbox/attach
+ucr unset asterisk/mailbox/emailsubject
+ucr unset asterisk/mailbox/emailbody
+ucr unset asterisk/mailbox/emaildateformat
+ucr unset asterisk/mailbox/mailcommand
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstalling UMC module..."
