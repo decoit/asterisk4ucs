@@ -2,7 +2,8 @@
 
 import univention.admin.filter
 import univention.admin.handlers
-from univention.admin.handlers.asterisk import ConfRefreshMixin
+from univention.admin.handlers.asterisk import ConfRefreshMixin, \
+	reverseFieldsLoad, reverseFieldsSave
 import univention.admin.syntax
 
 module = "asterisk/waitingLoop"
@@ -19,7 +20,8 @@ layout = [
 			univention.admin.field("strategy") ],
 		[ univention.admin.field("maxCalls"),
 			univention.admin.field("memberDelay") ],
-		[ univention.admin.field("delayMusic") ],
+		[ univention.admin.field("members"),
+			univention.admin.field("delayMusic") ],
 	])
 ]
 
@@ -62,6 +64,15 @@ property_descriptions = {
 		short_description="Warteschlangenmusik",
 		syntax=univention.admin.syntax.string,
 	),
+	"members": univention.admin.property(
+		short_description="Teilnehmer",
+		syntax=univention.admin.syntax.LDAP_Search(
+			filter="objectClass=ast4ucsPhone",
+			attribute=['asterisk/sipPhone: name'],
+			value='asterisk/sipPhone: dn',
+		),
+		multivalue=True,
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -94,12 +105,17 @@ class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
 		self.descriptions = property_descriptions
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
 			position, dn, superordinate)
+		
+		self.reverseFields = [
+			("members", "asterisk/sipPhone", "waitingloops"),
+		]
 
 	def exists(self):
 		return self._exists
 
 	def open(self):
 		univention.admin.handlers.simpleLdap.open(self)
+		reverseFieldsLoad(self)
 		self.save()
 
 	def _ldap_pre_create(self):
@@ -108,7 +124,15 @@ class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
 			mapping.mapValue('commonName', self.info['commonName']),
 			self.position.getDn()
 		)
-
+		reverseFieldsSave(self)
+	
+	def _ldap_pre_modify(self):
+		reverseFieldsSave(self)
+	
+	def _ldap_pre_remove(self):
+		self.info = {}
+		reverseFieldsSave(self)
+	
 	def _ldap_addlist(self):
 		return [('objectClass', ['top', 'ast4ucsWaitingloop',
 			'AsteriskExtension' ])]
