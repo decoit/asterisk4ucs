@@ -22,8 +22,8 @@ ast4ucs_ucr_extensionsconf="$AST4UCS_ASTCONF_PATH/extensions.conf"
 ## Backupsuffix:
 ## Akzeptiert die von strftime() bekannten Direktiven (siehe
 ## http://pubs.opengroup.org/onlinepubs/009695399/functions/strftime.html )
-# ast4ucs_ucr_backupsuffix=.bak
-ast4ucs_ucr_backupsuffix=.bak-%y%m%d-%H%M%S
+# ast4ucs_ucr_backupsuffix=.bak-%y%m%d-%H%M%S
+ast4ucs_ucr_backupsuffix=.bak
 
 ## Hookcommand:
 ## Wird ausgeführt, nachdem die Konfigurationsdateien neu generiert wurden.
