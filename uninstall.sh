@@ -46,6 +46,7 @@ ucr unset asterisk/voicemailconf
 ucr unset asterisk/musiconholdconf
 ucr unset asterisk/queuesconf
 ucr unset asterisk/meetmeconf
+ucr unset asterisk/extensionsconf
 ucr unset asterisk/backupsuffix
 ucr unset asterisk/hookcommand
 ucr unset asterisk/mailbox/maxlength

@@ -236,6 +236,50 @@ def genMeetmeconf(co, lo):
 		shutil.copyfile(confpath, confpath + time.strftime(
 			ucr.get("asterisk/backupsuffix", "")))
 
+def genExtensionsconfEntry(co, lo, phone):
+	import mailbox
+	phone = phone.info
+	
+	res  = "exten => %s,1,Dial(SIP/%s,%s)\n" % (
+		phone["extension"],
+		phone["extension"],
+		phone.get("maxrings", "20"))
+	
+	if phone.get("mailbox"):
+		phoneMailbox = mailbox.object(
+			co, lo, None, phone["mailbox"]).info
+		
+		res += "exten => %s,2,Voicemail(%s,u)\n" % (
+			phone["extension"],
+			phoneMailbox["id"])
+	
+	return res
+
+def genExtensionsconf(co, lo):
+	import sipPhone
+	confpath = ucr.get("asterisk/extensionsconf", False)
+	if not confpath: return
+	conf = open(confpath, "w")
+	print >> conf, "; Automatisch generierte extensions.conf von"
+	print >> conf, "; Asterisk4UCS"
+	print >> conf, ""
+	print >> conf, "[default]"
+	print >> conf, ""
+	print >> conf, ""
+	
+	for phone in sipPhone.lookup(co, lo, False):
+		print >> conf, "; dn: %s" % (phone.dn)
+		try:
+			print >> conf, genExtensionsconfEntry(co, lo, phone)
+		except:
+			print >> conf, re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] ) + "\n"
+	
+	conf.close()
+	if ucr.get("asterisk/backupsuffix"):
+		shutil.copyfile(confpath, confpath + time.strftime(
+			ucr.get("asterisk/backupsuffix", "")))
+
 def genConfigs(co, lo):
 	ucr.load()
 	
@@ -244,6 +288,7 @@ def genConfigs(co, lo):
 	genQueuesconf(co, lo)
 	genMusiconholdconf(co, lo)
 	genMeetmeconf(co, lo)
+	genExtensionsconf(co, lo)
 	
 	callHook()
 
