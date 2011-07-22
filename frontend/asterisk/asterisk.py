@@ -11,6 +11,7 @@ import univention.admin.handlers.asterisk.sipPhone
 import univention.admin.handlers.asterisk.conferenceRoom
 import univention.admin.handlers.asterisk.phoneType
 import univention.admin.handlers.asterisk.mailbox
+import univention.admin.handlers.asterisk.faxGroup
 
 module = "asterisk/asterisk"
 childs = 0
@@ -30,6 +31,7 @@ childmodules = [
 	"asterisk/conferenceRoom",
 	"asterisk/phoneType",
 	"asterisk/mailbox",
+	"asterisk/faxGroup",
 ]
 
 virtual = True
@@ -71,6 +73,8 @@ def lookup(*args, **kwargs):
 		univention.admin.handlers.asterisk.phoneType.lookup(
 			*args, **kwargs) +
 		univention.admin.handlers.asterisk.mailbox.lookup(
+			*args, **kwargs) +
+		univention.admin.handlers.asterisk.faxGroup.lookup(
 			*args, **kwargs) +
 		univention.admin.handlers.asterisk.contact.lookup(
 			*args, **kwargs)
