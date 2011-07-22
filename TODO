@@ -1,5 +1,6 @@
 Weitgehend nach Wichtigkeit sortiert:
 
+* Phonegroups: _ldap_pre_remove-bug fixen
 * Fax-Modul
   * Faxunterstützung für Asterisk?
   * Icon für Faxgruppen

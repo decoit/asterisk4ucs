@@ -67,7 +67,7 @@ property_descriptions = {
 		long_description=(u"Nach wievielmaligem Klingeln soll die" + 
 			u"Mailbox den Anruf entgegennehmen?"),
 		syntax=univention.admin.syntax.integer,
-		default="3",
+		default="20",
 	),
 	"phonetype": univention.admin.property(
 		short_description="Telefontyp",

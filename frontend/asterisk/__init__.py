@@ -44,6 +44,7 @@ def genSipconfEntry(co, lo, phone):
 	
 	res  = "[%s]\n" % (phone["extension"])
 	res += "type=friend\n"
+	res += "host=dynamic\n"
 	res += "secret=%s\n" % (phone["password"])
 	res += "callerid=\"%s\" <%s>\n" % (
 		getNameFromUser(phoneUser),
@@ -110,7 +111,7 @@ def genVoicemailconf(co, lo):
 	print >> conf, "; Asterisk4UCS"
 	print >> conf, ""
 	print >> conf, "[general]"
-	print >> conf, "maxmessage=%s" % (ucr.get(
+	print >> conf, "maxsecs=%s" % (ucr.get(
 				"asterisk/mailbox/maxlength", "120"))
 	print >> conf, "attach=%s" % (ucr.get(
 				"asterisk/mailbox/attach", "yes"))
@@ -123,6 +124,7 @@ def genVoicemailconf(co, lo):
 	print >> conf, "mailcommand=%s" % (ucr.get(
 				"asterisk/mailbox/mailcommand", "/bin/false"))
 	print >> conf, ""
+	print >> conf, "[default]"
 	
 	for box in mailbox.lookup(co, lo, False):
 		print >> conf, "; dn: %s" % (box.dn)
@@ -196,6 +198,11 @@ def genMusiconholdconf(co, lo):
 	print >> conf, "; Automatisch generierte musiconhold.conf von"
 	print >> conf, "; Asterisk4UCS"
 	print >> conf, ""
+	print >> conf, "[default]"
+	print >> conf, "mode = files"
+	print >> conf, "random = yes"
+	print >> conf, "directory = moh"
+	print >> conf, ""
 	
 	for queue in waitingLoop.lookup(co, lo, False):
 		print >> conf, "; dn: %s" % (queue.dn)
@@ -236,7 +243,7 @@ def genMeetmeconf(co, lo):
 		shutil.copyfile(confpath, confpath + time.strftime(
 			ucr.get("asterisk/backupsuffix", "")))
 
-def genExtensionsconfEntry(co, lo, phone):
+def genExtSIPPhoneEntry(co, lo, phone):
 	import mailbox
 	phone = phone.info
 	
@@ -255,8 +262,29 @@ def genExtensionsconfEntry(co, lo, phone):
 	
 	return res
 
+def genExtRoomEntry(co, lo, room):
+	room = room.info
+	
+	res  = "exten => %s,1,Answer()\n" % (room["extension"])
+	res += "exten => %s,n,Wait(1)\n" % (room["extension"])
+	res += "exten => %s,n,MeetMe(%s)\n" % (
+		room["extension"], room["extension"])
+	res += "exten => %s,n,Hangup()\n" % (room["extension"])
+	
+	return res
+
+def genExtQueueEntry(co, lo, queue):
+	queue = queue.info
+	
+	res  = "exten => %s,1,Answer()\n" % (queue["extension"])
+	res += "exten => %s,n,Queue(%s)\n" % (
+		queue["extension"], queue["extension"])
+	res += "exten => %s,n,Hangup()\n" % (queue["extension"])
+	
+	return res
+
 def genExtensionsconf(co, lo):
-	import sipPhone
+	import sipPhone, conferenceRoom, waitingLoop
 	confpath = ucr.get("asterisk/extensionsconf", False)
 	if not confpath: return
 	conf = open(confpath, "w")
@@ -265,12 +293,37 @@ def genExtensionsconf(co, lo):
 	print >> conf, ""
 	print >> conf, "[default]"
 	print >> conf, ""
+	print >> conf, "exten => _9[0-4],1,Answer()"
+	print >> conf, "exten => _9[0-4],2,MusicOnHold()"
+	print >> conf, ""
+	print >> conf, "exten => 99,1,VoicemailMain(${CALLERID(num)})"
+	print >> conf, "exten => 98,1,VoicemailMain()"
 	print >> conf, ""
 	
 	for phone in sipPhone.lookup(co, lo, False):
 		print >> conf, "; dn: %s" % (phone.dn)
 		try:
-			print >> conf, genExtensionsconfEntry(co, lo, phone)
+			print >> conf, genExtSIPPhoneEntry(co, lo, phone)
+		except:
+			print >> conf, re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] ) + "\n"
+	
+	print >> conf, ""
+	
+	for room in conferenceRoom.lookup(co, lo, False):
+		print >> conf, "; dn: %s" % (room.dn)
+		try:
+			print >> conf, genExtRoomEntry(co, lo, room)
+		except:
+			print >> conf, re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] ) + "\n"
+	
+	print >> conf, ""
+	
+	for queue in waitingLoop.lookup(co, lo, False):
+		print >> conf, "; dn: %s" % (queue.dn)
+		try:
+			print >> conf, genExtQueueEntry(co, lo, queue)
 		except:
 			print >> conf, re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] ) + "\n"

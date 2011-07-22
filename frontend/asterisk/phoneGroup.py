@@ -2,8 +2,8 @@
 
 import univention.admin.filter
 import univention.admin.handlers
-from univention.admin.handlers.asterisk \
-	import reverseFieldsLoad, reverseFieldsSave
+from univention.admin.handlers.asterisk import ConfRefreshMixin, \
+	reverseFieldsLoad, reverseFieldsSave
 import univention.admin.syntax
 
 module = "asterisk/phoneGroup"
@@ -60,7 +60,7 @@ mapping.register("commonName", "cn",
 mapping.register("id", "ast4ucsPhonegroupId",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap):
+class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
