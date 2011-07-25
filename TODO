@@ -1,17 +1,4 @@
-Weitgehend nach Wichtigkeit sortiert:
+Bugs werden nun im Bugzilla verwaltet:
 
-* Master - Member Replikation mit Hook und so nem Zeugs
-* Installation des Asterisk, Initialkonfig
-* User-Modul erweitern
-* Button zum Neugenerieren und Einspielen der Konfiguration
-* Internationalisierung
-
-* Phonegroups: _ldap_pre_remove-bug fixen
-* Fax-Modul
-  * Faxunterstützung für Asterisk?
-  * Icon für Faxgruppen
-* Einstellungen für normale Benutzer
-* Hilfetexte fuer UCR-Variablen
-* Decoit-OIDs verwenden
-* Alle möglichen Optionen als "Erweiterte Optionen" anbieten
+https://bugzilla.decoit.local/buglist.cgi?quicksearch=asterisk4ucs
 
