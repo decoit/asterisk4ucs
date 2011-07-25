@@ -22,11 +22,11 @@ asteriskDefaultDn = "cn=asterisk,%s"%ldap.base
 
 config = univention.admin.config.config()
 base = univention.admin.uldap.position(ldap.base)
-foo = container.object(config, ldap, base)
-foo.info['name'] = "asterisk"
-foo.open()
+newContainer = container.object(config, ldap, base)
+newContainer.info['name'] = "asterisk"
+newContainer.open()
 try:
-	foo.create()
+	newContainer.create()
 except univention.admin.uexceptions.objectExists:
 	print "Asterisk container already existed."
 
