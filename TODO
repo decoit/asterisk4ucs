@@ -1,5 +1,11 @@
 Weitgehend nach Wichtigkeit sortiert:
 
+* Master - Member Replikation mit Hook und so nem Zeugs
+* Installation des Asterisk, Initialkonfig
+* User-Modul erweitern
+* Button zum Neugenerieren und Einspielen der Konfiguration
+* Internationalisierung
+
 * Phonegroups: _ldap_pre_remove-bug fixen
 * Fax-Modul
   * Faxunterstützung für Asterisk?
