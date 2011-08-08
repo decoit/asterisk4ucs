@@ -2,7 +2,7 @@
 
 UNI_REGINFO_PATH=/etc/univention/registry.info
 UNI_LISTENER_PATH=/usr/lib/univention-directory-listener/system
-AST_CONF_PATH=/etc/asterisk
+AST_CONF_PATH=/opt/asterisk-1.8/etc/asterisk
 
 
 # --------------- UCR Settings -------------------------
