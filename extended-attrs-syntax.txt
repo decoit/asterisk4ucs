@@ -1,0 +1,5 @@
+udm settings/syntax create --set name="testsyntax" --set viewonly=FALSE --set filter='(objectClass=ast4ucsPhone)' --set attribute="asterisk/sipPhone: name" --set value="asterisk/sipPhone: dn"
+
+udm settings/extended_attribute create --set name="testattr" --set module="users/user" --set tabName=test --set syntax=testsyntax --set shortDescription=test --set objectClass=univentionFreeAttributes --set ldapMapping=univentionFreeAttribute1 --position "cn=custom attributes,cn=univention,dc=decoit,dc=dev" --set CLIName=testattr --set mayChange=1Object created: cn=testattr,cn=custom attributes,cn=univention,dc=decoit,dc=dev
+
+
