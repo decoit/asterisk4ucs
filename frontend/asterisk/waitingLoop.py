@@ -2,7 +2,7 @@
 
 import univention.admin.filter
 import univention.admin.handlers
-from univention.admin.handlers.asterisk import ConfRefreshMixin, \
+from univention.admin.handlers.asterisk import \
 	reverseFieldsLoad, reverseFieldsSave
 import univention.admin.syntax
 
@@ -91,7 +91,7 @@ mapping.register("memberDelay", "ast4ucsWaitingloopMemberdelay",
 mapping.register("delayMusic", "ast4ucsWaitingloopDelaymusic",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
+class object(univention.admin.handlers.simpleLdap):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,

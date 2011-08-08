@@ -1,10 +1,12 @@
+# coding=utf-8
+
 import univention.config_registry
 import univention.admin.filter
 import traceback
 import re
 import shutil
 import time
-from subprocess import Popen
+import zlib
 
 ucr = univention.config_registry.ConfigRegistry()
 
@@ -13,14 +15,6 @@ def getNameFromUser(userinfo):
 		return "%s %s" % (userinfo["firstname"], userinfo["lastname"])
 	else:
 		return userinfo["lastname"]
-
-def callHook():
-	if not ucr.get("asterisk/hookcommand"):
-		return
-	
-	# The following call _does_ block until the child process exits.
-	# ( Unexpected behavior, probably a bug )
-	Popen(ucr.get("asterisk/hookcommand"), shell=True)
 
 def genSipconfEntry(co, lo, phone):
 	from univention.admin.handlers.users import user
@@ -63,25 +57,19 @@ def genSipconfEntry(co, lo, phone):
 
 def genSipconf(co, lo):
 	import sipPhone
-	confpath = ucr.get("asterisk/sipconf", False)
-	if not confpath:
-		return
-	conf = open(confpath, "w")
-	print >> conf, "; Automatisch generierte sip.conf von asterisk4UCS"
-	print >> conf, ""
-	
+
+	conf = "; Automatisch generierte sip.conf von asterisk4UCS\n\n"
+
 	for phone in sipPhone.lookup(co, lo, False):
-		print >> conf, "; dn: %s" % (phone.dn)
+		conf += "; dn: %s\n" % (phone.dn)
 		try:
-			print >> conf, genSipconfEntry(co, lo, phone)
+			conf += genSipconfEntry(co, lo, phone)
 		except:
-			print >> conf, re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] ) + "\n"
-	
-	conf.close()
-	if ucr.get("asterisk/backupsuffix"):
-		shutil.copyfile(confpath, confpath + time.strftime(
-			ucr.get("asterisk/backupsuffix", "")))
+			conf += re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] )
+		conf += "\n"
+
+	return conf
 
 def genVoicemailconfEntry(co, lo, box):
 	from univention.admin.handlers.users import user
@@ -104,40 +92,35 @@ def genVoicemailconfEntry(co, lo, box):
 
 def genVoicemailconf(co, lo):
 	import mailbox
-	confpath = ucr.get("asterisk/voicemailconf", False)
-	if not confpath: return
-	conf = open(confpath, "w")
-	print >> conf, "; Automatisch generierte voicemail.conf von"
-	print >> conf, "; Asterisk4UCS"
-	print >> conf, ""
-	print >> conf, "[general]"
-	print >> conf, "maxsecs=%s" % (ucr.get(
+
+	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
+
+	conf += "[general]\n"
+	conf += "maxsecs=%s\n" % (ucr.get(
 				"asterisk/mailbox/maxlength", "120"))
-	print >> conf, "attach=%s" % (ucr.get(
+	conf += "attach=%s\n" % (ucr.get(
 				"asterisk/mailbox/attach", "yes"))
-	print >> conf, "emailsubject=%s" % (ucr.get(
+	conf += "emailsubject=%s\n" % (ucr.get(
 				"asterisk/mailbox/emailsubject", "-"))
-	print >> conf, "emailbody=%s" % (ucr.get(
+	conf += "emailbody=%s\n" % (ucr.get(
 				"asterisk/mailbox/emailbody", "-"))
-	print >> conf, "emaildateformat=%s" % (ucr.get(
+	conf += "emaildateformat=%s\n" % (ucr.get(
 				"asterisk/mailbox/emaildateformat", "-"))
-	print >> conf, "mailcommand=%s" % (ucr.get(
+	conf += "mailcommand=%s\n" % (ucr.get(
 				"asterisk/mailbox/mailcommand", "/bin/false"))
-	print >> conf, ""
-	print >> conf, "[default]"
+	conf += "\n"
+	conf += "[default]\n"
 	
 	for box in mailbox.lookup(co, lo, False):
-		print >> conf, "; dn: %s" % (box.dn)
+		conf += "; dn: %s\n" % (box.dn)
 		try:
-			print >> conf, genVoicemailconfEntry(co, lo, box)
+			conf += genVoicemailconfEntry(co, lo, box)
 		except:
-			print >> conf, re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] ) + "\n"
-	
-	conf.close()
-	if ucr.get("asterisk/backupsuffix"):
-		shutil.copyfile(confpath, confpath + time.strftime(
-			ucr.get("asterisk/backupsuffix", "")))
+			conf += re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] )
+		conf += "\n"
+
+	return conf
 
 def genQueuesconfEntry(co, lo, queue):
 	import sipPhone
@@ -158,27 +141,19 @@ def genQueuesconfEntry(co, lo, queue):
 
 def genQueuesconf(co, lo):
 	import waitingLoop
-	confpath = ucr.get("asterisk/queuesconf", False)
-	if not confpath: return
-	conf = open(confpath, "w")
-	print >> conf, "; Automatisch generierte queues.conf von Asterisk4UCS"
-	print >> conf, ""
-	print >> conf, "[general]"
-	print >> conf, "persistentmembers = yes"
-	print >> conf, ""
+
+	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
 	
 	for queue in waitingLoop.lookup(co, lo, False):
-		print >> conf, "; dn: %s" % (queue.dn)
+		conf += "; dn: %s\n" % (queue.dn)
 		try:
-			print >> conf, genQueuesconfEntry(co, lo, queue)
+			conf += genQueuesconfEntry(co, lo, queue)
 		except:
-			print >> conf, re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] ) + "\n"
-	
-	conf.close()
-	if ucr.get("asterisk/backupsuffix"):
-		shutil.copyfile(confpath, confpath + time.strftime(
-			ucr.get("asterisk/backupsuffix", "")))
+			conf += re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] )
+		conf += "\n"
+
+	return conf
 
 def genMusiconholdconfEntry(co, lo, queue):
 	queue = queue.info
@@ -192,56 +167,39 @@ def genMusiconholdconfEntry(co, lo, queue):
 
 def genMusiconholdconf(co, lo):
 	import waitingLoop
-	confpath = ucr.get("asterisk/musiconholdconf", False)
-	if not confpath: return
-	conf = open(confpath, "w")
-	print >> conf, "; Automatisch generierte musiconhold.conf von"
-	print >> conf, "; Asterisk4UCS"
-	print >> conf, ""
-	print >> conf, "[default]"
-	print >> conf, "mode = files"
-	print >> conf, "random = yes"
-	print >> conf, "directory = moh"
-	print >> conf, ""
+
+	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
 	
 	for queue in waitingLoop.lookup(co, lo, False):
-		print >> conf, "; dn: %s" % (queue.dn)
+		conf += "; dn: %s\n" % (queue.dn)
 		try:
-			print >> conf, genMusiconholdconfEntry(co, lo, queue)
+			conf += genMusiconholdconfEntry(co, lo, queue)
 		except:
-			print >> conf, re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] ) + "\n"
-	
-	conf.close()
-	if ucr.get("asterisk/backupsuffix"):
-		shutil.copyfile(confpath, confpath + time.strftime(
-			ucr.get("asterisk/backupsuffix", "")))
+			conf += re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] )
+		conf += "\n"
+
+	return conf
 
 def genMeetmeconf(co, lo):
 	import conferenceRoom
-	confpath = ucr.get("asterisk/meetmeconf", False)
-	if not confpath: return
-	conf = open(confpath, "w")
-	print >> conf, "; Automatisch generierte meetme.conf von Asterisk4UCS"
-	print >> conf, ""
-	print >> conf, "[rooms]"
-	
+
+	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
+
 	for room in conferenceRoom.lookup(co, lo, False):
-		print >> conf, "; dn: %s" % (room.dn)
+		conf += "; dn: %s\n" % (room.dn)
 		try:
-			print >> conf, "conf => %s,%s,%s"%(
+			conf += "conf => %s,%s,%s\n"%(
 				room.info["extension"],
 				room.info.get("pin", ""),
 				room.info.get("adminPin", ""),
 			)
 		except:
-			print >> conf, re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] ) + "\n"
-	
-	conf.close()
-	if ucr.get("asterisk/backupsuffix"):
-		shutil.copyfile(confpath, confpath + time.strftime(
-			ucr.get("asterisk/backupsuffix", "")))
+			conf += re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] )
+		conf += "\n"
+
+	return conf
 
 def genExtSIPPhoneEntry(co, lo, phone):
 	import mailbox
@@ -285,75 +243,59 @@ def genExtQueueEntry(co, lo, queue):
 
 def genExtensionsconf(co, lo):
 	import sipPhone, conferenceRoom, waitingLoop
-	confpath = ucr.get("asterisk/extensionsconf", False)
-	if not confpath: return
-	conf = open(confpath, "w")
-	print >> conf, "; Automatisch generierte extensions.conf von"
-	print >> conf, "; Asterisk4UCS"
-	print >> conf, ""
-	print >> conf, "[default]"
-	print >> conf, ""
-	print >> conf, "exten => _9[0-4],1,Answer()"
-	print >> conf, "exten => _9[0-4],2,MusicOnHold()"
-	print >> conf, ""
-	print >> conf, "exten => 99,1,VoicemailMain(${CALLERID(num)})"
-	print >> conf, "exten => 98,1,VoicemailMain()"
-	print >> conf, ""
-	
+
+	conf = "; Automatisch generiert von Asterisk4UCS\n"
+
+	conf += "\n\n; ===== Telefone =====\n\n"
 	for phone in sipPhone.lookup(co, lo, False):
-		print >> conf, "; dn: %s" % (phone.dn)
+		conf += "; dn: %s\n" % (phone.dn)
 		try:
-			print >> conf, genExtSIPPhoneEntry(co, lo, phone)
+			conf += genExtSIPPhoneEntry(co, lo, phone)
 		except:
-			print >> conf, re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] ) + "\n"
+			conf += re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] )
+		conf += "\n"
 	
-	print >> conf, ""
-	
+	conf += "\n\n; ===== Konferenzräume =====\n\n"
 	for room in conferenceRoom.lookup(co, lo, False):
-		print >> conf, "; dn: %s" % (room.dn)
+		conf += "; dn: %s\n" % (room.dn)
 		try:
-			print >> conf, genExtRoomEntry(co, lo, room)
+			conf += genExtRoomEntry(co, lo, room)
 		except:
-			print >> conf, re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] ) + "\n"
-	
-	print >> conf, ""
-	
+			conf += re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] )
+		conf += "\n"
+
+	conf += "\n\n; ===== Warteschleifen =====\n\n"
 	for queue in waitingLoop.lookup(co, lo, False):
-		print >> conf, "; dn: %s" % (queue.dn)
+		conf += "; dn: %s\n" % (queue.dn)
 		try:
-			print >> conf, genExtQueueEntry(co, lo, queue)
+			conf += genExtQueueEntry(co, lo, queue)
 		except:
-			print >> conf, re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] ) + "\n"
-	
-	conf.close()
-	if ucr.get("asterisk/backupsuffix"):
-		shutil.copyfile(confpath, confpath + time.strftime(
-			ucr.get("asterisk/backupsuffix", "")))
+			conf += re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] )
+		conf += "\n"
+
+	return conf
 
 def genConfigs(co, lo):
 	ucr.load()
-	
-	genSipconf(co, lo)
-	genVoicemailconf(co, lo)
-	genQueuesconf(co, lo)
-	genMusiconholdconf(co, lo)
-	genMeetmeconf(co, lo)
-	genExtensionsconf(co, lo)
-	
-	callHook()
 
-class ConfRefreshMixin:
-	def _ldap_post_create(self):
-		genConfigs(self.co, self.lo)
-	
-	def _ldap_post_modify(self):
-		genConfigs(self.co, self.lo)
-	
-	def _ldap_post_remove(self):
-		genConfigs(self.co, self.lo)
+	configs = {
+		'sip.conf': genSipconf,
+		'voicemail.conf': genVoicemailconf,
+		'queues.conf': genQueuesconf,
+		'musiconhold.conf': genMusiconholdconf,
+		'meetme.conf': genMeetmeconf,
+		'extensions.conf': genExtensionsconf,
+	}
+
+	res = []
+	for filename,genfunc in configs.items():
+		res.append("%s %s" % (filename,
+			zlib.compress(genfunc(co, lo)).encode("base64")))
+	return res
+
 
 def reverseFieldsLoad(self):
 	if not self.dn:

@@ -2,7 +2,6 @@
 
 import univention.admin.filter
 import univention.admin.handlers
-#from univention.admin.handlers.asterisk import ConfRefreshMixin
 import univention.admin.syntax
 
 module = "asterisk/faxGroup"
@@ -49,7 +48,6 @@ mapping.register("extension", "ast4ucsExtensionExtension",
 	None, univention.admin.mapping.ListToString)
 mapping.register("members", "ast4ucsFaxgroupMember")
 
-#class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
 class object(univention.admin.handlers.simpleLdap):
 	module=module
 

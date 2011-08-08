@@ -2,23 +2,23 @@
 
 import univention.admin.filter
 import univention.admin.handlers
-from univention.admin.handlers.asterisk import \
-	reverseFieldsLoad, reverseFieldsSave
+from univention.admin.handlers import asterisk
 import univention.admin.syntax
+import time
 
-module = "asterisk/phoneGroup"
+module = "asterisk/server"
 childs = 0
-short_description = u"Telefongruppe"
-long_description = u"Telefongruppe"
+short_description = u"Asterisk-Server"
+long_description = u"Asterisk-Server"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("id") ],
-		[ univention.admin.field("callphones"),
-			univention.admin.field("pickupphones") ],
+		[ univention.admin.field("host") ],
+		[ univention.admin.field("lastupdate_gui"),
+			univention.admin.field("apply") ],
 	])
 ]
 
@@ -29,27 +29,30 @@ property_descriptions = {
 		identifies=True,
 		required=True
 	),
-	"id": univention.admin.property(
-		short_description="Telefongruppen-Nummer",
-		syntax=univention.admin.syntax.integer,
+	"host": univention.admin.property(
+		short_description="Host",
+		syntax=univention.admin.syntax.LDAP_Search(
+                        filter="objectClass=univentionHost",
+                        attribute=['computers/computer: name'],
+                        value='computers/computer: dn',
+                ),
 		required=True
 	),
-	"callphones": univention.admin.property(
-		short_description="'Callgroup'-Teilnehmer",
-		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhone",
-                        attribute=['asterisk/sipPhone: name'],
-                        value='asterisk/sipPhone: dn',
-                ),
-		multivalue=True,
+	"lastupdate": univention.admin.property(
+		syntax=univention.admin.syntax.integer,
 	),
-	"pickupphones": univention.admin.property(
-		short_description="'Pickupgroup'-Teilnehmer",
-		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhone",
-                        attribute=['asterisk/sipPhone: name'],
-                        value='asterisk/sipPhone: dn',
-                ),
+	"lastupdate_gui": univention.admin.property(
+		short_description=u"Konfiguration zuletzt eingespielt am:",
+		syntax=univention.admin.syntax.string,
+		editable=False,
+	),
+	"apply": univention.admin.property(
+		short_description=u"Konfiguration jetzt einspielen?",
+		syntax=univention.admin.syntax.boolean,
+		default=False,
+	),
+	"configs": univention.admin.property(
+		syntax=univention.admin.syntax.string,
 		multivalue=True,
 	),
 }
@@ -57,8 +60,11 @@ property_descriptions = {
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
-mapping.register("id", "ast4ucsPhonegroupId",
+mapping.register("host", "ast4ucsServerHost",
 	None, univention.admin.mapping.ListToString)
+mapping.register("lastupdate", "ast4ucsServerLastupdate",
+	None, univention.admin.mapping.ListToString)
+mapping.register("configs", "ast4ucsServerConfig")
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -76,19 +82,27 @@ class object(univention.admin.handlers.simpleLdap):
 		self.descriptions = property_descriptions
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
 			position, dn, superordinate)
-		
-		self.reverseFields = [
-			("pickupphones", "asterisk/sipPhone", "pickupgroups"),
-			("callphones", "asterisk/sipPhone", "callgroups"),
-		]
 
 	def exists(self):
 		return self._exists
 
 	def open(self):
+		try:
+			self.info["lastupdate_gui"] = time.strftime(
+				"%d.%m.%Y %H:%M:%S", time.localtime(
+				int(self.info.get("lastupdate",""))))
+		except ValueError:
+			self.info["lastupdate_gui"] = "never"
+
 		univention.admin.handlers.simpleLdap.open(self)
-		reverseFieldsLoad(self)
 		self.save()
+
+        def _ldap_pre_ready(self):
+		if (self.info.get('apply') == "1" or
+					not self.info.get("lastupdate")):
+	                self.info['lastupdate'] = str(int(time.time()))
+			self.info['configs'] = asterisk.genConfigs(
+							self.co, self.lo)
 
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
@@ -96,24 +110,16 @@ class object(univention.admin.handlers.simpleLdap):
 			mapping.mapValue('commonName', self.info['commonName']),
 			self.position.getDn()
 		)
-		reverseFieldsSave(self)
-	
-	def _ldap_pre_modify(self):
-		reverseFieldsSave(self)
-	
-	def _ldap_pre_remove(self):
-		self.info = {}
-		reverseFieldsSave(self)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsPhonegroup' ])]
+		return [('objectClass', ['top', 'ast4ucsServer' ])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
-			'objectClass', "ast4ucsPhonegroup")
+			'objectClass', "ast4ucsServer")
 	])
  
 	if filter_s:
@@ -129,5 +135,5 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	return res
 
 def identify(dn, attr, canonical=0):
-	return 'ast4ucsPhonegroup' in attr.get('objectClass', [])
+	return 'ast4ucsServer' in attr.get('objectClass', [])
 

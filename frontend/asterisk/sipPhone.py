@@ -2,7 +2,6 @@
 
 import univention.admin.filter
 import univention.admin.handlers
-from univention.admin.handlers.asterisk import ConfRefreshMixin
 import univention.admin.syntax
 
 module = "asterisk/sipPhone"
@@ -151,7 +150,7 @@ mapping.register("callgroups", "ast4ucsPhoneCallgroup")
 mapping.register("pickupgroups", "ast4ucsPhonePickupgroup")
 mapping.register("waitingloops", "ast4ucsPhoneWaitingloop")
 
-class object(univention.admin.handlers.simpleLdap, ConfRefreshMixin):
+class object(univention.admin.handlers.simpleLdap):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
