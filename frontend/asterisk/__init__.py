@@ -181,6 +181,11 @@ def genMusiconholdconf(co, lo):
 
 	return conf
 
+def genConfbridgeconf(co, lo):
+	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
+
+	return conf
+
 def genMeetmeconf(co, lo):
 	import conferenceRoom
 
@@ -224,8 +229,7 @@ def genExtRoomEntry(co, lo, room):
 	room = room.info
 	
 	res  = "exten => %s,1,Answer()\n" % (room["extension"])
-	res += "exten => %s,n,Wait(1)\n" % (room["extension"])
-	res += "exten => %s,n,MeetMe(%s)\n" % (
+	res += "exten => %s,n,ConfBridge(%s)\n" % (
 		room["extension"], room["extension"])
 	res += "exten => %s,n,Hangup()\n" % (room["extension"])
 	
@@ -286,7 +290,7 @@ def genConfigs(co, lo):
 		'voicemail.conf': genVoicemailconf,
 		'queues.conf': genQueuesconf,
 		'musiconhold.conf': genMusiconholdconf,
-		'meetme.conf': genMeetmeconf,
+		'confbridge.conf': genConfbridgeconf,
 		'extensions.conf': genExtensionsconf,
 	}
 
