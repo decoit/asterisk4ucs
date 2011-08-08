@@ -12,10 +12,12 @@ success = False
 
 def refreshConfig(configs):
 	prefix = "%s/" % listener.baseConfig["asterisk/confpath"]
+	listener.setuid(0)
 	for config in configs:
 		filename,data = config.split(" ", 2)
 		open(prefix + filename, "w").write(
 			zlib.decompress(data.decode("base64")))
+	listener.unsetuid()
 
 def handler(dn, newdata, olddata):
 	global success
