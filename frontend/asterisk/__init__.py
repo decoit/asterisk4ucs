@@ -19,12 +19,18 @@ def getNameFromUser(userinfo):
 def genSipconfEntry(co, lo, phone):
 	from univention.admin.handlers.users import user
 	import mailbox, phoneGroup
+
+	phoneUser = user.lookup(co, lo, "(ast4ucsUserPhone=%s)" % (
+		univention.admin.filter.escapeForLdapFilter(phone.dn)))
+	if len(phoneUser) != 1:
+		return "; ERROR: Multiple or no users own this phone.\n"
+	phoneUser = phoneUser[0].info
+
 	phone = phone.info
-	phoneUser = user.object(co, lo, None, phone["owner"]).info
 	
-	if phone.get("mailbox"):
+	if phoneUser.get("mailbox"):
 		phoneMailbox = mailbox.object(co, lo, None,
-			phone["mailbox"]).info
+			phoneUser["mailbox"]).info
 	
 	callgroups = []
 	for group in phone.get("callgroups", []):
@@ -44,7 +50,7 @@ def genSipconfEntry(co, lo, phone):
 		getNameFromUser(phoneUser),
 		phone["extension"] )
 	
-	if phone.get("mailbox"):
+	if phoneUser.get("mailbox"):
 		res += "mailbox=%s\n" % (phoneMailbox["id"])
 
 	if callgroups:
@@ -58,7 +64,7 @@ def genSipconfEntry(co, lo, phone):
 def genSipconf(co, lo):
 	import sipPhone
 
-	conf = "; Automatisch generierte sip.conf von asterisk4UCS\n\n"
+	conf = "; Automatisch generiert von asterisk4UCS\n\n"
 
 	for phone in sipPhone.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (phone.dn)
@@ -73,8 +79,13 @@ def genSipconf(co, lo):
 
 def genVoicemailconfEntry(co, lo, box):
 	from univention.admin.handlers.users import user
+	boxUser = user.lookup(co, lo, "(ast4ucsUserMailbox=%s)"%(
+		univention.admin.filter.escapeForLdapFilter(box.dn)))
+	if len(boxUser) != 1:
+		return "; ERROR: Multiple or no users own this mailbox.\n"
+	boxUser = boxUser[0].info
+	
 	box = box.info
-	boxUser = user.object(co, lo, None, box["owner"]).info
 	
 	if box.get("email") and boxUser.get("e-mail", []):
 		return "%s => %s,%s,%s\n" % (
@@ -206,24 +217,55 @@ def genMeetmeconf(co, lo):
 
 	return conf
 
-def genExtSIPPhoneEntry(co, lo, phone):
+def genExtSIPPhoneEntry(co, lo, extenPhone):
+	from univention.admin.handlers.users import user
 	import mailbox
-	phone = phone.info
-	
-	res  = "exten => %s,1,Dial(SIP/%s,%s)\n" % (
-		phone["extension"],
-		phone["extension"],
-		phone.get("maxrings", "20"))
-	
-	if phone.get("mailbox"):
+	extension = extenPhone.info["extension"]
+
+	import univention.admin.modules
+	univention.admin.modules.init(lo, extenPhone.position, user)
+
+	phoneUser = user.lookup(co, lo, "(ast4ucsUserPhone=%s)"%(
+		univention.admin.filter.escapeForLdapFilter(extenPhone.dn)))
+	if len(phoneUser) != 1:
+		return "; ERROR: Multiple or no users own this phone.\n"
+	phoneUser = phoneUser[0].info
+
+	try:
+		timeout = int(phoneUser["timeout"])
+		if timeout < 1 or timeout > 120:
+			raise Exception
+	except:
+		timeout = 10
+
+	try:
+		ringdelay = int(phoneUser["ringdelay"])
+		if ringdelay < 1 or ringdelay > 120:
+			raise Exception
+	except:
+		ringdelay = 0
+
+	phones = [sipPhone.object(co, lo, None, dn).info["extension"]
+		for dn in phoneUser.get("phones", [])]
+
+	res = []
+
+	if ringdelay:
+		for phone in phones:
+			res.append("Dial(SIP/%s,%i)" % (phone, ringdelay))
+			res.append("Wait(0.5)")
+	else:
+		res.append("Dial(%s,%i)" % (
+			'&'.join(["SIP/%s"%phone for phone in phones]),
+			timeout))
+
+	if phoneUser.get("mailbox"):
 		phoneMailbox = mailbox.object(
-			co, lo, None, phone["mailbox"]).info
-		
-		res += "exten => %s,2,Voicemail(%s,u)\n" % (
-			phone["extension"],
-			phoneMailbox["id"])
-	
-	return res
+			co, lo, None, phoneUser["mailbox"]).info
+		res.append("Voicemail(%s,u)" % phoneMailbox["id"])
+
+	return ''.join(["exten => %s,%i,%s\n"%(extension, i+1, data)
+		for i,data in enumerate(res)])
 
 def genExtRoomEntry(co, lo, room):
 	room = room.info

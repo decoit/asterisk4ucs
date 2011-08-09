@@ -11,10 +11,9 @@ echo "Deleting default container for asterisk data..."
 python2.4 frontend/ldapDefaultNode/uninstall.py
 echo -e "\t\t\t\t\t\t\tdone."
 
-## Currently not needed
-# echo "Deleting extended attributes for UMC user module..."
-# sh frontend/user-phone-extension/uninstall.sh
-# echo -e "\t\t\t\t\t\t\tdone."
+echo "Deleting extended attributes for UDM user module..."
+sh frontend/user-phone-extension/uninstall.sh
+echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstalling schemata..."
 rm "$UNI_SCHEMA_PATH/asterisk.schema"
@@ -45,8 +44,10 @@ ucr unset asterisk/mailbox/emaildateformat
 ucr unset asterisk/mailbox/mailcommand
 echo -e "\t\t\t\t\t\t\tdone."
 
-echo "Uninstalling UMC module..."
-rm -r "$UNI_MODULE_PATH/asterisk"
+echo "Uninstalling UDM module..."
+rm "$UNI_UDM_PATH/syntax.d/asterisk.py"
+rm "$UNI_UDM_PATH/hooks.d/asterisk.py"
+rm -r "$UNI_UDM_PATH/handlers/asterisk"
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstalling icons..."

@@ -5,23 +5,13 @@ set -u
 
 eval "$(ucr shell)"
 
-# Extension
-udm settings/extended_attribute remove --dn "cn=AstExtension,\
-	cn=custom attributes,cn=univention,$ldap_base"
+for name in ast4ucsPhoneSyntax ast4ucsMailboxSyntax; do
+	udm settings/syntax remove \
+		--dn "cn=$name,cn=univention,$ldap_base"
+done
 
-# Password
-udm settings/extended_attribute remove --dn "cn=AstAccountSecret,\
-	cn=custom attributes,cn=univention,$ldap_base"
-
-# Ipaddress
-udm settings/extended_attribute remove --dn "cn=AstAccountIpaddr,\
-	cn=custom attributes,cn=univention,$ldap_base"
-
-# Host
-udm settings/extended_attribute remove --dn "cn=AstAccountHost,\
-	cn=custom attributes,cn=univention,$ldap_base"
-
-# Mailbox
-udm settings/extended_attribute remove --dn "cn=AstAccountMailbox,\
-	cn=custom attributes,cn=univention,$ldap_base"
+for name in phones mailbox extmode ringdelay timeout; do
+	udm settings/extended_attribute remove \
+		--dn "cn=$name,cn=custom attributes,cn=univention,$ldap_base"
+done
 

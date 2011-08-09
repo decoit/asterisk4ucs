@@ -97,7 +97,7 @@ class object(univention.admin.handlers.simpleLdap):
 		univention.admin.handlers.simpleLdap.open(self)
 		self.save()
 
-        def _ldap_pre_ready(self):
+        def _ldap_pre_modify(self):
 		if (self.info.get('apply') == "1" or
 					not self.info.get("lastupdate")):
 	                self.info['lastupdate'] = str(int(time.time()))

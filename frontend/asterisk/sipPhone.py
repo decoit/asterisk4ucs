@@ -17,11 +17,8 @@ layout = [
 			univention.admin.field("ipaddress")],
 		[ univention.admin.field("macaddress"),
 			univention.admin.field("hostname") ],
-		[ univention.admin.field("mailbox"),
-			univention.admin.field("maxrings") ],
 		[ univention.admin.field("phonetype"),
 			univention.admin.field("profile") ],
-		[ univention.admin.field("owner") ],
 		[ univention.admin.field("password"),
 			univention.admin.field("waitingloops") ],
 		[ univention.admin.field("callgroups"),
@@ -53,21 +50,6 @@ property_descriptions = {
 		short_description="Hostname",
 		syntax=univention.admin.syntax.hostName
 	),
-	"mailbox": univention.admin.property(
-		short_description="Mailbox",
-		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsMailbox",
-                        attribute=['asterisk/mailbox: commonName'],
-                        value='asterisk/mailbox: dn'
-                ),
-	),
-	"maxrings": univention.admin.property(
-		short_description=u"Höchstzahl Klingeln",
-		long_description=(u"Nach wievielmaligem Klingeln soll die" + 
-			u"Mailbox den Anruf entgegennehmen?"),
-		syntax=univention.admin.syntax.integer,
-		default="20",
-	),
 	"phonetype": univention.admin.property(
 		short_description="Telefontyp",
 		syntax=univention.admin.syntax.LDAP_Search(
@@ -83,15 +65,6 @@ property_descriptions = {
 	"password": univention.admin.property(
 		short_description="Passwort",
 		syntax=univention.admin.syntax.userPasswd,
-		required=True,
-	),
-	"owner": univention.admin.property(
-		short_description="Benutzer",
-		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=inetOrgPerson",
-                        attribute=['users/user: username'],
-                        value='users/user: dn'
-                ),
 		required=True,
 	),
 	"callgroups": univention.admin.property(
@@ -134,17 +107,11 @@ mapping.register("macaddress", "macAddress",
 	None, univention.admin.mapping.ListToString)
 mapping.register("hostname", "AstAccountHost",
 	None, univention.admin.mapping.ListToString)
-mapping.register("mailbox", "AstAccountMailbox",
-	None, univention.admin.mapping.ListToString)
-mapping.register("maxrings", "ast4ucsPhoneMaxrings",
-	None, univention.admin.mapping.ListToString)
 mapping.register("phonetype", "ast4ucsPhonePhonetype",
 	None, univention.admin.mapping.ListToString)
 mapping.register("profile", "ast4ucsPhoneProfile",
 	None, univention.admin.mapping.ListToString)
 mapping.register("password", "AstAccountSecret",
-	None, univention.admin.mapping.ListToString)
-mapping.register("owner", "owner",
 	None, univention.admin.mapping.ListToString)
 mapping.register("callgroups", "ast4ucsPhoneCallgroup")
 mapping.register("pickupgroups", "ast4ucsPhonePickupgroup")

@@ -15,8 +15,7 @@ layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("id") ],
 		[ univention.admin.field("password") ],
-		[ univention.admin.field("owner"),
-			univention.admin.field("email") ],
+		[ univention.admin.field("email") ],
 	])
 ]
 
@@ -41,15 +40,6 @@ property_descriptions = {
 		short_description=u"Per eMail benachrichtigen?",
 		syntax=univention.admin.syntax.boolean,
 	),
-	"owner": univention.admin.property(
-		short_description=u"Benutzer",
-		syntax=univention.admin.syntax.LDAP_Search(
-			filter="objectClass=inetOrgPerson",
-			attribute=['users/user: username'],
-			value='users/user: dn'
-		),
-		required=True,
-	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -60,8 +50,6 @@ mapping.register("id", "ast4ucsMailboxId",
 mapping.register("password", "ast4ucsMailboxPassword",
 	None, univention.admin.mapping.ListToString)
 mapping.register("email", "ast4ucsMailboxNotifybymail",
-	None, univention.admin.mapping.ListToString)
-mapping.register("owner", "owner",
 	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):

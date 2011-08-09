@@ -50,15 +50,18 @@ ucr set asterisk/mailbox/emaildateformat="$ast4ucs_ucr_mailbox_emaildateformat"
 ucr set asterisk/mailbox/mailcommand="$ast4ucs_ucr_mailbox_mailcommand"
 echo -e "\t\t\t\t\t\t\tdone."
 
-echo "Installing UMC module..."
-mkdir -p "$UNI_MODULE_PATH/asterisk"
-install -m664 frontend/asterisk/* "$UNI_MODULE_PATH/asterisk/"
+echo "Installing UDM module..."
+mkdir -p "$UNI_UDM_PATH/syntax.d"
+install -m664 frontend/syntax/asterisk.py "$UNI_UDM_PATH/syntax.d/"
+mkdir -p "$UNI_UDM_PATH/hooks.d"
+install -m664 frontend/hooks/asterisk.py "$UNI_UDM_PATH/hooks.d/"
+mkdir -p "$UNI_UDM_PATH/handlers/asterisk"
+install -m664 frontend/asterisk/* "$UNI_UDM_PATH/handlers/asterisk/"
 echo -e "\t\t\t\t\t\t\tdone."
 
-## Currently not needed
-# echo "Creating extended attributes for UMC user module..."
-# sh frontend/user-phone-extension/install.sh
-# echo -e "\t\t\t\t\t\t\tdone."
+echo "Creating extended attributes for UDM user module..."
+sh frontend/user-phone-extension/install.sh
+echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Creating default container for asterisk data..."
 python2.4 frontend/ldapDefaultNode/install.py

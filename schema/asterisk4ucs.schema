@@ -12,6 +12,7 @@ objectIdentifier ast4ucsContact ast4ucsRoot:8
 objectIdentifier ast4ucsFaxgroup ast4ucsRoot:9
 objectIdentifier ast4ucsExtension ast4ucsRoot:10
 objectIdentifier ast4ucsServer ast4ucsRoot:11
+objectIdentifier ast4ucsUser ast4ucsRoot:12
 
 
 # --------------------- Default container ---------------
@@ -31,11 +32,6 @@ objectclass ( ast4ucsDefaultdirectory NAME 'univentionDirectoryWithAsterisk'
 
 
 # -------------- SIP Phones -------------------------
-
-attributetype ( ast4ucsPhone:1 NAME 'ast4ucsPhoneMaxrings'
-	DESC 'Asterisk4ucs: Phone maxrings'
-	EQUALITY integerMatch
-	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
 
 attributetype ( ast4ucsPhone:2 NAME 'ast4ucsPhonePhonetype'
 	DESC 'Asterisk4ucs: Phone phonetype'
@@ -68,13 +64,11 @@ objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 	MUST ( cn )
 	MAY (
 		macAddress $
-		ast4ucsPhoneMaxrings $
 		ast4ucsPhonePhonetype $
 		ast4ucsPhoneProfile $
 		ast4ucsPhoneCallgroup $
 		ast4ucsPhonePickupgroup $
-		ast4ucsPhoneWaitingloop $
-		owner
+		ast4ucsPhoneWaitingloop
 	))
 
 
@@ -105,8 +99,7 @@ objectclass ( ast4ucsMailbox NAME 'ast4ucsMailbox'
 	)
 	MAY (
 		ast4ucsMailboxPassword $
-		ast4ucsMailboxNotifybymail $
-		owner
+		ast4ucsMailboxNotifybymail
 	) )
 
 
@@ -280,6 +273,44 @@ objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 		ast4ucsServerHost $
 		ast4ucsServerLastupdate $
 		ast4ucsServerConfig
+	) )
+
+
+# ------------------------ User --------------------------------
+
+attributetype ( ast4ucsUser:1 NAME 'ast4ucsUserPhone'
+	DESC 'Asterisk4ucs: User Phone'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsUser:2 NAME 'ast4ucsUserMailbox'
+	DESC 'Asterisk4ucs: User Mailbox'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsUser:3 NAME 'ast4ucsUserRingdelay'
+	DESC 'Asterisk4ucs: User Ringdelay'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsUser:4 NAME 'ast4ucsUserExtmode'
+	DESC 'Asterisk4ucs: User Extmode'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsUser:5 NAME 'ast4ucsUserTimeout'
+	DESC 'Asterisk4ucs: User Timeout'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( ast4ucsUser NAME 'ast4ucsUser'
+	DESC 'Asterisk4ucs: User'
+	SUP top AUXILIARY
+	MAY (
+		ast4ucsUserPhone $
+		ast4ucsUserMailbox $
+		ast4ucsUserRingdelay $
+		ast4ucsUserExtmode
 	) )
 
 
