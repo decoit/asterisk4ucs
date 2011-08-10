@@ -267,10 +267,10 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 
 	if ringdelay:
 		for phone in phones:
-			res.append("Dial(SIP/%s,%i)" % (phone, ringdelay))
+			res.append("Dial(SIP/%s,%i,tT)" % (phone, ringdelay))
 			res.append("Wait(0.5)")
 	else:
-		res.append("Dial(%s,%i)" % (
+		res.append("Dial(%s,%i,tT)" % (
 			'&'.join(["SIP/%s"%phone for phone in phones]),
 			timeout))
 
