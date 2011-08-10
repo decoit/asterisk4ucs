@@ -35,6 +35,9 @@ def genSipconfEntry(co, lo, phone):
 	from univention.admin.handlers.users import user
 	import mailbox, phoneGroup
 
+	import univention.admin.modules
+	univention.admin.modules.init(lo, phone.position, user)
+
 	phoneUser = user.lookup(co, lo, "(ast4ucsUserPhone=%s)" % (
 		univention.admin.filter.escapeForLdapFilter(phone.dn)))
 	if len(phoneUser) != 1:
@@ -61,10 +64,18 @@ def genSipconfEntry(co, lo, phone):
 	res += "type=friend\n"
 	res += "host=dynamic\n"
 	res += "secret=%s\n" % (phone["password"])
-	res += "callerid=\"%s\" <%s>\n" % (
-		getNameFromUser(phoneUser),
-		phone["extension"] )
-	
+
+	if phoneUser.get("extmode") == "normal":
+		res += "callerid=\"%s\" <%s>\n" % (
+			getNameFromUser(phoneUser),
+			phone["extension"] )
+	elif phoneUser.get("extmode") == "first":
+		firstPhone = sipPhone.object(co, lo, None,
+			llist(phoneUser["phones"])[0]).info
+		res += "callerid=\"%s\" <%s>\n" % (
+			getNameFromUser(phoneUser),
+			firstPhone["extension"] )
+
 	if phoneUser.get("mailbox"):
 		res += "mailbox=%s\n" % (phoneMailbox["id"])
 
