@@ -8,7 +8,13 @@ class AsteriskUsersUserHook(simpleHook):
 	class phoneError(uexceptions.base):
 		message="A phone can't belong to more than one user: "
 
+	class mailboxError(uexceptions.base):
+		message="A mailbox can't belong to more than one user: "
+
 	def checkFields(self, module):
+		def nameFromDn(dn):
+			return dn.split(",")[0].split("=", 1)[1]
+
 		for phonedn in module.info.get("phones"):
 			phoneUsers = user.lookup(module.co, module.lo,
 				"(&(ast4ucsUserPhone=%s)(!(uid=%s)))" % (
@@ -16,8 +22,21 @@ class AsteriskUsersUserHook(simpleHook):
 				escapeForLdapFilter(module.info["username"])))
 			if phoneUsers:
 				raise self.phoneError, (
-					"Phone %s belongs to %s!" % (
-						phonedn, phoneUsers[0].dn))
+					"%s belongs to %s!" % (
+						nameFromDn(phonedn),
+						nameFromDn(phoneUsers[0].dn)))
+
+		mailboxdn = module.info.get("mailbox")
+		if mailboxdn:
+			mailboxUsers = user.lookup(module.co, module.lo,
+				"(&(ast4ucsUserMailbox=%s)(!(uid=%s)))" % (
+				escapeForLdapFilter(mailboxdn),
+				escapeForLdapFilter(module.info["username"])))
+			if mailboxUsers:
+				raise self.mailboxError, (
+					"%s belongs to %s!" % (
+						nameFromDn(mailboxdn),
+						nameFromDn(mailboxUsers[0].dn)))
 
 	def hook_open(self, module):
 		pass
