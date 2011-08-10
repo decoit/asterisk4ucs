@@ -16,6 +16,21 @@ def getNameFromUser(userinfo):
 	else:
 		return userinfo["lastname"]
 
+def llist(thingie):
+	"""Forces thingie to be a list.
+
+	This should be used to work around univention's broken LDAP-module
+	sometimes returning attribute values as a list of strings or a string
+	depending on how many values an attribute has.
+
+	llist("foo") -> ["foo"]
+	llist(["foo", "bar"]) -> ["foo", "bar"]
+	"""
+
+	if isinstance(thingie, list):
+		return thingie
+	return list(thingie)
+
 def genSipconfEntry(co, lo, phone):
 	from univention.admin.handlers.users import user
 	import mailbox, phoneGroup
@@ -87,12 +102,12 @@ def genVoicemailconfEntry(co, lo, box):
 	
 	box = box.info
 	
-	if box.get("email") and boxUser.get("e-mail", []):
+	if box.get("email") == "1" and boxUser.get("e-mail"):
 		return "%s => %s,%s,%s\n" % (
 			box["id"],
 			box["password"],
 			getNameFromUser(boxUser),
-			boxUser["e-mail"][0],
+			llist(boxUser["e-mail"])[0],
 		)
 	else:
 		return "%s => %s,%s\n" % (
