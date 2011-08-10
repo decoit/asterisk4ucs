@@ -63,12 +63,14 @@ addUserAttribute ringdelay \
 	--set shortDescription="Intervall zwischen Telefonen (Sekunden)" \
 	--set tabPosition=4 \
 	--set syntax=integer \
-	--set ldapMapping="ast4ucsUserRingdelay"
+	--set ldapMapping="ast4ucsUserRingdelay" \
+	--set default=10
 
 addUserAttribute timeout \
 	--set shortDescription="Mailbox antwortet nach (Sekunden)" \
 	--set tabPosition=5 \
 	--set syntax=integer \
-	--set ldapMapping="ast4ucsUserTimeout"
+	--set ldapMapping="ast4ucsUserTimeout" \
+	--set default=10
 
 

@@ -310,7 +310,8 @@ objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 		ast4ucsUserPhone $
 		ast4ucsUserMailbox $
 		ast4ucsUserRingdelay $
-		ast4ucsUserExtmode
+		ast4ucsUserExtmode $
+		ast4ucsUserTimeout
 	) )
 
 
