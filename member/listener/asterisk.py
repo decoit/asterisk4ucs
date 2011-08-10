@@ -37,6 +37,8 @@ def postrun():
 	if not success:
 		return
 
-	listener.run(listener.baseConfig["asterisk/asteriskbin"],
-		["-r", "-x", "reload"])
+	bin = listener.baseConfig["asterisk/asteriskbin"]
+	listener.setuid(0)
+	listener.run(bin, [bin, "-r", "-x", "core reload"])
+	listener.unsetuid()
 
