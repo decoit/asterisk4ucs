@@ -19,6 +19,9 @@ phoneType: durch invertieren des alpha-channels aus dem phone-icon generiert
 
 mailbox: kombiniert aus linphone-icon und univention-mail-icon
 
+fax: http://www.iconfinder.com/icondetails/17366/80/fax_icon
+(Creative Commons: Attribution, Share Alike)
+
 
 
 gifs wurden erzeugt mit:
