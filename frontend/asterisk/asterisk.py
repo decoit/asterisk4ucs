@@ -13,6 +13,7 @@ import univention.admin.handlers.asterisk.phoneType
 import univention.admin.handlers.asterisk.mailbox
 import univention.admin.handlers.asterisk.faxGroup
 import univention.admin.handlers.asterisk.server
+import operator
 
 module = "asterisk/asterisk"
 childs = 0
@@ -20,21 +21,33 @@ short_description = u"Asterisk"
 long_description = ''
 operations = ['search']
 
+modulesWithSuperordinates = {
+	"None": [
+		univention.admin.handlers.asterisk.server,
+		univention.admin.handlers.asterisk.contact,
+	],
+	"asterisk/server": [
+		univention.admin.handlers.asterisk.phoneGroup,
+		univention.admin.handlers.asterisk.waitingLoop,
+		univention.admin.handlers.asterisk.sipPhone,
+		univention.admin.handlers.asterisk.conferenceRoom,
+		univention.admin.handlers.asterisk.phoneType,
+		univention.admin.handlers.asterisk.mailbox,
+		univention.admin.handlers.asterisk.faxGroup,
+	],
+}
+
 usewizard = 1
 wizardmenustring="Asterisk"
 wizarddescription="Asterisk verwalten"
 wizardpath="univentionAsteriskObject"
-childmodules = [
-	"asterisk/contact",
-	"asterisk/phoneGroup",
-	"asterisk/waitingLoop",
-	"asterisk/sipPhone",
-	"asterisk/conferenceRoom",
-	"asterisk/phoneType",
-	"asterisk/mailbox",
-	"asterisk/faxGroup",
-	"asterisk/server",
-]
+childmodules = [x.module for x in
+	reduce(operator.add, modulesWithSuperordinates.values())]
+
+wizardsuperordinates = modulesWithSuperordinates.keys()
+wizardtypesforsuper = {}
+for key, value in modulesWithSuperordinates.items():
+	wizardtypesforsuper[key] = [x.module for x in value]
 
 virtual = True
 options = {}
@@ -62,27 +75,16 @@ class object(univention.admin.handlers.simpleLdap):
 	def exists(self):
 		return self._exists
 
-def lookup(*args, **kwargs):
-	return ( 
-		univention.admin.handlers.asterisk.phoneGroup.lookup(
-			*args, **kwargs) +
-		univention.admin.handlers.asterisk.waitingLoop.lookup(
-			*args, **kwargs) +
-		univention.admin.handlers.asterisk.sipPhone.lookup(
-			*args, **kwargs) +
-		univention.admin.handlers.asterisk.conferenceRoom.lookup(
-			*args, **kwargs) +
-		univention.admin.handlers.asterisk.phoneType.lookup(
-			*args, **kwargs) +
-		univention.admin.handlers.asterisk.mailbox.lookup(
-			*args, **kwargs) +
-		univention.admin.handlers.asterisk.faxGroup.lookup(
-			*args, **kwargs) +
-		univention.admin.handlers.asterisk.server.lookup(
-			*args, **kwargs) +
-		univention.admin.handlers.asterisk.contact.lookup(
-			*args, **kwargs)
-	)
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
+		unique=0, required=0, timeout=-1, sizelimit=0):
+	ret = []
+	supi = "None"
+	if superordinate:
+		supi = superordinate.module
+	for module in modulesWithSuperordinates[supi]:
+		ret += module.lookup(co, lo, filter_s, base, superordinate,
+			scope, unique, required, timeout, sizelimit)
+	return ret
 
 def identify(dn, attr, canonical=0):
 	pass

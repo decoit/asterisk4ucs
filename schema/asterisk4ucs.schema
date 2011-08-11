@@ -271,7 +271,9 @@ objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 	MUST (
 		cn $
 		ast4ucsServerHost $
-		ast4ucsServerLastupdate $
+		ast4ucsServerLastupdate
+	)
+	MAY (
 		ast4ucsServerConfig
 	) )
 

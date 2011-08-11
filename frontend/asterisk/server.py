@@ -7,7 +7,7 @@ import univention.admin.syntax
 import time
 
 module = "asterisk/server"
-childs = 0
+childs = 1
 short_description = u"Asterisk-Server"
 long_description = u"Asterisk-Server"
 operations = ['add', 'edit', 'remove', 'search', 'move']
@@ -98,8 +98,7 @@ class object(univention.admin.handlers.simpleLdap):
 		self.save()
 
         def _ldap_pre_modify(self):
-		if (self.info.get('apply') == "1" or
-					not self.info.get("lastupdate")):
+		if self.info.get('apply') == "1":
 	                self.info['lastupdate'] = str(int(time.time()))
 			self.info['configs'] = asterisk.genConfigs(
 							self.co, self.lo)
@@ -110,6 +109,7 @@ class object(univention.admin.handlers.simpleLdap):
 			mapping.mapValue('commonName', self.info['commonName']),
 			self.position.getDn()
 		)
+		self.info["lastupdate"] = "0"
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['top', 'ast4ucsServer' ])]
