@@ -29,7 +29,7 @@ def llist(thingie):
 
 	if isinstance(thingie, list):
 		return thingie
-	return list(thingie)
+	return [ thingie ]
 
 def genSipconfEntry(co, lo, phone):
 	from univention.admin.handlers.users import user
@@ -338,6 +338,8 @@ def genExtensionsconf(co, lo, srv):
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n"
 
+	conf += "\n[default]\n"
+
 	conf += "\n\n; ===== Telefone =====\n\n"
 	for phone in sipPhone.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (phone.dn)
@@ -377,7 +379,16 @@ def genExtensionsconf(co, lo, srv):
 		conf += "exten => %s,1,Dial(SIP/%s)\n" % (
 			phone.info["extension"],
 			phone.info["extension"])
-	
+
+	conf += "\n[extern-incoming]\n"
+
+	conf += "\n\n; ===== Nummernkreise =====\n\n"
+	for extnum in llist(srv.info.get("extnums", [])):
+		conf += "exten => _%s,1,Goto(default,%s,1)\n" % (
+			extnum, srv.info.get("defaultext", "fubar"))
+		conf += "exten => _%s.,1,Goto(default,${EXTEN:%i},1)\n" % (
+			extnum, len(extnum))
+
 	return conf
 
 def genConfigs(co, lo, server):

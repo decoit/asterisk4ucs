@@ -27,6 +27,10 @@ layout = [
 	univention.admin.tab('Musik', 'Warteschlangenmusik', [
 		[ univention.admin.field("music") ],
 	], advanced=True),
+	univention.admin.tab('Nummernkreise', 'Nummernkreise', [
+		[ univention.admin.field("extnums"),
+			univention.admin.field("defaultext") ],
+	], advanced=True),
 ]
 
 property_descriptions = {
@@ -78,6 +82,15 @@ property_descriptions = {
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
 	),
+	"extnums": univention.admin.property(
+		short_description="Eigene externe Rufnummer(n)",
+		syntax=univention.admin.syntax.phone,
+		multivalue=True,
+	),
+	"defaultext": univention.admin.property(
+		short_description="Standard-Extension",
+		syntax=univention.admin.syntax.phone,
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -90,6 +103,9 @@ mapping.register("lastupdate", "ast4ucsServerLastupdate",
 mapping.register("configs", "ast4ucsServerConfig")
 mapping.register("blockedAreaCodes", "ast4ucsServerBlockedareacode")
 mapping.register("music", "ast4ucsServerMusic")
+mapping.register("extnums", "ast4ucsServerExtnum")
+mapping.register("defaultext", "ast4ucsServerDefaultext",
+	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
