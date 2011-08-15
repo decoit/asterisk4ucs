@@ -14,6 +14,7 @@ import univention.admin.handlers.asterisk.mailbox
 import univention.admin.handlers.asterisk.faxGroup
 import univention.admin.handlers.asterisk.server
 import univention.admin.handlers.asterisk.fax
+import univention.admin.handlers.asterisk.phoneBook
 import operator
 
 module = "asterisk/asterisk"
@@ -25,7 +26,7 @@ operations = ['search']
 modulesWithSuperordinates = {
 	"None": [
 		univention.admin.handlers.asterisk.server,
-		univention.admin.handlers.asterisk.contact,
+		univention.admin.handlers.asterisk.phoneBook,
 	],
 	"asterisk/server": [
 		univention.admin.handlers.asterisk.phoneGroup,
@@ -37,6 +38,9 @@ modulesWithSuperordinates = {
 		univention.admin.handlers.asterisk.faxGroup,
 		univention.admin.handlers.asterisk.fax,
 	],
+	"asterisk/phoneBook": [
+		univention.admin.handlers.asterisk.contact,
+	]
 }
 
 usewizard = 1

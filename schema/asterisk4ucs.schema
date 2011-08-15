@@ -14,6 +14,7 @@ objectIdentifier ast4ucsExtension ast4ucsRoot:10
 objectIdentifier ast4ucsServer ast4ucsRoot:11
 objectIdentifier ast4ucsUser ast4ucsRoot:12
 objectIdentifier ast4ucsFax ast4ucsRoot:13
+objectIdentifier ast4ucsPhonebook ast4ucsRoot:14
 
 
 # --------------------- Default container ---------------
@@ -339,6 +340,15 @@ objectclass ( ast4ucsFax NAME 'ast4ucsFax'
 	MAY (
 		macAddress
 	))
+
+
+# -------------- Phonebook --------------------------------------------
+
+objectclass ( ast4ucsPhonebook NAME 'ast4ucsPhonebook'
+	DESC 'Asterisk4ucs: Phonebook'
+	SUP top
+	MUST ( cn )
+	)
 
 
 
