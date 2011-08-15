@@ -91,7 +91,7 @@ class object(univention.admin.handlers.simpleLdap):
 		self.save()
 	
 	def _ldap_pre_ready(self):
-		self.info['name'] = "phone " + self.info["extension"]
+		self.info['name'] = "fax " + self.info["extension"]
 	
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
