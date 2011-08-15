@@ -81,6 +81,7 @@ property_descriptions = {
 		short_description="Installierte Musikklassen",
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
+		default=["moh"],
 	),
 	"extnums": univention.admin.property(
 		short_description="Eigene externe Rufnummer(n)",
