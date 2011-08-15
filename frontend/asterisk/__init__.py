@@ -87,7 +87,7 @@ def genSipconfEntry(co, lo, phone):
 	
 	return res
 
-def genSipconf(co, lo):
+def genSipconf(co, lo, srv):
 	import sipPhone
 
 	conf = "; Automatisch generiert von asterisk4UCS\n\n"
@@ -127,7 +127,7 @@ def genVoicemailconfEntry(co, lo, box):
 			getNameFromUser(boxUser),
 		)
 
-def genVoicemailconf(co, lo):
+def genVoicemailconf(co, lo, srv):
 	import mailbox
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
@@ -176,7 +176,7 @@ def genQueuesconfEntry(co, lo, queue):
 	
 	return res
 
-def genQueuesconf(co, lo):
+def genQueuesconf(co, lo, srv):
 	import waitingLoop
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
@@ -202,7 +202,7 @@ def genMusiconholdconfEntry(co, lo, queue):
 	
 	return res
 
-def genMusiconholdconf(co, lo):
+def genMusiconholdconf(co, lo, srv):
 	import waitingLoop
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
@@ -218,12 +218,12 @@ def genMusiconholdconf(co, lo):
 
 	return conf
 
-def genConfbridgeconf(co, lo):
+def genConfbridgeconf(co, lo, srv):
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
 
 	return conf
 
-def genMeetmeconf(co, lo):
+def genMeetmeconf(co, lo, srv):
 	import conferenceRoom
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
@@ -313,7 +313,7 @@ def genExtQueueEntry(co, lo, queue):
 	
 	return res
 
-def genExtensionsconf(co, lo):
+def genExtensionsconf(co, lo, srv):
 	import sipPhone, conferenceRoom, waitingLoop
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n"
@@ -348,9 +348,13 @@ def genExtensionsconf(co, lo):
 				traceback.format_exc()[:-1] )
 		conf += "\n"
 
+	conf += "\n\n; ===== Blockierte Vorwahlen =====\n\n"
+	for areaCode in srv.info.get("blockedAreaCodes", []):
+		conf += "exten => _%s.,1,Hangup()\n" % (areaCode)
+
 	return conf
 
-def genConfigs(co, lo):
+def genConfigs(co, lo, server):
 	ucr.load()
 
 	configs = {
@@ -365,7 +369,7 @@ def genConfigs(co, lo):
 	res = []
 	for filename,genfunc in configs.items():
 		res.append("%s %s" % (filename,
-			zlib.compress(genfunc(co, lo)).encode("base64")))
+			zlib.compress(genfunc(co, lo, server)).encode("base64")))
 	return res
 
 

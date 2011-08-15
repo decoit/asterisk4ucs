@@ -19,6 +19,10 @@ layout = [
 		[ univention.admin.field("host") ],
 		[ univention.admin.field("lastupdate_gui"),
 			univention.admin.field("apply") ],
+	]),
+	univention.admin.tab('Vorwahlen', 'Gesperrte Vorwahlen', [
+		[ univention.admin.field("blockedAreaCodes"),
+			univention.admin.field("blockInternational") ],
 	])
 ]
 
@@ -55,6 +59,17 @@ property_descriptions = {
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
 	),
+	"blockedAreaCodes": univention.admin.property(
+		short_description=u"Blockierte Vorwahlen",
+		syntax=univention.admin.syntax.string,
+		multivalue=True,
+	),
+	"blockInternational": univention.admin.property(
+		short_description=u"Auslandsgespräche blockieren",
+		long_description=u"Blockiert die Vorwahlen 00 und +",
+		syntax=univention.admin.syntax.boolean,
+		default=False,
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -65,6 +80,7 @@ mapping.register("host", "ast4ucsServerHost",
 mapping.register("lastupdate", "ast4ucsServerLastupdate",
 	None, univention.admin.mapping.ListToString)
 mapping.register("configs", "ast4ucsServerConfig")
+mapping.register("blockedAreaCodes", "ast4ucsServerBlockedareacode")
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -97,11 +113,28 @@ class object(univention.admin.handlers.simpleLdap):
 		univention.admin.handlers.simpleLdap.open(self)
 		self.save()
 
+		for areaCode in ["+", "00"]:
+			if not areaCode in self.info.get("blockedAreaCodes", []):
+				break
+		else:
+			self.info["blockInternational"] = "1"
+			for areaCode in ["+", "00"]:
+				self.info["blockedAreaCodes"].remove(areaCode)
+
+	def saveCheckboxes(self):
+		if "1" in self.info.get("blockInternational",[]):
+			self.info.setdefault("blockedAreaCodes", []).extend(["+", "00"])
+			if "" in self.info["blockedAreaCodes"]:
+				self.info["blockedAreaCodes"].remove("")
+			self.info["blockedAreaCodes"] = list(set(
+				self.info["blockedAreaCodes"]))
+
         def _ldap_pre_modify(self):
+		self.saveCheckboxes()
 		if self.info.get('apply') == "1":
 	                self.info['lastupdate'] = str(int(time.time()))
 			self.info['configs'] = asterisk.genConfigs(
-							self.co, self.lo)
+							self.co, self.lo, self)
 
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
@@ -110,6 +143,7 @@ class object(univention.admin.handlers.simpleLdap):
 			self.position.getDn()
 		)
 		self.info["lastupdate"] = "0"
+		self.saveCheckboxes()
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['top', 'ast4ucsServer' ])]

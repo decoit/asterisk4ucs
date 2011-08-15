@@ -265,6 +265,11 @@ attributetype ( ast4ucsServer:3 NAME 'ast4ucsServerConfig'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( ast4ucsServer:4 NAME 'ast4ucsServerBlockedareacode'
+	DESC 'Asterisk4ucs: Server Blockedareacode'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 	DESC 'Asterisk4ucs: Server'
 	SUP top
@@ -274,7 +279,8 @@ objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 		ast4ucsServerLastupdate
 	)
 	MAY (
-		ast4ucsServerConfig
+		ast4ucsServerConfig $
+		ast4ucsServerBlockedareacode
 	) )
 
 
