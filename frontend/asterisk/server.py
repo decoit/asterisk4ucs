@@ -23,7 +23,10 @@ layout = [
 	univention.admin.tab('Vorwahlen', 'Gesperrte Vorwahlen', [
 		[ univention.admin.field("blockedAreaCodes"),
 			univention.admin.field("blockInternational") ],
-	])
+	]),
+	univention.admin.tab('Musik', 'Warteschlangenmusik', [
+		[ univention.admin.field("music") ],
+	], advanced=True),
 ]
 
 property_descriptions = {
@@ -70,6 +73,11 @@ property_descriptions = {
 		syntax=univention.admin.syntax.boolean,
 		default=False,
 	),
+	"music": univention.admin.property(
+		short_description="Installierte Musikklassen",
+		syntax=univention.admin.syntax.string,
+		multivalue=True,
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -81,6 +89,7 @@ mapping.register("lastupdate", "ast4ucsServerLastupdate",
 	None, univention.admin.mapping.ListToString)
 mapping.register("configs", "ast4ucsServerConfig")
 mapping.register("blockedAreaCodes", "ast4ucsServerBlockedareacode")
+mapping.register("music", "ast4ucsServerMusic")
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module

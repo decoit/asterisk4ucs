@@ -20,3 +20,11 @@ class ast4ucsDurationSyntax(integer):
 				"Value must be a number between 1 and 120!"
 		return text
 
+class ast4ucsMusicSyntax(select):
+	name = "ast4ucsMusicSyntax"
+	def __init__(self, srv):
+		if srv:
+			self.choices = [(x,x) for x in srv.info.get("music", [])]
+		else:
+			self.choices = [("moh", "moh")]
+

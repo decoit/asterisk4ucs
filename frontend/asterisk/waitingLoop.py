@@ -98,6 +98,8 @@ class object(univention.admin.handlers.simpleLdap):
 			arg=None):
 		global mapping
 		global property_descriptions
+		property_descriptions["delayMusic"].syntax = \
+			univention.admin.syntax.ast4ucsMusicSyntax(superordinate)
 		self.co = co
 		self.lo = lo
 		self.dn = dn
