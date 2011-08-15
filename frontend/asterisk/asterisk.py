@@ -50,7 +50,14 @@ wizardpath="univentionAsteriskObject"
 childmodules = [x.module for x in
 	reduce(operator.add, modulesWithSuperordinates.values())]
 
-wizardsuperordinates = modulesWithSuperordinates.keys()
+def superordinatecmp(x, y):
+	if x == "None":
+		return -1
+	elif y == "None":
+		return 1
+	return cmp(x, y)
+
+wizardsuperordinates = sorted(modulesWithSuperordinates.keys(), cmp=superordinatecmp)
 wizardtypesforsuper = {}
 for key, value in modulesWithSuperordinates.items():
 	wizardtypesforsuper[key] = [x.module for x in value]
