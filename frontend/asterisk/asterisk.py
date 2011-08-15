@@ -13,6 +13,7 @@ import univention.admin.handlers.asterisk.phoneType
 import univention.admin.handlers.asterisk.mailbox
 import univention.admin.handlers.asterisk.faxGroup
 import univention.admin.handlers.asterisk.server
+import univention.admin.handlers.asterisk.fax
 import operator
 
 module = "asterisk/asterisk"
@@ -34,6 +35,7 @@ modulesWithSuperordinates = {
 		univention.admin.handlers.asterisk.phoneType,
 		univention.admin.handlers.asterisk.mailbox,
 		univention.admin.handlers.asterisk.faxGroup,
+		univention.admin.handlers.asterisk.fax,
 	],
 }
 

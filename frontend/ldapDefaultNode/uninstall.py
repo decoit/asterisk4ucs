@@ -7,7 +7,7 @@ import univention.admin.uexceptions
 import univention.admin.handlers.container.cn
 from univention.admin.handlers.asterisk \
 	import contact, phoneGroup, waitingLoop, sipPhone, conferenceRoom, \
-		phoneType, mailbox, faxGroup, server
+		phoneType, mailbox, faxGroup, server, fax
 
 ucr = univention.config_registry.ConfigRegistry()
 ucr.load()
@@ -42,7 +42,7 @@ config = univention.admin.config.config()
 base = univention.admin.uldap.position(ldap.base)
 
 for entrytype in [contact, waitingLoop, phoneGroup, sipPhone, conferenceRoom,
-		phoneType, mailbox, faxGroup, server]:
+		phoneType, mailbox, faxGroup, server, fax]:
 	for entry in entrytype.lookup(config, ldap, None):
 		entry.remove()
 

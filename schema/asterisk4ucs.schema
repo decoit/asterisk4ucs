@@ -13,6 +13,7 @@ objectIdentifier ast4ucsFaxgroup ast4ucsRoot:9
 objectIdentifier ast4ucsExtension ast4ucsRoot:10
 objectIdentifier ast4ucsServer ast4ucsRoot:11
 objectIdentifier ast4ucsUser ast4ucsRoot:12
+objectIdentifier ast4ucsFax ast4ucsRoot:13
 
 
 # --------------------- Default container ---------------
@@ -327,5 +328,17 @@ objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 		ast4ucsUserExtmode $
 		ast4ucsUserTimeout
 	) )
+
+
+# -------------- Faxes --------------------------------------------
+
+objectclass ( ast4ucsFax NAME 'ast4ucsFax'
+	DESC 'Asterisk4ucs: Fax'
+	SUP top
+	MUST ( cn )
+	MAY (
+		macAddress
+	))
+
 
 

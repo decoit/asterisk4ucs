@@ -87,15 +87,33 @@ def genSipconfEntry(co, lo, phone):
 	
 	return res
 
+def genSipconfFaxEntry(co, lo, phone):
+	res  = "[%s]\n" % (phone["extension"])
+	res += "type=friend\n"
+	res += "host=dynamic\n"
+	res += "secret=%s\n" % (phone["password"])
+	return res
+
 def genSipconf(co, lo, srv):
-	import sipPhone
+	import sipPhone, fax
 
 	conf = "; Automatisch generiert von asterisk4UCS\n\n"
 
+	conf += "\n\n; ===== Phones =====\n\n"
 	for phone in sipPhone.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (phone.dn)
 		try:
 			conf += genSipconfEntry(co, lo, phone)
+		except:
+			conf += re.sub("(?m)^", ";",
+				traceback.format_exc()[:-1] )
+		conf += "\n"
+
+	conf += "\n\n; ===== Faxes =====\n\n"
+	for phone in fax.lookup(co, lo, False):
+		conf += "; dn: %s\n" % (phone.dn)
+		try:
+			conf += genSipconfFaxEntry(co, lo, phone)
 		except:
 			conf += re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] )
@@ -354,6 +372,12 @@ def genExtensionsconf(co, lo, srv):
 	for areaCode in srv.info.get("blockedAreaCodes", []):
 		conf += "exten => _%s.,1,Hangup()\n" % (areaCode)
 
+	conf += "\n\n; ===== Faxe =====\n\n"
+	for phone in fax.lookup(co, lo, False):
+		conf += "exten => %s,1,Dial(SIP/%s)\n" % (
+			phone.info["extension"],
+			phone.info["extension"])
+	
 	return conf
 
 def genConfigs(co, lo, server):
