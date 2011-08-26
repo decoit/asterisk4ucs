@@ -288,6 +288,8 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 def genExtRoomEntry(co, lo, room):
 	room = room.info
 
+	# todo: optionen setzen
+
 	res  = "exten => %s1,1,Answer()\n" % (room["extension"])
 	res += "exten => %s1,n,Authenticate(%s,,%i)\n" % (
 		room["extension"], room["adminPin"], len(room["adminPin"]))

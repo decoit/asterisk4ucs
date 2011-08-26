@@ -23,7 +23,10 @@ layout = [
 			univention.admin.field("maxMembers") ],
 		[ univention.admin.field("pin"),
 			univention.admin.field("adminPin") ],
-		[ univention.admin.field("options") ],
+		[ univention.admin.field("announceCount"),
+			univention.admin.field("initiallyMuted") ],
+		[ univention.admin.field("musicOnHold"),
+			univention.admin.field("quietMode") ],
 	])
 ]
 
@@ -37,6 +40,7 @@ property_descriptions = {
 	"extension": univention.admin.property(
 		short_description="Durchwahl",
 		syntax=univention.admin.syntax.phone,
+		required=True,
 	),
 	"maxMembers": univention.admin.property(
 		short_description="Maximalzahl der Benutzer",
@@ -55,24 +59,43 @@ property_descriptions = {
 		required=True,
 		default="1234",
 	),
-	"options": univention.admin.property(
-		short_description="Optionen",
-		syntax=univention.admin.syntax.string,
+	"announceCount": univention.admin.property(
+		short_description="Beim Betreten Teilnehmerzahl ansagen",
+		syntax=univention.admin.syntax.boolean,
+	),
+	"initiallyMuted": univention.admin.property(
+		short_description=u"Teilnehmer zunächst muten",
+		syntax=univention.admin.syntax.boolean,
+	),
+	"musicOnHold": univention.admin.property(
+		short_description=u"Wartemusik für ersten Teilnehmer",
+		syntax=univention.admin.syntax.boolean,
+	),
+	"quietMode": univention.admin.property(
+		short_description="Kein Signal beim Betreten/Verlassen eines Teilnehmers",
+		syntax=univention.admin.syntax.boolean,
 	),
 }
 
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
-mapping.register("extension", "AstExtension",
+mapping.register("extension", "ast4ucsConfroomExtension",
 	None, univention.admin.mapping.ListToString)
-mapping.register("maxMembers", "AstMeetmeMembers",
+mapping.register("maxMembers", "ast4ucsConfroomMaxmembers",
 	None, univention.admin.mapping.ListToString)
-mapping.register("pin", "AstMeetmePin",
+mapping.register("pin", "ast4ucsConfroomPin",
 	None, univention.admin.mapping.ListToString)
-mapping.register("adminPin", "AstMeetmeAdminpin",
+mapping.register("adminPin", "ast4ucsConfroomAdminpin",
 	None, univention.admin.mapping.ListToString)
-mapping.register("options", "ast4ucsConfRoomOptions",
+
+mapping.register("announceCount", "ast4ucsConfroomAnnouncecount",
+	None, univention.admin.mapping.ListToString)
+mapping.register("initiallyMuted", "ast4ucsConfroomInitiallymuted",
+	None, univention.admin.mapping.ListToString)
+mapping.register("musicOnHold", "ast4ucsConfroomMusiconhold",
+	None, univention.admin.mapping.ListToString)
+mapping.register("quietMode", "ast4ucsConfroomQuietmode",
 	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
@@ -107,15 +130,14 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsConferenceRoom',
-			'AsteriskExtension', 'AsteriskMeetme' ])]
+		return [('objectClass', ['top', 'ast4ucsConfroom'])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
-			'objectClass', "ast4ucsConferenceRoom")
+			'objectClass', "ast4ucsConfroom")
 	])
  
 	if filter_s:
@@ -131,5 +153,5 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	return res
 
 def identify(dn, attr, canonical=0):
-	return 'ast4ucsConferenceRoom' in attr.get('objectClass', [])
+	return 'ast4ucsConfroom' in attr.get('objectClass', [])
 
