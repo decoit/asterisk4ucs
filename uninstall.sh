@@ -35,14 +35,9 @@ rm "$UNI_REGINFO_PATH/categories/asterisk4ucs.cfg"
 rm "$UNI_REGINFO_PATH/variables/asterisk4ucs.cfg"
 echo -e "\t\t\t\t\t\t\tdone."
 
-echo "Removing UCR variables..."
-ucr unset asterisk/mailbox/maxlength
-ucr unset asterisk/mailbox/attach
-ucr unset asterisk/mailbox/emailsubject
-ucr unset asterisk/mailbox/emailbody
-ucr unset asterisk/mailbox/emaildateformat
-ucr unset asterisk/mailbox/mailcommand
-echo -e "\t\t\t\t\t\t\tdone."
+# echo "Removing UCR variables..."
+# ucr unset asterisk/mailbox/maxlength
+# echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstalling UDM module..."
 rm "$UNI_UDM_PATH/syntax.d/asterisk.py"

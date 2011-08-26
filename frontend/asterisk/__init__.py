@@ -151,18 +151,15 @@ def genVoicemailconf(co, lo, srv):
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
 
 	conf += "[general]\n"
-	conf += "maxsecs=%s\n" % (ucr.get(
-				"asterisk/mailbox/maxlength", "120"))
-	conf += "attach=%s\n" % (ucr.get(
-				"asterisk/mailbox/attach", "yes"))
-	conf += "emailsubject=%s\n" % (ucr.get(
-				"asterisk/mailbox/emailsubject", "-"))
-	conf += "emailbody=%s\n" % (ucr.get(
-				"asterisk/mailbox/emailbody", "-"))
-	conf += "emaildateformat=%s\n" % (ucr.get(
-				"asterisk/mailbox/emaildateformat", "-"))
-	conf += "mailcommand=%s\n" % (ucr.get(
-				"asterisk/mailbox/mailcommand", "/bin/false"))
+	conf += "maxsecs=%s\n" % (srv.info["mailboxMaxlength"])
+	conf += "emailsubject=%s\n" % (srv.info["mailboxEmailsubject"])
+	conf += "emailbody=%s\n" % (srv.info["mailboxEmailbody"])
+	conf += "emaildateformat=%s\n" % (srv.info["mailboxEmaildateformat"])
+	conf += "mailcommand=%s\n" % (srv.info["mailboxMailcommand"])
+	if "1" in srv.info["mailboxAttach"]:
+		conf += "attach=yes\n"
+	else:
+		conf += "attach=no\n"
 	conf += "\n"
 	conf += "[default]\n"
 	

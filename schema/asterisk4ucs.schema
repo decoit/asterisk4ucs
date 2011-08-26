@@ -81,12 +81,12 @@ attributetype ( ast4ucsMailbox:1 NAME 'ast4ucsMailboxPassword'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-attributetype ( ast4ucsMailbox:3 NAME 'ast4ucsMailboxNotifybymail'
+attributetype ( ast4ucsMailbox:2 NAME 'ast4ucsMailboxNotifybymail'
 	DESC 'Asterisk4ucs: Mailbox Notifybymail'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-attributetype ( ast4ucsMailbox:7 NAME 'ast4ucsMailboxId'
+attributetype ( ast4ucsMailbox:3 NAME 'ast4ucsMailboxId'
 	DESC 'Asterisk4ucs: Mailbox Id'
 	EQUALITY integerMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
@@ -287,6 +287,36 @@ attributetype ( ast4ucsServer:7 NAME 'ast4ucsServerDefaultext'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( ast4ucsServer:8 NAME 'ast4ucsServerMailboxmaxlen'
+	DESC 'Asterisk4ucs: Server Mailboxmaxlen'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsServer:9 NAME 'ast4ucsServerMailboxattach'
+	DESC 'Asterisk4ucs: Server Mailboxattach'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsServer:10 NAME 'ast4ucsServerMailboxemailsubject'
+	DESC 'Asterisk4ucs: Server Mailboxemailsubject'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsServer:11 NAME 'ast4ucsServerMailboxemailbody'
+	DESC 'Asterisk4ucs: Server Mailboxemailbody'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsServer:12 NAME 'ast4ucsServerMailboxemaildateformat'
+	DESC 'Asterisk4ucs: Server Mailboxemaildateformat'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsServer:13 NAME 'ast4ucsServerMailboxemailcommand'
+	DESC 'Asterisk4ucs: Server Mailboxemailcommand'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 	DESC 'Asterisk4ucs: Server'
 	SUP top
@@ -300,7 +330,13 @@ objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 		ast4ucsServerBlockedareacode $
 		ast4ucsServerMusic $
 		ast4ucsServerExtnum $
-		ast4ucsServerDefaultext
+		ast4ucsServerDefaultext $
+		ast4ucsServerMailboxmaxlen $
+		ast4ucsServerMailboxattach $
+		ast4ucsServerMailboxemailsubject $
+		ast4ucsServerMailboxemailbody $
+		ast4ucsServerMailboxemaildateformat $
+		ast4ucsServerMailboxemailcommand
 	) )
 
 

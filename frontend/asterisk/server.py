@@ -24,6 +24,14 @@ layout = [
 		[ univention.admin.field("blockedAreaCodes"),
 			univention.admin.field("blockInternational") ],
 	]),
+	univention.admin.tab('Anrufbeantworter', 'Anrufbeantworter', [
+		[ univention.admin.field("mailboxMaxlength") ],
+		[ univention.admin.field("mailboxEmailsubject"),
+			univention.admin.field("mailboxEmailbody") ],
+		[ univention.admin.field("mailboxEmaildateformat"),
+			univention.admin.field("mailboxAttach") ],
+		[ univention.admin.field("mailboxMailcommand") ],
+	]),
 	univention.admin.tab('Musik', 'Warteschlangenmusik', [
 		[ univention.admin.field("music") ],
 	], advanced=True),
@@ -92,6 +100,45 @@ property_descriptions = {
 		short_description="Standard-Extension",
 		syntax=univention.admin.syntax.phone,
 	),
+	"mailboxMaxlength": univention.admin.property(
+		short_description=u"Maximale Länge einer Sprachnachricht (Sekunden)",
+		syntax=univention.admin.syntax.integer,
+		required=True,
+		default="300",
+	),
+	"mailboxEmailsubject": univention.admin.property(
+		short_description="Betreff der eMails",
+		syntax=univention.admin.syntax.string,
+		required=True,
+		default="New message from ${VM_CALLERID}",
+	),
+	"mailboxEmailbody": univention.admin.property(
+		short_description="Textkörper der eMails",
+		syntax=univention.admin.syntax.long_string,
+		required=True,
+		default="Hello ${VM_NAME},\n\nThere is a new message " + \
+			"in mailbox ${VM_MAILBOX}.",
+	),
+	"mailboxEmaildateformat": univention.admin.property(
+		short_description="Datumsformat in eMails",
+		syntax=univention.admin.syntax.string,
+		required=True,
+		default="%d.%m.%Y %H:%M",
+	),
+	"mailboxAttach": univention.admin.property(
+		short_description="Sprachnachricht an eMails anhängen?",
+		syntax=univention.admin.syntax.boolean,
+		required=True,
+		default="1",
+	),
+	"mailboxMailcommand": univention.admin.property(
+		short_description="Befehl zum Versenden der eMails",
+		long_description=u"Programm zum Versenden von E-Mails " + \
+			"(unbedingt den absoluten Pfad angeben!)",
+		syntax=univention.admin.syntax.string,
+		required=True,
+		default="/usr/sbin/sendmail -t",
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -106,6 +153,19 @@ mapping.register("blockedAreaCodes", "ast4ucsServerBlockedareacode")
 mapping.register("music", "ast4ucsServerMusic")
 mapping.register("extnums", "ast4ucsServerExtnum")
 mapping.register("defaultext", "ast4ucsServerDefaultext",
+	None, univention.admin.mapping.ListToString)
+
+mapping.register("mailboxMaxlength", "ast4ucsServerMailboxmaxlen",
+	None, univention.admin.mapping.ListToString)
+mapping.register("mailboxEmailsubject", "ast4ucsServerMailboxemailsubject",
+	None, univention.admin.mapping.ListToString)
+mapping.register("mailboxEmailbody", "ast4ucsServerMailboxemailbody",
+	None, univention.admin.mapping.ListToString)
+mapping.register("mailboxEmaildateformat", "ast4ucsServerMailboxemaildateformat",
+	None, univention.admin.mapping.ListToString)
+mapping.register("mailboxAttach", "ast4ucsServerMailboxattach",
+	None, univention.admin.mapping.ListToString)
+mapping.register("mailboxMailcommand", "ast4ucsServerMailboxemailcommand",
 	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
