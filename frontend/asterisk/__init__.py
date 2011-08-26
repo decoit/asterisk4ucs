@@ -233,31 +233,6 @@ def genMusiconholdconf(co, lo, srv):
 
 	return conf
 
-def genConfbridgeconf(co, lo, srv):
-	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
-
-	return conf
-
-def genMeetmeconf(co, lo, srv):
-	import conferenceRoom
-
-	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
-
-	for room in conferenceRoom.lookup(co, lo, False):
-		conf += "; dn: %s\n" % (room.dn)
-		try:
-			conf += "conf => %s,%s,%s\n"%(
-				room.info["extension"],
-				room.info.get("pin", ""),
-				room.info.get("adminPin", ""),
-			)
-		except:
-			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] )
-		conf += "\n"
-
-	return conf
-
 def genExtSIPPhoneEntry(co, lo, extenPhone):
 	from univention.admin.handlers.users import user
 	import mailbox
@@ -312,12 +287,21 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 
 def genExtRoomEntry(co, lo, room):
 	room = room.info
-	
-	res  = "exten => %s,1,Answer()\n" % (room["extension"])
-	res += "exten => %s,n,ConfBridge(%s)\n" % (
+
+	res  = "exten => %s1,1,Answer()\n" % (room["extension"])
+	res += "exten => %s1,n,Authenticate(%s,,%i)\n" % (
+		room["extension"], room["adminPin"], len(room["adminPin"]))
+	res += "exten => %s1,n,ConfBridge(%s,aMs)\n" % (
+		room["extension"], room["extension"])
+	res += "exten => %s1,n,Hangup()\n" % (room["extension"])
+	res += "; -------\n"
+	res += "exten => %s,1,Answer()\n" % (room["extension"])
+	res += "exten => %s,n,Authenticate(%s,,%i)\n" % (
+		room["extension"], room["pin"], len(room["pin"]))
+	res += "exten => %s,n,ConfBridge(%s,Ms)\n" % (
 		room["extension"], room["extension"])
 	res += "exten => %s,n,Hangup()\n" % (room["extension"])
-	
+
 	return res
 
 def genExtQueueEntry(co, lo, queue):
@@ -396,7 +380,6 @@ def genConfigs(co, lo, server):
 		'voicemail.conf': genVoicemailconf,
 		'queues.conf': genQueuesconf,
 		'musiconhold.conf': genMusiconholdconf,
-		'confbridge.conf': genConfbridgeconf,
 		'extensions.conf': genExtensionsconf,
 	}
 

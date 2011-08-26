@@ -46,11 +46,13 @@ property_descriptions = {
 	"pin": univention.admin.property(
 		short_description="Pin",
 		syntax=univention.admin.syntax.string,
+		required=True,
 		default="1234",
 	),
 	"adminPin": univention.admin.property(
 		short_description="Admin-Pin",
 		syntax=univention.admin.syntax.string,
+		required=True,
 		default="1234",
 	),
 	"options": univention.admin.property(
