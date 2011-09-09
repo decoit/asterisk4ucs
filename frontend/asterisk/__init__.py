@@ -288,20 +288,28 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 def genExtRoomEntry(co, lo, room):
 	room = room.info
 
-	# todo: optionen setzen
+	flags = "s"
+	if room.get("announceCount") == "1":
+		flags += "c"
+	if room.get("initiallyMuted") == "1":
+		flags += "m"
+	if room.get("quietMode") == "1":
+		flags += "q"
+	if room.get("musicOnHold") == "1":
+		flags += "M"
 
 	res  = "exten => %s1,1,Answer()\n" % (room["extension"])
 	res += "exten => %s1,n,Authenticate(%s,,%i)\n" % (
 		room["extension"], room["adminPin"], len(room["adminPin"]))
-	res += "exten => %s1,n,ConfBridge(%s,aMs)\n" % (
-		room["extension"], room["extension"])
+	res += "exten => %s1,n,ConfBridge(%s,a%s)\n" % (
+		room["extension"], room["extension"], flags)
 	res += "exten => %s1,n,Hangup()\n" % (room["extension"])
 	res += "; -------\n"
 	res += "exten => %s,1,Answer()\n" % (room["extension"])
 	res += "exten => %s,n,Authenticate(%s,,%i)\n" % (
 		room["extension"], room["pin"], len(room["pin"]))
-	res += "exten => %s,n,ConfBridge(%s,Ms)\n" % (
-		room["extension"], room["extension"])
+	res += "exten => %s,n,ConfBridge(%s,%s)\n" % (
+		room["extension"], room["extension"], flags)
 	res += "exten => %s,n,Hangup()\n" % (room["extension"])
 
 	return res
