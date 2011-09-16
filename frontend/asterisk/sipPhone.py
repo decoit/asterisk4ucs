@@ -6,8 +6,8 @@ import univention.admin.syntax
 
 module = "asterisk/sipPhone"
 childs = 0
-short_description = u"SIP-Telefon"
-long_description = u"SIP-Telefon"
+short_description = u"IP-Telefon"
+long_description = u"IP-Telefon"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
