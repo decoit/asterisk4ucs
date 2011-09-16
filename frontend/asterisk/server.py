@@ -108,12 +108,40 @@ property_descriptions = {
 	),
 	"mailboxEmailsubject": univention.admin.property(
 		short_description="Betreff der eMails",
+		long_description=u"""Die folgenden Platzhalter können verwendet werden:
+     ${VM_NAME}      Name des Mailbox-Inhabers
+     ${VM_DUR}       Länge der Nachricht
+     ${VM_MSGNUM}    Nummer der Nachricht
+     ${VM_MAILBOX}   Name der Mailbox
+     ${VM_CALLERID}  Telefonnummer und Name des Anrufers
+     ${VM_CIDNUM}    Telefonnummer des Anrufers
+     ${VM_CIDNAME}   Name des Anrufers
+     ${VM_DATE}      Datum und Uhrzeit des Anrufs
+     ${VM_MESSAGEFILE}
+                     Name der Sounddatei, in der die
+                     Nachricht abgespeichert ist""",
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="New message from ${VM_CALLERID}",
 	),
 	"mailboxEmailbody": univention.admin.property(
 		short_description="Textkörper der eMails",
+		long_description=u"""Die folgenden Platzhalter können verwendet werden:
+     ${VM_NAME}      Name des Mailbox-Inhabers
+     ${VM_DUR}       Länge der Nachricht
+     ${VM_MSGNUM}    Nummer der Nachricht
+     ${VM_MAILBOX}   Name der Mailbox
+     ${VM_CALLERID}  Telefonnummer und Name des Anrufers
+     ${VM_CIDNUM}    Telefonnummer des Anrufers
+     ${VM_CIDNAME}   Name des Anrufers
+     ${VM_DATE}      Datum und Uhrzeit des Anrufs
+     ${VM_MESSAGEFILE}
+                     Name der Sounddatei, in der die
+                     Nachricht abgespeichert ist
+
+Weiterhin können die folgenden Escapesequenzen verwendet werden:
+     \\n             Neue Zeile
+     \\t             Tabulator-Zeichen""",
 		syntax=univention.admin.syntax.long_string,
 		required=True,
 		default="Hello ${VM_NAME},\n\nThere is a new message " + \
@@ -121,6 +149,28 @@ property_descriptions = {
 	),
 	"mailboxEmaildateformat": univention.admin.property(
 		short_description="Datumsformat in eMails",
+		long_description=u"""Folgt der strftime-Notation:
+%a    Abgekürzter Wochentag
+%A    Ausgeschriebener Wochentag
+%b    Abgekürzter Monatsname
+%B    Voller Monatsname
+%c    Datum und Uhrzeit
+%d    Tag im Monat (1-31)
+%H    Stunde (0-23)
+%I    Stunde (0-12)
+%j    Tag im Jahr (1-366)
+%m    Monat (1-12)
+%M    Minute (00-59)
+%p    AM/PM
+%S    Sekunde (00-59)
+%w    Wochentag (0-6)
+%W    Woche im Jahr (0-52)
+%x    Lokale Datumsdarstellung
+%X    Lokale Zeit-Darstellung
+%y    Jahr ohne Jahrhundert (0-99)
+%Y    Jahr mit Jahrhundertangabe
+%Z    Name der Zeitzone (z.B. MEZ)
+%%    Das '%'-Zeichen""",
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="%d.%m.%Y %H:%M",
