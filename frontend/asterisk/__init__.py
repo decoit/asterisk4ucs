@@ -298,19 +298,40 @@ def genExtRoomEntry(co, lo, room):
 	if room.get("musicOnHold") == "1":
 		flags += "M"
 
+	try:
+		maxusers = int(room.get("maxMembers", "foo"))
+	except ValueError:
+		maxusers = 100
+
 	res  = "exten => %s1,1,Answer()\n" % (room["extension"])
+	res += "exten => %s1,n,Set(GROUP()=conf_%s)\n" % (
+		room["extension"], room["extension"])
+	res += "exten => %s1,n,GotoIf($[ ${GROUP_COUNT()} > %i ]?limit)\n" % (
+		room["extension"], maxusers)
 	res += "exten => %s1,n,Authenticate(%s,,%i)\n" % (
 		room["extension"], room["adminPin"], len(room["adminPin"]))
 	res += "exten => %s1,n,ConfBridge(%s,a%s)\n" % (
 		room["extension"], room["extension"], flags)
 	res += "exten => %s1,n,Hangup()\n" % (room["extension"])
+	res += "exten => %s1,n(limit),Playback(denial-of-service)\n" % (
+		room["extension"])
+	res += "exten => %s1,n,Congestion()\n" % (
+		room["extension"])
 	res += "; -------\n"
 	res += "exten => %s,1,Answer()\n" % (room["extension"])
+	res += "exten => %s,n,Set(GROUP()=conf_%s)\n" % (
+		room["extension"], room["extension"])
+	res += "exten => %s,n,GotoIf($[ ${GROUP_COUNT()} > %i ]?limit)\n" % (
+		room["extension"], maxusers)
 	res += "exten => %s,n,Authenticate(%s,,%i)\n" % (
 		room["extension"], room["pin"], len(room["pin"]))
 	res += "exten => %s,n,ConfBridge(%s,%s)\n" % (
 		room["extension"], room["extension"], flags)
 	res += "exten => %s,n,Hangup()\n" % (room["extension"])
+	res += "exten => %s,n(limit),Playback(denial-of-service)\n" % (
+		room["extension"])
+	res += "exten => %s,n,Congestion()\n" % (
+		room["extension"])
 
 	return res
 
