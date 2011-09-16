@@ -22,6 +22,8 @@ mailbox: kombiniert aus linphone-icon und univention-mail-icon
 fax: http://www.iconfinder.com/icondetails/17366/80/fax_icon
 (Creative Commons: Attribution, Share Alike)
 
+phoneBook: http://findicons.com/icon/263500/address_book
+(Creative Commons Attribution (by))
 
 
 gifs wurden erzeugt mit:
