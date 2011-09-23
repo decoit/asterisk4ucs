@@ -51,7 +51,8 @@ property_descriptions = {
 	"host": univention.admin.property(
 		short_description="Host",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=univentionHost",
+                        filter="(&(objectClass=univentionHost)" + \
+				"(univentionService=Asterisk))",
                         attribute=['computers/computer: name'],
                         value='computers/computer: dn',
                 ),
