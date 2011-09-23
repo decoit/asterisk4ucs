@@ -1,0 +1,24 @@
+VERSION=2
+pkgname="asterisk4ucs"
+
+if ! test -e "/usr/share/univention-join/.joined"; then
+        echo "The server has not joined yet"
+        exit 1
+fi
+
+touch /usr/lib/univention-install/.index.txt
+
+test -n "`grep "univention-$pkgname v${VERSION} successful" /usr/lib/univention-install/.index.txt`" && exit 1
+
+eval `univention-baseconfig shell`
+
+if [ "$server_role" = "domaincontroller_master" -o "$server_role" = "domaincontroller_backup" -o "$server_role" = "domaincontroller_slave" -o "$server_role" = "memberserver" ]; then
+	univention-admin container/cn create --ignore_exists $@ --position cn=univention,$ldap_base --set name=services
+	univention-admin settings/service create  --ignore_exists $@ --position cn=services,cn=univention,$ldap_base --set name=Asterisk
+	univention-directory-manager "computers/$server_role" modify "$@" --dn "$ldap_hostdn" --append service=Asterisk
+fi
+
+test -n "`grep "univention-$pkgname v${VERSION} successful" /usr/lib/univention-install/.index.txt`" || echo "univention-$pkgname v${VERSION} successful" >>/usr/lib/univention-install/.index.txt
+
+exit 0
+
