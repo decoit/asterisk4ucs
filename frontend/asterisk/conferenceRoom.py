@@ -3,6 +3,7 @@
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+from univention.admin import uexceptions
 
 module = "asterisk/conferenceRoom"
 childs = 0
@@ -121,6 +122,14 @@ class object(univention.admin.handlers.simpleLdap):
 	def open(self):
 		univention.admin.handlers.simpleLdap.open(self)
 		self.save()
+
+	def _ldap_pre_ready(self):
+		if self.info.get("pin"):
+			if self.info.get("adminPin") == self.info["pin"]:
+				class pinError(uexceptions.base):
+					message="Pin und Admin-Pin dürfen "+\
+					"nicht übereinstimmen."
+				raise pinError
 
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
