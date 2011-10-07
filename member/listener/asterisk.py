@@ -7,6 +7,7 @@ attributes = ["ast4ucsServerLastupdate"]
 
 import listener
 import zlib
+from subprocess import Popen, PIPE
 
 success = False
 
@@ -19,8 +20,22 @@ def refreshConfig(configs):
 			zlib.decompress(data.decode("base64")))
 	listener.unsetuid()
 
+def sendMail(templ):
+	if not admins:
+		return
+
+	hostname = "fubar"
+	body = templ.substitute(hostname=hostname)
+	for admin in admins:
+		body = ( "To: %s\r\n" % admin ) + body
+
+	sendmail = Popen(["/usr/sbin/sendmail", "-t"],
+			stdin=PIPE, stdout=PIPE, stderr=PIPE)
+	stdout, stderr = sendmail.communicate(body)
+
 def handler(dn, newdata, olddata):
-	global success
+	global success, admins
+	admins = newdata.get("admins")
 	success = False
 	
 	if not newdata:
@@ -35,10 +50,30 @@ def handler(dn, newdata, olddata):
 
 def postrun():
 	if not success:
+		sendMail(failMail)
 		return
 
 	bin = listener.baseConfig["asterisk/asteriskbin"]
 	listener.setuid(0)
 	listener.run(bin, [bin, "-r", "-x", "core reload"])
 	listener.unsetuid()
+
+	sendMail(successMail)
+
+
+successMail = Template"""\
+From: Asterisk auf {hostname} <asterisk@{hostname}>
+Subject: Neue Konfiguration erfolgreich Eingespielt!
+
+(Kein Text)
+""".replace("\n", "\r\n"))
+
+
+failMail = Template("""\
+From: Asterisk auf {hostname} <asterisk@{hostname}>
+Subject: Fehler beim Einspielen der Konfiguration!
+
+(Hier wird später eine sehr hilfreiche Fehlermeldung stehen.)
+""".replace("\n", "\r\n"))
+
 
