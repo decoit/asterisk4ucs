@@ -1,24 +1,23 @@
-VERSION=2
+VERSION=3
 pkgname="asterisk4ucs"
 
-if ! test -e "/usr/share/univention-join/.joined"; then
-        echo "The server has not joined yet"
-        exit 1
-fi
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
 
-touch /usr/lib/univention-install/.index.txt
+eval "$(univention-config-registry shell)"
+NAME="Asterisk Server"
 
-test -n "`grep "univention-$pkgname v${VERSION} successful" /usr/lib/univention-install/.index.txt`" && exit 1
+univention-directory-manager container/cn      create "$@" --ignore_exists \
+	--set name=services \
+	--position             "cn=univention,$ldap_base"
+univention-directory-manager  settings/service create "$@" --ignore_exists \
+	--set name="$NAME" \
+	--position "cn=services,cn=univention,$ldap_base"
+univention-directory-manager "computers/$server_role" modify "$@" \
+	--dn "$ldap_hostdn" \
+	--append service="$NAME"
 
-eval `univention-baseconfig shell`
-
-if [ "$server_role" = "domaincontroller_master" -o "$server_role" = "domaincontroller_backup" -o "$server_role" = "domaincontroller_slave" -o "$server_role" = "memberserver" ]; then
-	univention-admin container/cn create --ignore_exists $@ --position cn=univention,$ldap_base --set name=services
-	univention-admin settings/service create  --ignore_exists $@ --position cn=services,cn=univention,$ldap_base --set name=Asterisk
-	univention-directory-manager "computers/$server_role" modify "$@" --dn "$ldap_hostdn" --append service=Asterisk
-fi
-
-test -n "`grep "univention-$pkgname v${VERSION} successful" /usr/lib/univention-install/.index.txt`" || echo "univention-$pkgname v${VERSION} successful" >>/usr/lib/univention-install/.index.txt
+joinscript_save_current_version
 
 exit 0
 
