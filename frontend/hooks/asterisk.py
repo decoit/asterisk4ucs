@@ -15,7 +15,9 @@ class AsteriskUsersUserHook(simpleHook):
 		def nameFromDn(dn):
 			return dn.split(",")[0].split("=", 1)[1]
 
-		for phonedn in module.info.get("phones"):
+		for phonedn in module.info.get("phones", []):
+			if not phonedn:
+				continue
 			phoneUsers = user.lookup(module.co, module.lo,
 				"(&(ast4ucsUserPhone=%s)(!(uid=%s)))" % (
 				escapeForLdapFilter(phonedn),
