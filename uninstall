@@ -5,7 +5,7 @@ set -u
 
 cd "`dirname $0`"
 
-. settings.sh
+. settings.bash
 
 echo "Deleting default container for asterisk data..."
 python2.4 frontend/ldapDefaultNode/uninstall.py

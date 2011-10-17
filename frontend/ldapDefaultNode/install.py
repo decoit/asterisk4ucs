@@ -4,6 +4,7 @@
 import univention.config_registry
 import univention.admin.uldap
 import univention.admin.uexceptions
+import univention.admin.config
 import univention.admin.handlers.container.cn as container
 
 ucr = univention.config_registry.ConfigRegistry()

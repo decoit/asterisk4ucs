@@ -5,7 +5,7 @@ set -u
 
 cd "`dirname $0`"
 
-. settings.sh
+. settings.bash
 
 echo "Installing schemata..."
 cd schema/
@@ -55,11 +55,11 @@ install -m664 frontend/asterisk/* "$UNI_UDM_PATH/handlers/asterisk/"
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Creating extended attributes for UDM user module..."
-sh frontend/user-phone-extension/install.sh
+frontend/user-phone-extension/install
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Creating default container for asterisk data..."
-python2.4 frontend/ldapDefaultNode/install.py
+$UNI_PYTHON frontend/ldapDefaultNode/install.py
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Restarting apache2..."
