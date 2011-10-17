@@ -6,7 +6,7 @@ shopt -s extglob
 
 cd "`dirname $0`"
 
-. settings.sh
+. settings.bash
 
 echo "Deleting directory listener module..."
 rm "$UNI_LISTENER_PATH/asterisk.py"
@@ -24,6 +24,10 @@ echo -e "\t\t\t\t\t\t\tdone."
 echo "Removing UCR variables..."
 ucr unset asterisk/confpath
 ucr unset asterisk/asteriskbin
+echo -e "\t\t\t\t\t\t\tdone."
+
+echo "Deleting join script..."
+rm "$UNI_JOIN_PATH/42univention-asterisk4ucs.inst"
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstallation successful."

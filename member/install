@@ -6,7 +6,7 @@ shopt -s extglob
 
 cd "`dirname $0`"
 
-. settings.sh
+. settings.bash
 
 echo "Moving current asterisk configuration to preUCS.bak..."
 mkdir -p "$AST_CONF_PATH"
@@ -38,6 +38,12 @@ echo -e "\t\t\t\t\t\t\tdone."
 echo "Restarting univention directory listener..."
 invoke-rc.d univention-directory-listener restart
 echo -e "\t\t\t\t\t\t\tdone."
+
+echo "Installing join script..."
+install -m775 package/42univention-asterisk4ucs.inst "$UNI_JOIN_PATH/"
+echo -e "\t\t\t\t\t\t\tdone."
+
+univention-run-join-scripts
 
 echo "Installation successful."
 
