@@ -3,17 +3,17 @@
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+from univention.admin.layout import Tab
 
 module = "asterisk/phoneBook"
 childs = 1
-short_description = u"Telefonbuch"
-long_description = u"Telefonbuch"
+short_description = u"Asterisk: Telefonbuch"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("commonName") ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		'commonName',
 	]),
 ]
 
@@ -34,7 +34,7 @@ class object(univention.admin.handlers.simpleLdap):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
-			arg=None):
+			attributes=[]):
 		global mapping
 		global property_descriptions
 		self.co = co
@@ -79,9 +79,10 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		filter.expressions.append(filter_p)
  
 	res = []
-	for dn in lo.searchDn(unicode(filter), base, scope, unique, required, 
-			timeout, sizelimit):
-		res.append(object(co, lo, None, dn))
+	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
+			required, timeout, sizelimit):
+		res.append(object(co, lo, None, dn=dn,
+				superordinate=superordinate, attributes=attrs))
 	return res
 
 def identify(dn, attr, canonical=0):
