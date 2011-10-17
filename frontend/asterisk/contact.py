@@ -3,6 +3,7 @@
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+from univention.admin.layout import Tab
 
 module = "asterisk/contact"
 childs = 0
@@ -12,11 +13,8 @@ operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Kontaktdaten', [
-		[ univention.admin.field("commonName"),
-			univention.admin.field("title")],
-		[ univention.admin.field("telephoneNumber"),
-			univention.admin.field("organisation") ],
+	Tab('Allgemein', 'Allgemeine Kontaktdaten', layout = [
+		'commonName', 'title', 'telephoneNumber', 'organisation',
 	])
 ]
 
@@ -37,7 +35,7 @@ property_descriptions = {
 	),
 	"telephoneNumber": univention.admin.property(
 		short_description="Telefonnummer",
-		syntax=univention.admin.syntax.phone,
+		syntax=univention.admin.syntax.string,
 		multivalue=True
 	),
 }
@@ -55,7 +53,7 @@ class object(univention.admin.handlers.simpleLdap):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
-			arg=None):
+			attributes=[]):
 		global mapping
 		global property_descriptions
 		self.co = co

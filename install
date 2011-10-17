@@ -31,15 +31,15 @@ if [ ! \( -r /var/run/slapd/slapd.pid \
 fi
 echo -e "\t\t\t\t\t\t\tdone."
 
-echo "Installing icons..."
-mkdir -p "$UNI_ICON_PATH/asterisk"
-install -m664 icons/asterisk/* "$UNI_ICON_PATH/asterisk/"
-echo -e "\t\t\t\t\t\t\tdone."
+#echo "Installing icons..."
+#mkdir -p "$UNI_ICON_PATH/asterisk"
+#install -m664 icons/asterisk/* "$UNI_ICON_PATH/asterisk/"
+#echo -e "\t\t\t\t\t\t\tdone."
 
-echo "Installing info-texts for UCR variables..."
-install -m664 ucr/category.cfg "$UNI_REGINFO_PATH/categories/asterisk4ucs.cfg"
-install -m664 ucr/variables.cfg "$UNI_REGINFO_PATH/variables/asterisk4ucs.cfg"
-echo -e "\t\t\t\t\t\t\tdone."
+#echo "Installing info-texts for UCR variables..."
+#install -m664 ucr/category.cfg "$UNI_REGINFO_PATH/categories/asterisk4ucs.cfg"
+#install -m664 ucr/variables.cfg "$UNI_REGINFO_PATH/variables/asterisk4ucs.cfg"
+#echo -e "\t\t\t\t\t\t\tdone."
 
 # echo "Setting default values for UCR variables..."
 # ucr set asterisk/mailbox/maxlength="$ast4ucs_ucr_mailbox_maxlength"
@@ -53,7 +53,7 @@ install -m664 frontend/hooks/asterisk.py "$UNI_UDM_PATH/hooks.d/"
 mkdir -p "$UNI_UDM_PATH/handlers/asterisk"
 install -m664 frontend/asterisk/* "$UNI_UDM_PATH/handlers/asterisk/"
 echo -e "\t\t\t\t\t\t\tdone."
-
+exit 0
 echo "Creating extended attributes for UDM user module..."
 frontend/user-phone-extension/install
 echo -e "\t\t\t\t\t\t\tdone."
