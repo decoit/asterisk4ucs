@@ -8,8 +8,17 @@ attributes = ["ast4ucsServerLastupdate"]
 import listener
 import zlib
 from subprocess import Popen, PIPE
+from string import Template
+import univention.debug
 
 success = False
+admins = ["bruns@decoit.de"]
+
+def debug(msg):
+	univention.debug.debug(
+		univention.debug.LISTENER,
+		univention.debug.WARN,
+		msg)
 
 def refreshConfig(configs):
 	prefix = "%s/" % listener.baseConfig["asterisk/confpath"]
@@ -21,19 +30,29 @@ def refreshConfig(configs):
 	listener.unsetuid()
 
 def sendMail(templ):
+	admins = ["bruns@decoit.de"]
+	debug("sendMail()")
 	if not admins:
+		debug(":-(")
 		return
+	debug(":-)")
 
 	hostname = "fubar"
 	body = templ.substitute(hostname=hostname)
+	debug("foo")
 	for admin in admins:
 		body = ( "To: %s\r\n" % admin ) + body
+	debug("bar")
 
+	debugfile = open("/tmp/debugfoo","w")
+	debug("baz")
 	sendmail = Popen(["/usr/sbin/sendmail", "-t"],
-			stdin=PIPE, stdout=PIPE, stderr=PIPE)
+			stdin=PIPE, stdout=debugfile, stderr=debugfile)
 	stdout, stderr = sendmail.communicate(body)
+	debug("sendMail(): success")
 
 def handler(dn, newdata, olddata):
+	debug("handler()")
 	global success, admins
 	admins = newdata.get("admins")
 	success = False
@@ -47,8 +66,10 @@ def handler(dn, newdata, olddata):
 
 	refreshConfig(newdata.get("ast4ucsServerConfig", []))
 	success = True
+	debug("handler(): success")
 
 def postrun():
+	debug("postrun()")
 	if not success:
 		sendMail(failMail)
 		return
@@ -57,11 +78,12 @@ def postrun():
 	listener.setuid(0)
 	listener.run(bin, [bin, "-r", "-x", "core reload"])
 	listener.unsetuid()
+	debug("postrun(): reload success")
 
 	sendMail(successMail)
 
 
-successMail = Template"""\
+successMail = Template("""\
 From: Asterisk auf {hostname} <asterisk@{hostname}>
 Subject: Neue Konfiguration erfolgreich Eingespielt!
 
