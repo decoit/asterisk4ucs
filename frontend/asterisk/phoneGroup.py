@@ -5,20 +5,18 @@ import univention.admin.handlers
 from univention.admin.handlers.asterisk import \
 	reverseFieldsLoad, reverseFieldsSave
 import univention.admin.syntax
+from univention.admin.layout import Tab
 
 module = "asterisk/phoneGroup"
 childs = 0
-short_description = u"Telefongruppe"
-long_description = u"Telefongruppe"
+short_description = u"Asterisk: Telefongruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("id") ],
-		[ univention.admin.field("callphones"),
-			univention.admin.field("pickupphones") ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		[ "commonName", "id" ],
+		[ "callphones", "pickupphones" ],
 	])
 ]
 

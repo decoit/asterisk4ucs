@@ -13,7 +13,7 @@ options = {}
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		'commonName',
+		[ 'commonName' ],
 	]),
 ]
 

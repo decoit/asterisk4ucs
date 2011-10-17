@@ -3,20 +3,19 @@
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+from univention.admin.layout import Tab
 
 module = "asterisk/phoneType"
 childs = 0
-short_description = u"Telefontyp"
-long_description = u"Telefontyp"
+short_description = u"Asterisk: Telefontyp"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Kenndaten', [
-		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("displaySize"),
-			univention.admin.field("manufacturer") ],
-		[ univention.admin.field("type") ],
+	Tab('Allgemein', 'Allgemeine Kenndaten', layout = [
+		[ "commonName" ],
+		[ "displaySize", "manufacturer" ],
+		[ "type" ],
 	])
 ]
 

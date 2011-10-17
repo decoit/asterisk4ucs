@@ -3,21 +3,19 @@
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+from univention.admin.layout import Tab
 
 module = "asterisk/fax"
 childs = 0
-short_description = u"Fax"
-long_description = u"Fax"
+short_description = u"Asterisk: Fax"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("extension"),
-			univention.admin.field("ipaddress")],
-		[ univention.admin.field("macaddress"),
-			univention.admin.field("hostname") ],
-		[ univention.admin.field("password") ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		[ "extension", "ipaddress" ],
+		[ "macaddress", "hostname", ],
+		[ "password" ],
 	])
 ]
 

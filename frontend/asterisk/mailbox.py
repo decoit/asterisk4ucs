@@ -3,19 +3,19 @@
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+from univention.admin.layout import Tab
 
 module = "asterisk/mailbox"
 childs = 0
-short_description = u"Anrufbeantworter"
-long_description = u"Anrufbeantworter"
+short_description = u"Asterisk: Anrufbeantworter"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("id") ],
-		[ univention.admin.field("password") ],
-		[ univention.admin.field("email") ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		[ "id" ],
+		[ "password" ],
+		[ "email" ],
 	])
 ]
 

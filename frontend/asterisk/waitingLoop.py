@@ -5,23 +5,20 @@ import univention.admin.handlers
 from univention.admin.handlers.asterisk import \
 	reverseFieldsLoad, reverseFieldsSave
 import univention.admin.syntax
+from univention.admin.layout import Tab
 
 module = "asterisk/waitingLoop"
 childs = 0
-short_description = u"Warteschlange"
-long_description = u"Warteschlange"
+short_description = u"Asterisk: Warteschlange"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("extension"),
-			univention.admin.field("strategy") ],
-		[ univention.admin.field("maxCalls"),
-			univention.admin.field("memberDelay") ],
-		[ univention.admin.field("members"),
-			univention.admin.field("delayMusic") ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		[ "commonName", "extension" ],
+		[ "strategy", "maxCalls" ],
+		[ "memberDelay", "members" ],
+		[ "delayMusic" ],
 	])
 ]
 

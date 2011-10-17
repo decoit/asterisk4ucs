@@ -3,26 +3,21 @@
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+from univention.admin.layout import Tab
 
 module = "asterisk/sipPhone"
 childs = 0
-short_description = u"IP-Telefon"
-long_description = u"IP-Telefon"
+short_description = u"Asterisk: IP-Telefon"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("extension"),
-			univention.admin.field("ipaddress")],
-		[ univention.admin.field("macaddress"),
-			univention.admin.field("hostname") ],
-		[ univention.admin.field("phonetype"),
-			univention.admin.field("profile") ],
-		[ univention.admin.field("password"),
-			univention.admin.field("waitingloops") ],
-		[ univention.admin.field("callgroups"),
-			univention.admin.field("pickupgroups") ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		[ "extension", "ipaddress" ],
+		[ "macaddress", "hostname" ],
+		[ "phonetype", "profile" ],
+		[ "password", "waitingloops" ],
+		[ "callgroups", "pickupgroups" ],
 	])
 ]
 

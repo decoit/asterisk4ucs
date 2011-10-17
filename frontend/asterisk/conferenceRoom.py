@@ -3,12 +3,12 @@
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+from univention.admin.layout import Tab
 from univention.admin import uexceptions
 
 module = "asterisk/conferenceRoom"
 childs = 0
-short_description = u"Konferenzraum"
-long_description = u"Konferenzraum"
+short_description = u"Asterisk: Konferenzraum"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
@@ -18,16 +18,12 @@ wizarddescription="Konferenzräume hinzufügen, editieren und löschen"
 wizardoperations={"add":["Add", "Add user."],"find":["Search", "Search for user(s)"]}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("extension"),
-			univention.admin.field("maxMembers") ],
-		[ univention.admin.field("pin"),
-			univention.admin.field("adminPin") ],
-		[ univention.admin.field("announceCount"),
-			univention.admin.field("initiallyMuted") ],
-		[ univention.admin.field("musicOnHold"),
-			univention.admin.field("quietMode") ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		[ "commonName", "extension" ],
+		[ "maxMembers" ],
+		[ "pin", "adminPin" ],
+		[ "announceCount", "initiallyMuted" ],
+		[ "musicOnHold", "quietMode" ],
 	])
 ]
 

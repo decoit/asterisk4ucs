@@ -4,41 +4,36 @@ import univention.admin.filter
 import univention.admin.handlers
 from univention.admin.handlers import asterisk
 import univention.admin.syntax
+from univention.admin.layout import Tab
 import time
 
 module = "asterisk/server"
 childs = 1
-short_description = u"Asterisk-Server"
-long_description = u"Asterisk-Server"
+short_description = u"Asterisk: Asterisk-Server"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("host") ],
-		[ univention.admin.field("lastupdate_gui"),
-			univention.admin.field("apply") ],
-		[ univention.admin.field("globalCallId") ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		[ "commonName" ],
+		[ "host" ],
+		[ "lastupdate_gui", "apply" ],
+		[ "globalCallId" ],
 	]),
-	univention.admin.tab('Vorwahlen', 'Gesperrte Vorwahlen', [
-		[ univention.admin.field("blockedAreaCodes"),
-			univention.admin.field("blockInternational") ],
+	Tab('Vorwahlen', 'Gesperrte Vorwahlen', layout = [
+		[ "blockedAreaCodes", "blockInternational" ],
 	]),
-	univention.admin.tab('Anrufbeantworter', 'Anrufbeantworter', [
-		[ univention.admin.field("mailboxMaxlength") ],
-		[ univention.admin.field("mailboxEmailsubject"),
-			univention.admin.field("mailboxEmailbody") ],
-		[ univention.admin.field("mailboxEmaildateformat"),
-			univention.admin.field("mailboxAttach") ],
-		[ univention.admin.field("mailboxMailcommand") ],
+	Tab('Anrufbeantworter', 'Anrufbeantworter', layout = [
+		[ "mailboxMaxlength" ],
+		[ "mailboxEmailsubject", "mailboxEmailbody" ],
+		[ "mailboxEmaildateformat", "mailboxAttach" ],
+		[ "mailboxMailcommand" ],
 	]),
-	univention.admin.tab('Musik', 'Warteschlangenmusik', [
-		[ univention.admin.field("music") ],
+	Tab('Musik', 'Warteschlangenmusik', layout = [
+		[ "music" ],
 	], advanced=True),
-	univention.admin.tab('Nummernkreise', 'Nummernkreise', [
-		[ univention.admin.field("extnums"),
-			univention.admin.field("defaultext") ],
+	Tab('Nummernkreise', 'Nummernkreise', layout = [
+		[ "extnums", "defaultext" ],
 	], advanced=True),
 ]
 

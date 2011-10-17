@@ -3,19 +3,18 @@
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+from univention.admin.layout import Tab
 
 module = "asterisk/faxGroup"
 childs = 0
-short_description = u"Faxgruppe"
-long_description = u"Faxgruppe"
+short_description = u"Asterisk: Faxgruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 layout = [
-	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
-		[ univention.admin.field("commonName") ],
-		[ univention.admin.field("extension") ],
-		[ univention.admin.field("members") ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		[ "commonName", "extension" ],
+		[ "members" ],
 	])
 ]
 
