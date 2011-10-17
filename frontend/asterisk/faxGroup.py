@@ -51,7 +51,7 @@ class object(univention.admin.handlers.simpleLdap):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
-			arg=None):
+			attributes=[]):
 		global mapping
 		global property_descriptions
 		self.co = co
