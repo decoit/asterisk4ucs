@@ -77,7 +77,7 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		univention.admin.filter.walk(filter_p, 
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
- 
+
 	res = []
 	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
 			required, timeout, sizelimit):

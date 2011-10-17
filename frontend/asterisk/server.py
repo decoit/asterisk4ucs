@@ -302,9 +302,10 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		filter.expressions.append(filter_p)
  
 	res = []
-	for dn in lo.searchDn(unicode(filter), base, scope, unique, required, 
-			timeout, sizelimit):
-		res.append(object(co, lo, None, dn))
+	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
+			required, timeout, sizelimit):
+		res.append(object(co, lo, None, dn=dn,
+				superordinate=superordinate, attributes=attrs))
 	return res
 
 def identify(dn, attr, canonical=0):
