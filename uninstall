@@ -12,7 +12,7 @@ $UNI_PYTHON frontend/ldapDefaultNode/uninstall.py
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Deleting extended attributes for UDM user module..."
-sh frontend/user-phone-extension/uninstall.sh
+frontend/user-phone-extension/uninstall
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstalling schemata..."
