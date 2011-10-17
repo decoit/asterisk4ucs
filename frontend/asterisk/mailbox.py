@@ -13,6 +13,7 @@ options = {}
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
+		[ "commonName" ],
 		[ "id" ],
 		[ "password" ],
 		[ "email" ],
@@ -28,7 +29,7 @@ property_descriptions = {
 	),
 	"id": univention.admin.property(
 		short_description="Mailbox-Nummer",
-		syntax=univention.admin.syntax.phone,
+		syntax=univention.admin.syntax.string,
 		required=True
 	),
 	"password": univention.admin.property(
@@ -56,7 +57,7 @@ class object(univention.admin.handlers.simpleLdap):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
-			arg=None):
+			attributes=[]):
 		global mapping
 		global property_descriptions
 		self.co = co
@@ -77,7 +78,7 @@ class object(univention.admin.handlers.simpleLdap):
 		self.save()
 
         def _ldap_pre_ready(self):
-                self.info['commonName'] = "mailbox " + self.info["id"]
+                self['commonName'] = "mailbox " + self["id"]
 
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
