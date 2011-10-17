@@ -13,7 +13,6 @@ options = {}
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "commonName" ],
 		[ "id" ],
 		[ "password" ],
 		[ "email" ],
@@ -25,7 +24,8 @@ property_descriptions = {
 		short_description="Name",
 		syntax=univention.admin.syntax.string,
 		identifies=True,
-		required=True
+		required=True,
+		default="temp",
 	),
 	"id": univention.admin.property(
 		short_description="Mailbox-Nummer",
