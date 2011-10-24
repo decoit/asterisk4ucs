@@ -46,11 +46,16 @@ rm -r "$UNI_UDM_PATH/handlers/asterisk"
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstalling icons..."
-rm -r "$UNI_ICON_PATH/asterisk"
+rm "$UNI_ICON_PATH/50x50/udm-asterisk*"
+rm "$UNI_ICON_PATH/16x16/udm-asterisk*"
+rm "$UNI_ICON_PATH/scalable/udm-asterisk*"
 echo -e "\t\t\t\t\t\t\tdone."
 
-echo "Restarting apache2..."
-invoke-rc.d apache2 restart
+echo "Restarting services..."
+/etc/init.d/univention-management-console-web-server stop
+/etc/init.d/univention-management-console-server stop
+/etc/init.d/univention-management-console-server start
+/etc/init.d/univention-management-console-web-server start
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstallation successful."

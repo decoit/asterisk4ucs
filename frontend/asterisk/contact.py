@@ -14,7 +14,7 @@ options = {}
 layout = [
 	Tab('Allgemein', 'Allgemeine Kontaktdaten', layout = [
 		[ 'commonName', 'title' ],
-		[ 'telephoneNumber', 'organisation' ],
+		[ 'organisation', 'telephoneNumber' ],
 	])
 ]
 

@@ -11,9 +11,17 @@ echo "Installing UMC module..."
 install -m664 frontend/asterisk/* "$UNI_UDM_PATH/handlers/asterisk/"
 echo -e "\t\t\t\t\t\t\tdone."
 
-#echo "Restarting apache2..."
-#invoke-rc.d apache2 restart
+#echo "Restarting services..."
+#/etc/init.d/univention-management-console-web-server stop
+#/etc/init.d/univention-management-console-server stop
+#/etc/init.d/univention-management-console-server start
+#/etc/init.d/univention-management-console-web-server start
 #echo -e "\t\t\t\t\t\t\tdone."
+
+echo "Restarting services..."
+/etc/init.d/univention-management-console-server reload
+/etc/init.d/univention-management-console-web-server restart
+echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Installation successful."
 
