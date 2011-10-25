@@ -47,12 +47,18 @@ echo -e "\t\t\t\t\t\t\tdone."
 # echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Installing UDM module..."
-mkdir -p "$UNI_UDM_PATH/syntax.d"
+# syntax
+mkdir -p "$UNI_UDM_PATH/syntax.d" "$UNI_UDM_LN_PATH/syntax.d"
 install -m664 frontend/syntax/asterisk.py "$UNI_UDM_PATH/syntax.d/"
-mkdir -p "$UNI_UDM_PATH/hooks.d"
+ln -s "$UNI_UDM_PATH/syntax.d/asterisk.py" "$UNI_UDM_LN_PATH/syntax.d/"
+# hook
+mkdir -p "$UNI_UDM_PATH/hooks.d" "$UNI_UDM_LN_PATH/hooks.d"
 install -m664 frontend/hooks/asterisk.py "$UNI_UDM_PATH/hooks.d/"
-mkdir -p "$UNI_UDM_PATH/handlers/asterisk"
+ln -s "$UNI_UDM_PATH/hooks.d/asterisk.py" "$UNI_UDM_LN_PATH/hooks.d/"
+# module
+mkdir -p "$UNI_UDM_PATH/handlers/asterisk" "$UNI_UDM_LN_PATH/handlers/asterisk"
 install -m664 frontend/asterisk/* "$UNI_UDM_PATH/handlers/asterisk/"
+ln -s "$UNI_UDM_PATH"/handlers/asterisk/* "$UNI_UDM_LN_PATH/handlers/asterisk/"
 echo -e "\t\t\t\t\t\t\tdone."
 
 #echo "Creating extended attributes for UDM user module..."

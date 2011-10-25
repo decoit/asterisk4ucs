@@ -29,11 +29,12 @@ property_descriptions = {
 		short_description="Name",
 		syntax=univention.admin.syntax.string,
 		identifies=True,
-		required=True
+		required=True,
+		default="foo",
 	),
 	"extension": univention.admin.property(
 		short_description="Durchwahl",
-		syntax=univention.admin.syntax.phone,
+		syntax=univention.admin.syntax.string,
 		required=True
 	),
 	"ipaddress": univention.admin.property(
