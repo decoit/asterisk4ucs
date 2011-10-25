@@ -8,10 +8,12 @@ from univention.admin.layout import Tab
 import time
 
 module = "asterisk/server"
-childs = 1
 short_description = u"Asterisk: Asterisk-Server"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
+
+childs = 1
+usewizard = 1
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
@@ -94,12 +96,12 @@ property_descriptions = {
 	),
 	"extnums": univention.admin.property(
 		short_description="Eigene externe Rufnummer(n)",
-		syntax=univention.admin.syntax.phone,
+		syntax=univention.admin.syntax.string,
 		multivalue=True,
 	),
 	"defaultext": univention.admin.property(
 		short_description="Standard-Extension",
-		syntax=univention.admin.syntax.phone,
+		syntax=univention.admin.syntax.string,
 	),
 	"mailboxMaxlength": univention.admin.property(
 		short_description=u"Maximale Länge einer Sprachnachricht (Sekunden)",

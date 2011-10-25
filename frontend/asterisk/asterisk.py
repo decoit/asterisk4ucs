@@ -18,10 +18,12 @@ import univention.admin.handlers.asterisk.phoneBook
 import operator
 
 module = "asterisk/asterisk"
-childs = 0
 short_description = u"Asterisk"
 long_description = ''
 operations = ['search']
+
+childs = 0
+virtual = 1
 
 modulesWithSuperordinates = {
 	"None": [
@@ -64,7 +66,6 @@ for key, value in modulesWithSuperordinates.items():
 	wizardtypesforsuper[key] = [x.module for x in value]
 
 wizardoperations={"add":["Add", "Add DNS object"],"find":["Search", "Search DNS object(s)"]}
-virtual = 1
 options = {}
 layout = []
 property_descriptions = {}

@@ -6,10 +6,12 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/phoneBook"
-childs = 1
 short_description = u"Asterisk: Telefonbuch"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
+
+childs = 1
+usewizard = 1
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [

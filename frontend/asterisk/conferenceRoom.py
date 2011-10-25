@@ -7,15 +7,13 @@ from univention.admin.layout import Tab
 from univention.admin import uexceptions
 
 module = "asterisk/conferenceRoom"
-childs = 0
 short_description = u"Asterisk: Konferenzraum"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
+childs = 0
 usewizard = 1
-wizardmenustring="Konferenzraum"
-wizarddescription="Konferenzräume hinzufügen, editieren und löschen"
-wizardoperations={"add":["Add", "Add user."],"find":["Search", "Search for user(s)"]}
+superordinate = "asterisk/server"
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
