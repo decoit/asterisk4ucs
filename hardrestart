@@ -1,0 +1,5 @@
+#!/bin/bash
+
+kill -9 `ps aux | grep management-console | cut -d\  -f 7` ; /etc/init.d/univention-management-console-server start && /etc/init.d/univention-management-console-web-server start
+
+
