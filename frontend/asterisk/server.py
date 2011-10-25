@@ -71,7 +71,7 @@ property_descriptions = {
 	"apply": univention.admin.property(
 		short_description=u"Konfiguration jetzt einspielen?",
 		syntax=univention.admin.syntax.boolean,
-		default=False,
+		default="0",
 	),
 	"configs": univention.admin.property(
 		syntax=univention.admin.syntax.string,
