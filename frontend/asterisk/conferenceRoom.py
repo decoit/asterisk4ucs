@@ -34,7 +34,7 @@ property_descriptions = {
 	),
 	"extension": univention.admin.property(
 		short_description="Durchwahl",
-		syntax=univention.admin.syntax.phone,
+		syntax=univention.admin.syntax.string,
 		required=True,
 	),
 	"maxMembers": univention.admin.property(
