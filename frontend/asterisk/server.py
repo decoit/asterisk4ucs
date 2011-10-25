@@ -122,7 +122,7 @@ property_descriptions = {
      ${VM_DATE}      Datum und Uhrzeit des Anrufs
      ${VM_MESSAGEFILE}
                      Name der Sounddatei, in der die
-                     Nachricht abgespeichert ist""",
+                     Nachricht abgespeichert ist""".replace("\n","<br>"),
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="New message from ${VM_CALLERID}",
@@ -144,7 +144,7 @@ property_descriptions = {
 
 Weiterhin können die folgenden Escapesequenzen verwendet werden:
      \\n             Neue Zeile
-     \\t             Tabulator-Zeichen""",
+     \\t             Tabulator-Zeichen""".replace("\n","<br>"),
 		syntax=univention.admin.syntax.long_string,
 		required=True,
 		default="Hello ${VM_NAME},\n\nThere is a new message " + \
@@ -173,7 +173,7 @@ Weiterhin können die folgenden Escapesequenzen verwendet werden:
 %y    Jahr ohne Jahrhundert (0-99)
 %Y    Jahr mit Jahrhundertangabe
 %Z    Name der Zeitzone (z.B. MEZ)
-%%    Das '%'-Zeichen""",
+%%    Das '%'-Zeichen""".replace("\n","<br>"),
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="%d.%m.%Y %H:%M",

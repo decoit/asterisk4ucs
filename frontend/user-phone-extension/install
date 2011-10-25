@@ -51,8 +51,8 @@ addUserAttribute mailbox \
 	--set shortDescription="Anrufbeantworter" \
 	--set tabPosition=2 \
 	--set syntax=ast4ucsMailboxSyntax \
-	--set ldapMapping="ast4ucsUserMailbox" \
-	--set addEmptyValue=1
+	--set ldapMapping="ast4ucsUserMailbox" #\
+	#--set addEmptyValue=1
 
 addUserAttribute extmode \
 	--set shortDescription="Beim Anrufen Durchwahl senden" \
