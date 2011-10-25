@@ -8,6 +8,7 @@ attributes = ["ast4ucsServerLastupdate"]
 import listener
 import zlib
 from subprocess import Popen, PIPE
+from string import Template
 
 success = False
 
@@ -61,7 +62,7 @@ def postrun():
 	sendMail(successMail)
 
 
-successMail = Template"""\
+successMail = Template("""\
 From: Asterisk auf {hostname} <asterisk@{hostname}>
 Subject: Neue Konfiguration erfolgreich Eingespielt!
 
