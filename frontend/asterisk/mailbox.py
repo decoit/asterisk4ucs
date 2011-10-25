@@ -6,14 +6,16 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/mailbox"
-childs = 0
 short_description = u"Asterisk: Anrufbeantworter"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
+childs = 0
+usewizard = 1
+superordinate = "asterisk/server"
+
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "commonName" ],
 		[ "id" ],
 		[ "password" ],
 		[ "email" ],
@@ -25,7 +27,8 @@ property_descriptions = {
 		short_description="Name",
 		syntax=univention.admin.syntax.string,
 		identifies=True,
-		required=True
+		required=True,
+		default="temp",
 	),
 	"id": univention.admin.property(
 		short_description="Mailbox-Nummer",

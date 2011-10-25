@@ -6,10 +6,13 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/sipPhone"
-childs = 0
 short_description = u"Asterisk: IP-Telefon"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
+
+childs = 0
+usewizard = 1
+superordinate = "asterisk/server"
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [

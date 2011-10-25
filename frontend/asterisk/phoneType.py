@@ -6,10 +6,13 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/phoneType"
-childs = 0
 short_description = u"Asterisk: Telefontyp"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
+
+childs = 0
+usewizard = 1
+superordinate = "asterisk/server"
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Kenndaten', layout = [
