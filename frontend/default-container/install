@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+set -u
+
+eval "$(ucr shell)"
+
+udm container/cn create \
+	--ignore_exists \
+	--position "$ldap_base" \
+	--set name="asterisk" \
+	--set description="Asterisk4UCS data container"
+
