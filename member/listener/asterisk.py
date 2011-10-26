@@ -43,7 +43,7 @@ def sendMail(templ):
 			stdin=PIPE, stdout=None, stderr=None)
 	sendmail.communicate(body)
 	if sendmail.returncode != 0:
-		throw Exception
+		raise Exception, "sendmail failed: %i" % sendmail.returncode
 
 def handler(dn, newdata, olddata):
 	global relevant, success, admins
