@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+set -u
+
+eval "$(ucr shell)"
+
+udm container/cn remove \
+	--dn "cn=asterisk,$ldap_base"
+
