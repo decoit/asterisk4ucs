@@ -8,7 +8,7 @@ cd "`dirname $0`"
 . settings.bash
 
 echo "Deleting default container for asterisk data..."
-$UNI_PYTHON frontend/ldapDefaultNode/uninstall.py
+frontend/default-container/uninstall
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Deleting extended attributes for UDM user module..."

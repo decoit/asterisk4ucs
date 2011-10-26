@@ -68,7 +68,7 @@ echo -e "\t\t\t\t\t\t\tdone."
 #echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Creating default container for asterisk data..."
-$UNI_PYTHON frontend/ldapDefaultNode/install.py
+frontend/default-container/install
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Restarting services..."
