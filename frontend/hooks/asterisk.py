@@ -5,11 +5,16 @@ from univention.admin import uexceptions
 
 class AsteriskUsersUserHook(simpleHook):
 	type='AsteriskUsersUserHook'
-	class phoneError(uexceptions.base):
-		message="A phone can't belong to more than one user: "
 
-	class mailboxError(uexceptions.base):
-		message="A mailbox can't belong to more than one user: "
+	class phoneError(uexceptions.valueError):
+		_message="The phone '%s' belongs to user '%s'."
+		def __init__(self, *args):
+			self.message = self._message % args
+
+	class mailboxError(uexceptions.valueError):
+		_message="The mailbox '%s' belongs to user '%s'."
+		def __init__(self, *args):
+			self.message = self._message % args
 
 	def checkFields(self, module):
 		def nameFromDn(dn):
@@ -23,10 +28,9 @@ class AsteriskUsersUserHook(simpleHook):
 				escapeForLdapFilter(phonedn),
 				escapeForLdapFilter(module.info["username"])))
 			if phoneUsers:
-				raise self.phoneError, (
-					"%s belongs to %s!" % (
+				raise self.phoneError(
 						nameFromDn(phonedn),
-						nameFromDn(phoneUsers[0].dn)))
+						nameFromDn(phoneUsers[0].dn))
 
 		mailboxdn = module.info.get("mailbox")
 		if mailboxdn:
@@ -35,10 +39,9 @@ class AsteriskUsersUserHook(simpleHook):
 				escapeForLdapFilter(mailboxdn),
 				escapeForLdapFilter(module.info["username"])))
 			if mailboxUsers:
-				raise self.mailboxError, (
-					"%s belongs to %s!" % (
+				raise self.mailboxError(
 						nameFromDn(mailboxdn),
-						nameFromDn(mailboxUsers[0].dn)))
+						nameFromDn(mailboxUsers[0].dn))
 
 	def hook_open(self, module):
 		pass

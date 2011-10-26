@@ -41,7 +41,7 @@ function addUserAttribute {
 
 addUserAttribute phones \
 	--set shortDescription="Telefone" \
-	--set tabPosition=1 \
+	--set tabPosition=4 \
 	--set syntax=ast4ucsPhoneSyntax \
 	--set ldapMapping="ast4ucsUserPhone" \
 	--set multivalue=1 \
@@ -51,8 +51,8 @@ addUserAttribute mailbox \
 	--set shortDescription="Anrufbeantworter" \
 	--set tabPosition=2 \
 	--set syntax=ast4ucsMailboxSyntax \
-	--set ldapMapping="ast4ucsUserMailbox" #\
-	#--set addEmptyValue=1
+	--set ldapMapping="ast4ucsUserMailbox" \
+	--set addEmptyValue=1
 
 addUserAttribute extmode \
 	--set shortDescription="Beim Anrufen Durchwahl senden" \
@@ -62,7 +62,7 @@ addUserAttribute extmode \
 
 addUserAttribute ringdelay \
 	--set shortDescription="Intervall zwischen Telefonen (Sekunden)" \
-	--set tabPosition=4 \
+	--set tabPosition=1 \
 	--set syntax=ast4ucsDurationSyntax \
 	--set ldapMapping="ast4ucsUserRingdelay" \
 	--set default=10
