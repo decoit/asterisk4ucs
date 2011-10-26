@@ -20,6 +20,7 @@ layout = [
 		[ univention.admin.field("lastupdate_gui"),
 			univention.admin.field("apply") ],
 		[ univention.admin.field("globalCallId") ],
+		[ univention.admin.field("admins") ],
 	]),
 	univention.admin.tab('Vorwahlen', 'Gesperrte Vorwahlen', [
 		[ univention.admin.field("blockedAreaCodes"),
@@ -70,6 +71,11 @@ property_descriptions = {
 	"globalCallId" : univention.admin.property(
 		syntax=univention.admin.syntax.string,
 		short_description=u"Alle ausgehenden Anrufer übermitteln die folgende Nummer:",
+	),
+	"admins": univention.admin.property(
+		syntax=univention.admin.string,
+		short_description=u"Bestätigungs-Mails an folgende eMail-Adressen:",
+		multivalue=True,
 	),
 	"apply": univention.admin.property(
 		short_description=u"Konfiguration jetzt einspielen?",
@@ -210,6 +216,7 @@ mapping.register("music", "ast4ucsServerMusic")
 mapping.register("extnums", "ast4ucsServerExtnum")
 mapping.register("defaultext", "ast4ucsServerDefaultext",
 	None, univention.admin.mapping.ListToString)
+mapping.register("admins", "ast4ucsServerAdminemail")
 
 mapping.register("mailboxMaxlength", "ast4ucsServerMailboxmaxlen",
 	None, univention.admin.mapping.ListToString)
