@@ -11,8 +11,9 @@ from subprocess import Popen, PIPE
 from string import Template
 import univention.debug
 
+relevant = False
 success = False
-admins = ["bruns@decoit.de"]
+admins = []
 
 def debug(msg):
 	univention.debug.debug(
@@ -30,46 +31,39 @@ def refreshConfig(configs):
 	listener.unsetuid()
 
 def sendMail(templ):
-	admins = ["bruns@decoit.de"]
-	debug("sendMail()")
 	if not admins:
-		debug(":-(")
 		return
-	debug(":-)")
 
 	hostname = "fubar"
 	body = templ.substitute(hostname=hostname)
-	debug("foo")
 	for admin in admins:
 		body = ( "To: %s\r\n" % admin ) + body
-	debug("bar")
 
-	debugfile = open("/tmp/debugfoo","w")
-	debug("baz")
 	sendmail = Popen(["/usr/sbin/sendmail", "-t"],
-			stdin=PIPE, stdout=debugfile, stderr=debugfile)
-	stdout, stderr = sendmail.communicate(body)
-	debug("sendMail(): success")
+			stdin=PIPE, stdout=None, stderr=None)
+	sendmail.communicate(body)
+	if sendmail.returncode != 0:
+		throw Exception
 
 def handler(dn, newdata, olddata):
-	debug("handler()")
-	global success, admins
-	admins = newdata.get("admins")
-	success = False
+	global relevant, success, admins
 	
-	if not newdata:
+	if not newdata or (newdata["ast4ucsServerHost"][0]
+				!= listener.baseConfig["ldap/hostdn"]):
+		relevant = False
 		return
 
-	if (newdata["ast4ucsServerHost"][0]
-				!= listener.baseConfig["ldap/hostdn"]):
-		return
+	relevant = True
+	success = False
+	admins = newdata.get("admins")
 
 	refreshConfig(newdata.get("ast4ucsServerConfig", []))
 	success = True
-	debug("handler(): success")
 
 def postrun():
-	debug("postrun()")
+	if not relevant:
+		return
+
 	if not success:
 		sendMail(failMail)
 		return
@@ -78,7 +72,6 @@ def postrun():
 	listener.setuid(0)
 	listener.run(bin, [bin, "-r", "-x", "core reload"])
 	listener.unsetuid()
-	debug("postrun(): reload success")
 
 	sendMail(successMail)
 
