@@ -73,7 +73,7 @@ property_descriptions = {
 		short_description=u"Alle ausgehenden Anrufer übermitteln die folgende Nummer:",
 	),
 	"admins": univention.admin.property(
-		syntax=univention.admin.string,
+		syntax=univention.admin.syntax.string,
 		short_description=u"Bestätigungs-Mails an folgende eMail-Adressen:",
 		multivalue=True,
 	),
