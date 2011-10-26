@@ -22,7 +22,7 @@ childs = 0
 short_description = u"Asterisk"
 long_description = ''
 operations = ['search']
-default_containers = [ "cn=asterisk," ]
+default_containers = [ "cn=asterisk" ]
 
 modulesWithSuperordinates = {
 	"None": [
