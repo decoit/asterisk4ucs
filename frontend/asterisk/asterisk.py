@@ -21,6 +21,7 @@ module = "asterisk/asterisk"
 short_description = u"Asterisk"
 long_description = ''
 operations = ['search']
+default_containers = [ "cn=asterisk," ]
 
 childs = 0
 virtual = 1
@@ -48,8 +49,6 @@ modulesWithSuperordinates = {
 usewizard = 1
 wizardmenustring="Asterisk"
 wizarddescription="Asterisk verwalten"
-wizardpath="univentionAsteriskObject"
-#wizardpath="univentionPrintersObject"
 childmodules = [x.module for x in
 	reduce(operator.add, modulesWithSuperordinates.values())]
 
