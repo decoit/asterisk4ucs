@@ -30,17 +30,6 @@ echo "Restarting slapd..."
 invoke-rc.d slapd restart
 echo -e "\t\t\t\t\t\t\tdone."
 
-# UCR wird z.Z. auf dem Master nicht genutzt
-# echo "Removing info-texts for UCR variables..."
-# rm "$UNI_REGINFO_PATH/categories/asterisk4ucs.cfg"
-# rm "$UNI_REGINFO_PATH/variables/asterisk4ucs.cfg"
-# echo -e "\t\t\t\t\t\t\tdone."
-
-# UCR wird z.Z. auf dem Master nicht genutzt
-# echo "Removing UCR variables..."
-# ucr unset asterisk/mailbox/maxlength
-# echo -e "\t\t\t\t\t\t\tdone."
-
 echo "Uninstalling UDM module..."
 rm "$UNI_UDM_PATH/syntax.d/asterisk.py"
 rm "$UNI_UDM_PATH/hooks.d/asterisk.py"

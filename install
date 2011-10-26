@@ -37,17 +37,6 @@ install -m664 icons/16x16/udm-asterisk* "$UNI_ICON_PATH/16x16/"
 install -m664 icons/scalable/udm-asterisk* "$UNI_ICON_PATH/scalable/"
 echo -e "\t\t\t\t\t\t\tdone."
 
-# UCR wird z.Z. auf dem Master nicht genutzt
-# echo "Installing info-texts for UCR variables..."
-# install -m664 ucr/category.cfg "$UNI_REGINFO_PATH/categories/asterisk4ucs.cfg"
-# install -m664 ucr/variables.cfg "$UNI_REGINFO_PATH/variables/asterisk4ucs.cfg"
-# echo -e "\t\t\t\t\t\t\tdone."
-
-# UCR wird z.Z. auf dem Master nicht genutzt
-# echo "Setting default values for UCR variables..."
-# ucr set asterisk/mailbox/maxlength="$ast4ucs_ucr_mailbox_maxlength"
-# echo -e "\t\t\t\t\t\t\tdone."
-
 echo "Installing UDM module..."
 # syntax
 mkdir -p "$UNI_UDM_PATH/syntax.d" "$UNI_UDM_LN_PATH/syntax.d"
