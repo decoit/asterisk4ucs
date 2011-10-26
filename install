@@ -36,15 +36,6 @@ mkdir -p "$UNI_ICON_PATH/asterisk"
 install -m664 icons/asterisk/* "$UNI_ICON_PATH/asterisk/"
 echo -e "\t\t\t\t\t\t\tdone."
 
-echo "Installing info-texts for UCR variables..."
-install -m664 ucr/category.cfg "$UNI_REGINFO_PATH/categories/asterisk4ucs.cfg"
-install -m664 ucr/variables.cfg "$UNI_REGINFO_PATH/variables/asterisk4ucs.cfg"
-echo -e "\t\t\t\t\t\t\tdone."
-
-# echo "Setting default values for UCR variables..."
-# ucr set asterisk/mailbox/maxlength="$ast4ucs_ucr_mailbox_maxlength"
-# echo -e "\t\t\t\t\t\t\tdone."
-
 echo "Installing UDM module..."
 mkdir -p "$UNI_UDM_PATH/syntax.d"
 install -m664 frontend/syntax/asterisk.py "$UNI_UDM_PATH/syntax.d/"
