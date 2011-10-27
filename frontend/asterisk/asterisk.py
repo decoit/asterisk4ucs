@@ -21,7 +21,7 @@ module = "asterisk/asterisk"
 short_description = u"Asterisk"
 long_description = ''
 operations = ['search']
-default_containers = [ "cn=asterisk," ]
+default_containers = [ "cn=asterisk" ]
 
 childs = 0
 virtual = 1
