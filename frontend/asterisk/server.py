@@ -145,7 +145,7 @@ property_descriptions = {
 Weiterhin können die folgenden Escapesequenzen verwendet werden:
      \\n             Neue Zeile
      \\t             Tabulator-Zeichen""".replace("\n","<br>"),
-		syntax=univention.admin.syntax.long_string,
+		syntax=univention.admin.syntax.string,
 		required=True,
 		default="Hello ${VM_NAME},\n\nThere is a new message " + \
 			"in mailbox ${VM_MAILBOX}.",
