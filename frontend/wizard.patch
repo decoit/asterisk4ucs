@@ -1,5 +1,5 @@
---- /usr/share/univention-management-console/modules/udm.xml.foo	2011-10-26 17:47:58.000000000 +0200
-+++ /usr/share/univention-management-console/modules/udm.xml	2011-10-24 14:28:44.000000000 +0200
+--- a/udm.xml	2011-10-26 17:47:58.000000000 +0200
++++ b/udm.xml	2011-10-24 14:28:44.000000000 +0200
 @@ -3,6 +3,10 @@
    <module id="udm" icon="udm/module" version="1.0">
  	<name>Univention Directory Manager</name>
