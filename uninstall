@@ -45,6 +45,10 @@ rm "$UNI_ICON_PATH/16x16/udm-asterisk*"
 rm "$UNI_ICON_PATH/scalable/udm-asterisk*"
 echo -e "\t\t\t\t\t\t\tdone."
 
+echo "Removing module Asterisk from UMC's main menu..."
+patch -ufsRr- "$UNI_UMC_PATH/modules/udm.xml" frontend/wizard.patch
+echo -e "\t\t\t\t\t\t\tdone."
+
 echo "Restarting services..."
 /etc/init.d/univention-management-console-web-server stop
 /etc/init.d/univention-management-console-server stop

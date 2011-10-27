@@ -60,9 +60,14 @@ echo "Creating default container for asterisk data..."
 frontend/default-container/install
 echo -e "\t\t\t\t\t\t\tdone."
 
-#echo "Adding module Asterisk to UMC's main menu..."
-#patch -r- -u -f -p0 -s -R < frontend/wizard.patch
-#echo -e "\t\t\t\t\t\t\tdone."
+echo "Adding module Asterisk to UMC's main menu..."
+# first try to reverse-apply the patch, in case it was applied already
+# that may fail.
+patch -ufsRr- "$UNI_UMC_PATH/modules/udm.xml" \
+		frontend/wizard.patch &>/dev/null || true
+# then apply the patch. this must not fail.
+patch -ufsr- "$UNI_UMC_PATH/modules/udm.xml" frontend/wizard.patch
+echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Restarting services..."
 /etc/init.d/univention-management-console-web-server stop
