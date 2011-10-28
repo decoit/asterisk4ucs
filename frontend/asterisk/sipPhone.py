@@ -106,7 +106,7 @@ mapping.register("name", "cn",
 	None, univention.admin.mapping.ListToString)
 mapping.register("extension", "AstExtension",
 	None, univention.admin.mapping.ListToString)
-mapping.register("forward", "phoneForwarding",
+mapping.register("forward", "ast4ucsPhoneForwarding",
         None, univention.admin.mapping.ListToString)
 mapping.register("ipaddress", "AstAccountIpaddr",
 	None, univention.admin.mapping.ListToString)
