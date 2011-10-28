@@ -1,0 +1,27 @@
+#/bin sh
+
+set -e
+set -u
+
+eval "$(ucr shell)"
+
+for name in ast4ucsFaxSyntax ; do
+	udm settings/syntax remove \
+		--dn "cn=$name,cn=univention,$ldap_base"
+done
+
+for name in ast4ucsFaxgroupSyntax ; do
+	udm settings/syntax remove \
+		--dn "cn=$name,cn=univention,$ldap_base"
+done
+
+for name in faxes; do
+        udm settings/extended_attribute remove \
+                --dn "cn=$name,cn=custom attributes,cn=univention,$ldap_base"
+done
+
+for name in faxgroups; do
+        udm settings/extended_attribute remove \
+                --dn "cn=$name,cn=custom attributes,cn=univention,$ldap_base"
+done
+

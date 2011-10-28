@@ -1,0 +1,58 @@
+#/bin sh
+
+set -e
+set -u
+
+eval "$(ucr shell)"
+
+udm settings/syntax create \
+	--ignore_exists \
+	--set name="ast4ucsFaxSyntax" \
+	--position "cn=univention,$ldap_base" \
+	--set viewonly=FALSE \
+	--set filter='(objectClass=ast4ucsFax)' \
+	--set attribute="asterisk/fax: name" \
+	--set value="asterisk/fax: dn"
+
+udm settings/syntax create \
+	--ignore_exists \
+	--set name="ast4ucsFaxgroupSyntax" \
+	--position "cn=univention,$ldap_base" \
+	--set viewonly=FALSE \
+	--set filter='(objectClass=ast4ucsFaxgroup)' \
+	--set attribute="asterisk/faxGroup: commonName" \
+	--set value="asterisk/faxGroup: dn"
+
+function addUserAttribute {
+	name="$1"
+	shift
+	udm settings/extended_attribute create \
+		--ignore_exists \
+		--position "cn=custom attributes,cn=univention,$ldap_base" \
+		--set module="users/user" \
+		--set tabName="Fax" \
+		--append translationTabName='"de_DE" "Fax"' \
+		--set objectClass=ast4ucsUser \
+		--set name="$name" \
+		--set CLIName="$name" \
+		--set mayChange=1 \
+		"$@"
+}
+
+addUserAttribute faxes \
+	--set shortDescription="Faxe" \
+	--set tabPosition=1 \
+	--set syntax=ast4ucsFaxSyntax \
+	--set ldapMapping="ast4ucsUserFax" \
+	--set multivalue=1 \
+	--set hook="AsteriskUsersUserHook"
+
+addUserAttribute faxgroups \
+	--set shortDescription="Faxgruppen" \
+	--set tabPosition=2 \
+	--set syntax=ast4ucsFaxgroupSyntax \
+	--set ldapMapping="ast4ucsUserFaxgroup" \
+	--set multivalue=1 \
+	--set hook="AsteriskUsersUserHook"
+
+
