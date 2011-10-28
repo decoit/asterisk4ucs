@@ -420,6 +420,11 @@ attributetype ( ast4ucsUser:7 NAME 'ast4ucsUserFaxgroup'
         EQUALITY caseIgnoreMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( ast4ucsUser:8 NAME 'ast4ucsUserForwarding'
+        DESC 'Asterisk4ucs: User Forwarding'
+        EQUALITY caseIgnoreMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 	DESC 'Asterisk4ucs: User'
 	SUP top AUXILIARY
@@ -429,7 +434,7 @@ objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 		ast4ucsUserRingdelay $
 		ast4ucsUserExtmode $
 		ast4ucsUserTimeout $
-                ast4ucsUserForwarding $
+		ast4ucsUserForwarding $
 		ast4ucsUserFax $
 		ast4ucsUserFaxgroup
 	) )
