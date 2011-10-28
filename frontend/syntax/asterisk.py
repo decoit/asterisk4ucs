@@ -20,6 +20,19 @@ class ast4ucsDurationSyntax(integer):
 				"Value must be a number between 1 and 120!"
 		return text
 
+class ast4ucsForwardingSyntax(integer):
+        name = "ast4ucsForwardingSyntax"
+
+        def parse(self, text):
+                try:
+                        number = int(text)
+                        if number < 0:
+                                raise ValueError
+                except ValueError:
+                        raise univention.admin.uexceptions.valueError, \
+                                "Value must be a number above -1"
+                return text
+
 class ast4ucsMusicSyntax(select):
 	name = "ast4ucsMusicSyntax"
 	def __init__(self, srv):

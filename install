@@ -47,6 +47,7 @@ echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Creating extended attributes for UDM user module..."
 frontend/user-phone-extension/install
+frontend/user-fax-extension/install
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Creating default container for asterisk data..."

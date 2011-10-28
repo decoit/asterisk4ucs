@@ -43,12 +43,18 @@ attributetype ( ast4ucsPhone:6 NAME 'ast4ucsPhoneWaitingloop'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( ast4ucsPhone:7 NAME 'phoneForwarding'
+        DESC 'Asterisk4ucs: Phone Forwarding'
+        EQUALITY caseIgnoreMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 	DESC 'Asterisk4ucs: phone'
 	SUP top STRUCTURAL
 	MUST ( cn )
 	MAY (
 		macAddress $
+		phoneForwarding $
 		ast4ucsPhonePhonetype $
 		ast4ucsPhoneProfile $
 		ast4ucsPhoneCallgroup $
@@ -404,6 +410,16 @@ attributetype ( ast4ucsUser:5 NAME 'ast4ucsUserTimeout'
 	EQUALITY caseIgnoreMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( ast4ucsUser:6 NAME 'ast4ucsUserFax'
+        DESC 'Asterisk4ucs: User Fax'
+        EQUALITY caseIgnoreMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsUser:7 NAME 'ast4ucsUserFaxgroup'
+        DESC 'Asterisk4ucs: User Faxgroup'
+        EQUALITY caseIgnoreMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 	DESC 'Asterisk4ucs: User'
 	SUP top AUXILIARY
@@ -412,7 +428,10 @@ objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 		ast4ucsUserMailbox $
 		ast4ucsUserRingdelay $
 		ast4ucsUserExtmode $
-		ast4ucsUserTimeout
+		ast4ucsUserTimeout $
+                ast4ucsUserForwarding $
+		ast4ucsUserFax $
+		ast4ucsFaxgroup
 	) )
 
 

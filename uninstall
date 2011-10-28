@@ -13,6 +13,7 @@ echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Deleting extended attributes for UDM user module..."
 frontend/user-phone-extension/uninstall
+frontend/user-fax-extension/uninstall
 echo -e "\t\t\t\t\t\t\tdone."
 
 echo "Uninstalling schemata..."

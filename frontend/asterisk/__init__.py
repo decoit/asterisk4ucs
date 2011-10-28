@@ -261,21 +261,62 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 	except:
 		ringdelay = 0
 
-	phones = [sipPhone.object(co, lo, None, dn).info["extension"]
+  	try:
+                globalForward = int(phoneUser["forwarding"])
+                if globalForward < 0:
+                        raise Exception
+        except:
+                globalForward = 0
+
+
+	phones = [sipPhone.object(co, lo, None, dn)
 		for dn in phoneUser.get("phones", [])]
 
 	res = []
 
 	if phones:
 		if ringdelay:
-			for phone in phones[:-1]:
-				res.append("Dial(SIP/%s,%i,tT)" % (phone, ringdelay))
-				res.append("Wait(0.5)")
-			res.append("Dial(SIP/%s,%i,tT" % (phones[-1], timeout))
+			 for phone in phones[:-1]:
+                                phoneForward = phone.info.get("forward","")
+                                if globalForward:
+                                        res.append("Dial(SIP/%s,%i,tT)" % (globalForward, ringdelay))
+                                elif phoneForward:
+                                        res.append("Dial(SIP/%s,%i,tT)" % (phoneForward, ringdelay))
+                                        res.append("Wait(0.5)")
+                                else:
+                                        res.append("Dial(SIP/%s,%i,tT)" % (phone.info["extension"], ringdelay))
+                                        res.append("Wait(0.5)")
+
+                        phoneForward = phones[-1].info.get("forward","")
+                        if globalForward:
+                                pass
+                        elif phoneForward:
+                                res.append("Dial(SIP/%s,%i,tT" % (phoneForward, ringdelay))
+                        else:
+                                res.append("Dial(SIP/%s,%i,tT" % (phones[-1].info["extension"], ringdelay))
+
 		else:
-			res.append("Dial(%s,%i,tT)" % (
-				'&'.join(["SIP/%s"%phone for phone in phones]),
-				timeout))
+			mergedExtensions = ""
+                        for phone in phones:
+                                currentExtension = ""
+                                phoneForward = phone.info.get("forward","")
+                                if globalForward:
+                                        currentExtension = str(globalForward)
+                                elif phoneForward != "":
+                                        currentExtension = phoneForward
+                                else:
+                                        currentExtension = phone.info["extension"]
+
+                                if mergedExtensions == "":
+                                        mergedExtensions += 'SIP/' + currentExtension
+                                else:
+                                        mergedExtensions += '&SIP/' + currentExtension
+
+                                if globalForward:
+                                        break
+
+                        res.append("Dial(%s,%i,tT)" % (mergedExtensions,timeout))
+
 
 	if phoneUser.get("mailbox"):
 		phoneMailbox = mailbox.object(

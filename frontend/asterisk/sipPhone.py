@@ -23,6 +23,7 @@ layout = [
 			univention.admin.field("waitingloops") ],
 		[ univention.admin.field("callgroups"),
 			univention.admin.field("pickupgroups") ],
+		[ univention.admin.field("forward")],
 	])
 ]
 
@@ -38,6 +39,10 @@ property_descriptions = {
 		syntax=univention.admin.syntax.phone,
 		required=True
 	),
+	"forward": univention.admin.property(
+                short_description="Weiterleitung",
+                syntax=univention.admin.syntax.phone,
+        ),
 	"ipaddress": univention.admin.property(
 		short_description="IP-Adresse",
 		syntax=univention.admin.syntax.ipAddress,
@@ -101,6 +106,8 @@ mapping.register("name", "cn",
 	None, univention.admin.mapping.ListToString)
 mapping.register("extension", "AstExtension",
 	None, univention.admin.mapping.ListToString)
+mapping.register("forward", "phoneForwarding",
+        None, univention.admin.mapping.ListToString)
 mapping.register("ipaddress", "AstAccountIpaddr",
 	None, univention.admin.mapping.ListToString)
 mapping.register("macaddress", "macAddress",

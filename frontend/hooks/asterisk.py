@@ -10,7 +10,11 @@ class AsteriskUsersUserHook(simpleHook):
 
 	class mailboxError(uexceptions.base):
 		message="A mailbox can't belong to more than one user: "
+	
+	class faxError(uexceptions.base):
+                message="A fax can't belong to more than one user: "
 
+	
 	def checkFields(self, module):
 		def nameFromDn(dn):
 			return dn.split(",")[0].split("=", 1)[1]
@@ -39,6 +43,33 @@ class AsteriskUsersUserHook(simpleHook):
 					"%s belongs to %s!" % (
 						nameFromDn(mailboxdn),
 						nameFromDn(mailboxUsers[0].dn)))
+
+                for faxdn in module.info.get("faxes", []):
+                        if not faxdn:
+                                continue
+                        faxUsers = user.lookup(module.co, module.lo,
+                                "(&(ast4ucsUserFax=%s)(!(uid=%s)))" % (
+                                escapeForLdapFilter(faxdn),
+                                escapeForLdapFilter(module.info["username"])))
+                        if faxUsers:
+                                raise self.faxError, (
+                                        "%s belongs to %s!" % (
+                                                nameFromDn(faxdn),
+                                                nameFromDn(faxUsers[0].dn)))
+
+		for faxgroupdn in module.info.get("faxgroups", []):
+                        if not faxgroupdn:
+                                continue
+                        faxGroups = user.lookup(module.co, module.lo,
+                                "(&(ast4ucsUserFaxgroup=%s)(!(uid=%s)))" % (
+                                escapeForLdapFilter(faxgroupdn),
+                                escapeForLdapFilter(module.info["username"])))
+                        if faxGroups:
+                                raise self.faxError, (
+                                        "%s belongs to %s!" % (
+                                                nameFromDn(faxgroupdn),
+                                                nameFromDn(faxGroupUsers[0].dn)))
+
 
 	def hook_open(self, module):
 		pass
