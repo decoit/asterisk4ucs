@@ -431,7 +431,7 @@ objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 		ast4ucsUserTimeout $
                 ast4ucsUserForwarding $
 		ast4ucsUserFax $
-		ast4ucsFaxgroup
+		ast4ucsUserFaxgroup
 	) )
 
 
