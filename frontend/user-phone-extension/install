@@ -21,7 +21,8 @@ udm settings/syntax create \
 	--set viewonly=FALSE \
 	--set filter='(objectClass=ast4ucsMailbox)' \
 	--set attribute="asterisk/mailbox: commonName" \
-	--set value="asterisk/mailbox: dn"
+	--set value="asterisk/mailbox: dn" \
+	--set addEmptyValue=1
 
 function addUserAttribute {
 	name="$1"
@@ -51,8 +52,7 @@ addUserAttribute mailbox \
 	--set shortDescription="Anrufbeantworter" \
 	--set tabPosition=2 \
 	--set syntax=ast4ucsMailboxSyntax \
-	--set ldapMapping="ast4ucsUserMailbox" \
-	--set addEmptyValue=1
+	--set ldapMapping="ast4ucsUserMailbox"
 
 addUserAttribute extmode \
 	--set shortDescription="Beim Anrufen Durchwahl senden" \
@@ -73,5 +73,4 @@ addUserAttribute timeout \
 	--set syntax=ast4ucsDurationSyntax \
 	--set ldapMapping="ast4ucsUserTimeout" \
 	--set default=10
-
 
