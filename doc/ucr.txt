@@ -1,0 +1,15 @@
+
+Zur Univention Configuration Registry gibt es außergewöhnlich viel
+Dokumentation von Univention selber in ihrem UCS-Handbuch (Kapitel 14):
+http://www.univention.de/fileadmin/download/dokumentation_2.4/ucs-handbuch.pdf
+
+
+In Asterisk4UCS wird die UCR an folgenden Stellen verwendet:
+
+* Zum Einbinden des zusätzlichen LDAP-Schemas.
+  Die Dateien liegen in $repo/schema
+
+* Zum Speichern von Pfaden auf dem Member-Server.
+  Dabei wurden neue UCR-Variablen erstellt und dokumentiert.
+  Das Format der Dokumentation ist in $repo/member/ucr zu sehen.
+
