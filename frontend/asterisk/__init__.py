@@ -287,13 +287,13 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
                                         res.append("Dial(SIP/%s,%i,tT)" % (phone.info["extension"], ringdelay))
                                         res.append("Wait(0.5)")
 
-                        phoneForward = phones[-1].info.get("forward","")
-                        if globalForward:
-                                pass
-                        elif phoneForward:
-                                res.append("Dial(SIP/%s,%i,tT" % (phoneForward, ringdelay))
-                        else:
-                                res.append("Dial(SIP/%s,%i,tT" % (phones[-1].info["extension"], ringdelay))
+                         phoneForward = phones[-1].info.get("forward","")
+                         if globalForward:
+                                 pass
+                         elif phoneForward:
+                                 res.append("Dial(SIP/%s,%i,tT" % (phoneForward, ringdelay))
+                         else:
+                                 res.append("Dial(SIP/%s,%i,tT" % (phones[-1].info["extension"], ringdelay))
 
 		else:
 			mergedExtensions = ""
