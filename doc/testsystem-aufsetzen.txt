@@ -1,0 +1,8 @@
+
+
+ucr set grub/bootsplash=nosplash
+ucr set nameserver2=10.10.10.2
+apt-get update
+apt-get install git
+git clone ssh://tbruns@git/repo/asterisk4ucs
+
