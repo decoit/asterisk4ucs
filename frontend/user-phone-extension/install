@@ -74,4 +74,11 @@ addUserAttribute timeout \
 	--set ldapMapping="ast4ucsUserTimeout" \
 	--set default=10
 
+addUserAttribute forwarding \
+        --set shortDescription="Weiterleitung für alle Telefone" \
+        --set tabPosition=6 \
+        --set syntax=ast4ucsForwardingSyntax \
+        --set ldapMapping="ast4ucsUserForwarding" \
+        --set default=0
+
 

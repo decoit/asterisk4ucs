@@ -289,6 +289,7 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 
                          phoneForward = phones[-1].info.get("forward","")
                          if globalForward:
+				 res.append("Dial(SIP/%s,%i,tT)" % (globalForward, ringdelay))
                                  pass
                          elif phoneForward:
                                  res.append("Dial(SIP/%s,%i,tT" % (phoneForward, ringdelay))
