@@ -274,27 +274,31 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 
 	res = []
 
+	res.append("\nValues before entering Loop:\n")
+	res.append("timeout:" + str(timeout) + "\n")
+	res.append("ringdelay:" + str(ringdelay) + "\n")
+	res.append("global-forward:" + str(globalForward) + "\n")
+	res.append("length of phone list:" + str(len(phones)) + "\n")
+
 	if phones:
 		if ringdelay:
-			 for phone in phones[:-1]:
-                                phoneForward = phone.info.get("forward","")
-                                if globalForward:
-                                        res.append("Dial(SIP/%s,%i,tT)" % (globalForward, ringdelay))
-                                elif phoneForward:
-                                        res.append("Dial(SIP/%s,%i,tT)" % (phoneForward, ringdelay))
-                                        res.append("Wait(0.5)")
-                                else:
-                                        res.append("Dial(SIP/%s,%i,tT)" % (phone.info["extension"], ringdelay))
-                                        res.append("Wait(0.5)")
+			counter = 1;
+			for phone in phones:
+				phoneForward = phone.info.get("forward","")
+				if globalForward:
+					res.append("Dial(SIP/%s,%i,tT)" % (globalForward, ringdelay))
+				elif phoneForward:
+					res.append("Dial(SIP/%s,%i,tT)" % (phoneForward, ringdelay))
+				else:
+					res.append("Dial(SIP/%s,%i,tT)" % (phone.info["extension"], ringdelay))
+		
+				if (globalForward):
+					break
 
-                         phoneForward = phones[-1].info.get("forward","")
-                         if globalForward:
-				 res.append("Dial(SIP/%s,%i,tT)" % (globalForward, ringdelay))
-                                 pass
-                         elif phoneForward:
-                                 res.append("Dial(SIP/%s,%i,tT" % (phoneForward, ringdelay))
-                         else:
-                                 res.append("Dial(SIP/%s,%i,tT" % (phones[-1].info["extension"], ringdelay))
+				if (counter < len(phones)):
+					res.append("Wait(0.5)")
+
+				counter += 1
 
 		else:
 			mergedExtensions = ""
