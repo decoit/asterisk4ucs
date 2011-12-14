@@ -95,7 +95,7 @@ def genSipconfFaxEntry(co, lo, phone):
 	return res
 
 def genSipconf(co, lo, srv):
-	import sipPhone, fax
+	import sipPhone, fax, faxGroup
 
 	conf = "; Automatisch generiert von asterisk4UCS\n\n"
 
@@ -118,6 +118,10 @@ def genSipconf(co, lo, srv):
 			conf += re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] )
 		conf += "\n"
+	
+	conf +="\n\n; ===== FaxGroups =====\n\n"
+	for phone in faxGroup.lookup(co, lo, False):
+		conf += "; dn: %s\n" % (phone.dn)
 
 	return conf
 

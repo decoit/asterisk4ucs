@@ -68,7 +68,7 @@ class AsteriskUsersUserHook(simpleHook):
                                 raise self.faxError, (
                                         "%s belongs to %s!" % (
                                                 nameFromDn(faxgroupdn),
-                                                nameFromDn(faxGroupUsers[0].dn)))
+                                                nameFromDn(faxgroupUsers[0].dn)))
 
 
 	def hook_open(self, module):

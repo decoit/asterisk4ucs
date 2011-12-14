@@ -15,7 +15,7 @@ layout = [
 	univention.admin.tab('Allgemein', 'Allgemeine Einstellungen', [
 		[ univention.admin.field("commonName") ],
 		[ univention.admin.field("extension") ],
-		[ univention.admin.field("members") ],
+		#[ univention.admin.field("members") ],
 	])
 ]
 
@@ -30,15 +30,15 @@ property_descriptions = {
 		short_description="Durchwahl",
 		syntax=univention.admin.syntax.phone,
 	),
-	"members": univention.admin.property(
-		short_description="Teilnehmer",
-		syntax=univention.admin.syntax.LDAP_Search(
-			filter="objectClass=inetOrgPerson",
-			attribute=['users/user: username'],
-			value='users/user: dn',
-		),
-		multivalue=True,
-	),
+	#"members": univention.admin.property(
+	#	short_description="Teilnehmer",
+	#	syntax=univention.admin.syntax.LDAP_Search(
+	#		filter="objectClass=inetOrgPerson",
+	#		attribute=['users/user: username'],
+	#		value='users/user: dn',
+	#	),
+	#	multivalue=True,
+	#),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -46,7 +46,7 @@ mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
 mapping.register("extension", "ast4ucsExtensionExtension",
 	None, univention.admin.mapping.ListToString)
-mapping.register("members", "ast4ucsFaxgroupMember")
+#mapping.register("members", "ast4ucsFaxgroupMember")
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
