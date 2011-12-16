@@ -278,12 +278,6 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 
 	res = []
 
-	res.append("\nValues before entering Loop:\n")
-	res.append("timeout:" + str(timeout) + "\n")
-	res.append("ringdelay:" + str(ringdelay) + "\n")
-	res.append("global-forward:" + str(globalForward) + "\n")
-	res.append("length of phone list:" + str(len(phones)) + "\n")
-
 	if phones:
 		if ringdelay:
 			counter = 1;
