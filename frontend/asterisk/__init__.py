@@ -239,7 +239,8 @@ def genMusiconholdconf(co, lo, srv):
 
 def genExtSIPPhoneEntry(co, lo, extenPhone):
 	from univention.admin.handlers.users import user
-	import mailbox
+	import mailbox	
+
 	extension = extenPhone.info["extension"]
 
 	import univention.admin.modules
@@ -395,6 +396,11 @@ def genExtensionsconf(co, lo, srv):
 	conf = "; Automatisch generiert von Asterisk4UCS\n"
 
 	conf += "\n[default]\n"
+
+	if (srv["globalCallId"]):
+		conf += "\n;globale Rufnummer fuer alle ausgehenden Anrufe\n"
+		conf += ";exten => _0.,1,CALLERID(all," + srv["globalCallId"] + ")\n"
+		conf += ";exten => _0.,n,Dial(SIP/${EXTEN:1})\n"
 
 	conf += "\n\n; ===== Telefone =====\n\n"
 	for phone in sipPhone.lookup(co, lo, False):

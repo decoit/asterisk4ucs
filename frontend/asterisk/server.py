@@ -218,6 +218,10 @@ mapping.register("defaultext", "ast4ucsServerDefaultext",
 	None, univention.admin.mapping.ListToString)
 mapping.register("admins", "ast4ucsServerAdminemail")
 
+# NEW!NEW!NEW!NEW!NEW!NEW!
+mapping.register("globalCallId" , "ast4ucsServerGlobalCallId",
+	None, univention.admin.mapping.ListToString)
+
 mapping.register("mailboxMaxlength", "ast4ucsServerMailboxmaxlen",
 	None, univention.admin.mapping.ListToString)
 mapping.register("mailboxEmailsubject", "ast4ucsServerMailboxemailsubject",
