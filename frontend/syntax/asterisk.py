@@ -10,6 +10,7 @@ class ast4ucsExtmodeSyntax(select):
 class ast4ucsDurationSyntax(integer):
 	name = "ast4ucsDurationSyntax"
 
+	@classmethod
 	def parse(self, text):
 		try:
 			number = int(text)
