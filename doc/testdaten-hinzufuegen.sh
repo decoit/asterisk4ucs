@@ -22,20 +22,6 @@ function create {
 create settings/service "Asterisk Server" "cn=services,cn=univention"
 create computers/memberserver "Fakemember" "cn=computers"
 
-# Testuser
-create users/user "" "cn=users" \
-	--set lastname="Moss" \
-	--set firstname="Maurice" \
-	--set username="mmoss" \
-	--set password="mmoss" \
-	--set overridePWLength="1"
-create users/user "" "cn=users" \
-	--set lastname="Trenneman" \
-	--set firstname="Roy" \
-	--set username="rtrenneman" \
-	--set password="rtrenneman" \
-	--set overridePWLength="1"
-
 # =============== Telefonbuch =================================================
 create asterisk/phoneBook "Testtelefonbuch" "cn=asterisk"
 
@@ -69,7 +55,8 @@ create asterisk/phoneGroup "Systemmanagement" "cn=Testserver,cn=asterisk" \
 
 # Warteschleifen
 create asterisk/waitingLoop "Support-Hotline" "cn=Testserver,cn=asterisk" \
-	--set extension="50"
+	--set extension="50" \
+	--set Name="Support-Hotline"
 
 # Mailboxen
 create asterisk/mailbox "" "cn=Testserver,cn=asterisk" \
@@ -94,9 +81,31 @@ create asterisk/sipPhone "" "cn=Testserver,cn=asterisk" \
 create asterisk/sipPhone "" "cn=Testserver,cn=asterisk" \
 	--set extension="21" \
 	--set password="1234" \
-	--set phonetype="cn=Grandstream 12D,cn=Testserver,cn=asterisk,$ldap_base"
+	--set phonetype="cn=Grandstream 12D,cn=Testserver,cn=asterisk,$ldap_base" \
 	--set waitingloops="cn=Support-Hotline,cn=Testserver,cn=asterisk" \
 	--set callgroups="cn=Softwareentwicklung,cn=Testserver,cn=asterisk" \
 	--set pickupgroups="cn=Softwareentwicklung,cn=Testserver,cn=asterisk" \
 	--set pickupgroups="cn=Systemmanagement,cn=Testserver,cn=asterisk"
+
+# ====================== Benutzer =============================================
+
+create users/user "" "cn=users" \
+	--set lastname="Moss" \
+	--set firstname="Maurice" \
+	--set username="mmoss" \
+	--set password="mmoss" \
+	--set overridePWLength="1"
+udm users/user modify --dn "uid=mmoss,cn=users,$ldap_base" \
+	--set mailbox="cn=mailbox 20,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set phones="cn=phone 20,cn=Testserver,cn=asterisk,$ldap_base"
+
+create users/user "" "cn=users" \
+	--set lastname="Trenneman" \
+	--set firstname="Roy" \
+	--set username="rtrenneman" \
+	--set password="rtrenneman" \
+	--set overridePWLength="1"
+udm users/user modify --dn "uid=rtrenneman,cn=users,$ldap_base" \
+	--set mailbox="cn=mailbox 21,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set phones="cn=phone 21,cn=Testserver,cn=asterisk,$ldap_base"
 
