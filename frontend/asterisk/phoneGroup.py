@@ -19,7 +19,8 @@ superordinate = "asterisk/server"
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
 		[ "commonName", "id" ],
-		[ "callphones", "pickupphones" ],
+		[ "callphones" ],
+		[ "pickupphones" ],
 	])
 ]
 
@@ -36,7 +37,7 @@ property_descriptions = {
 		required=True
 	),
 	"callphones": univention.admin.property(
-		short_description="'Callgroup'-Teilnehmer",
+		short_description="Callgroup-Teilnehmer",
 		syntax=univention.admin.syntax.LDAP_Search(
                         filter="objectClass=ast4ucsPhone",
                         attribute=['asterisk/sipPhone: name'],
@@ -45,7 +46,7 @@ property_descriptions = {
 		multivalue=True,
 	),
 	"pickupphones": univention.admin.property(
-		short_description="'Pickupgroup'-Teilnehmer",
+		short_description="Pickupgroup-Teilnehmer",
 		syntax=univention.admin.syntax.LDAP_Search(
                         filter="objectClass=ast4ucsPhone",
                         attribute=['asterisk/sipPhone: name'],

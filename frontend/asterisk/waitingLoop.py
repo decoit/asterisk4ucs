@@ -20,8 +20,8 @@ layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
 		[ "commonName", "extension" ],
 		[ "strategy", "maxCalls" ],
-		[ "memberDelay", "members" ],
-		[ "delayMusic" ],
+		[ "delayMusic", "memberDelay" ],
+		[ "members" ],
 	])
 ]
 

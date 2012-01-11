@@ -19,8 +19,10 @@ layout = [
 		[ "extension", "ipaddress" ],
 		[ "macaddress", "hostname" ],
 		[ "phonetype", "profile" ],
-		[ "password", "waitingloops" ],
-		[ "callgroups", "pickupgroups" ],
+		[ "password" ],
+		[ "waitingloops" ],
+		[ "callgroups" ],
+		[ "pickupgroups" ],
 	])
 ]
 

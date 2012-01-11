@@ -20,8 +20,10 @@ layout = [
 		[ "commonName", "extension" ],
 		[ "maxMembers" ],
 		[ "pin", "adminPin" ],
-		[ "announceCount", "initiallyMuted" ],
-		[ "musicOnHold", "quietMode" ],
+		[ "announceCount" ],
+		[ "initiallyMuted" ],
+		[ "musicOnHold" ],
+		[ "quietMode" ],
 	])
 ]
 
