@@ -81,19 +81,19 @@ create asterisk/sipPhone "cn=Testserver,cn=asterisk" \
 	--set extension="20" \
 	--set password="1234" \
 	--set phonetype="cn=Grandstream 12D,cn=Testserver,cn=asterisk,$ldap_base" \
-	--set waitingloops="cn=Support-Hotline,cn=Testserver,cn=asterisk" \
-	--set callgroups="cn=Systemmanagement,cn=Testserver,cn=asterisk" \
-	--set pickupgroups="cn=Systemmanagement,cn=Testserver,cn=asterisk" \
-	--set pickupgroups="cn=Softwareentwicklung,cn=Testserver,cn=asterisk"
+	--set waitingloops="cn=Support-Hotline,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set callgroups="cn=Systemmanagement,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set pickupgroups="cn=Systemmanagement,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set pickupgroups="cn=Softwareentwicklung,cn=Testserver,cn=asterisk,$ldap_base"
 
 create asterisk/sipPhone "cn=Testserver,cn=asterisk" \
 	--set extension="21" \
 	--set password="1234" \
 	--set phonetype="cn=Grandstream 12D,cn=Testserver,cn=asterisk,$ldap_base" \
-	--set waitingloops="cn=Support-Hotline,cn=Testserver,cn=asterisk" \
-	--set callgroups="cn=Softwareentwicklung,cn=Testserver,cn=asterisk" \
-	--set pickupgroups="cn=Softwareentwicklung,cn=Testserver,cn=asterisk" \
-	--set pickupgroups="cn=Systemmanagement,cn=Testserver,cn=asterisk"
+	--set waitingloops="cn=Support-Hotline,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set callgroups="cn=Softwareentwicklung,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set pickupgroups="cn=Softwareentwicklung,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set pickupgroups="cn=Systemmanagement,cn=Testserver,cn=asterisk,$ldap_base"
 
 # ====================== Benutzer =============================================
 
