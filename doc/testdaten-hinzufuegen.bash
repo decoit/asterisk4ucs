@@ -19,7 +19,8 @@ function create {
 create settings/service "cn=services,cn=univention" \
 	--set name="Asterisk Server"
 create computers/memberserver "cn=computers" \
-	--set name="Fakemember"
+	--set name="Fakemember" \
+	--set service="Asterisk Server"
 
 # =============== Telefonbuch =================================================
 create asterisk/phoneBook "cn=asterisk" \
