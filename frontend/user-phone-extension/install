@@ -42,7 +42,7 @@ function addUserAttribute {
 
 addUserAttribute phones \
 	--set shortDescription="Telefone" \
-	--set tabPosition=4 \
+	--set tabPosition=5 \
 	--set syntax=ast4ucsPhoneSyntax \
 	--set ldapMapping="ast4ucsUserPhone" \
 	--set multivalue=1 \
@@ -50,13 +50,13 @@ addUserAttribute phones \
 
 addUserAttribute mailbox \
 	--set shortDescription="Anrufbeantworter" \
-	--set tabPosition=2 \
+	--set tabPosition=3 \
 	--set syntax=ast4ucsMailboxSyntax \
 	--set ldapMapping="ast4ucsUserMailbox"
 
 addUserAttribute extmode \
 	--set shortDescription="Beim Anrufen Durchwahl senden" \
-	--set tabPosition=3 \
+	--set tabPosition=4 \
 	--set syntax=ast4ucsExtmodeSyntax \
 	--set ldapMapping="ast4ucsUserExtmode"
 
@@ -69,7 +69,7 @@ addUserAttribute ringdelay \
 
 addUserAttribute timeout \
 	--set shortDescription="Mailbox antwortet nach (Sekunden)" \
-	--set tabPosition=5 \
+	--set tabPosition=2 \
 	--set syntax=ast4ucsDurationSyntax \
 	--set ldapMapping="ast4ucsUserTimeout" \
 	--set default=10
