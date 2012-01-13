@@ -10,7 +10,7 @@ for name in ast4ucsPhoneSyntax ast4ucsMailboxSyntax; do
 		--dn "cn=$name,cn=univention,$ldap_base"
 done
 
-for name in phones mailbox extmode ringdelay timeout; do
+for name in phones mailbox extmode ringdelay timeout forwarding; do
 	udm settings/extended_attribute remove \
 		--dn "cn=$name,cn=custom attributes,cn=univention,$ldap_base"
 done
