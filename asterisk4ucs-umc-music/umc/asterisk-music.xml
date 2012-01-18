@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="asterisk-music" icon="asterisk-music" version="1.0">
+		<name>Asterisk4UCS music upload</name>
+		<description>Upload music for waitingloops</description>
+		<categories>
+			<category name="system"/>
+		</categories>
+
+		<command name="asteriskMusic/hallo" function="hallo">
+		</command>
+	</module>
+</umc>
+
