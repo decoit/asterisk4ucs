@@ -1,6 +1,6 @@
 Module: asteriskMusic
 Python: umc/python
-Definition: umc/asterisk-music.xml
+Definition: umc/asteriskMusic.xml
 Javascript: umc/js
 Icons: umc/icons
 
