@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="asteriskUser" icon="asteriskUser" version="1.0">
+		<name>Telefoneinstellungen</name>
+		<description>Asterisk4UCS Telefoneinstellungen</description>
+		<categories>
+			<category name="system"/>
+		</categories>
+
+		<command name="asteriskUser/getSettings"
+			function="getSettings" />
+		<command name="asteriskUser/setSettings"
+			function="setSettings" />
+	</module>
+</umc>
+

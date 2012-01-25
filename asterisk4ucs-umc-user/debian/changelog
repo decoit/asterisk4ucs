@@ -1,0 +1,12 @@
+asterisk4ucs-umc-user (0.0.2) unstable; urgency=low
+
+  * Displays "Hello World!"
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 25 Jan 2012 16:14:25 +0100
+
+asterisk4ucs-umc-user (0.0.1) unstable; urgency=low
+
+  * Initial release
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 18 Jan 2012 16:29:23 +0100
+
