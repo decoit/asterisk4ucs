@@ -7,10 +7,12 @@ joinscript_init
 eval "$(univention-config-registry shell)"
 NAME="Asterisk Server"
 
-univention-directory-manager container/cn      create "$@" --ignore_exists \
+univention-directory-manager container/cn create "$@" \
+	--ignore_exists \
 	--set name=services \
-	--position             "cn=univention,$ldap_base"
-univention-directory-manager  settings/service create "$@" --ignore_exists \
+	--position "cn=univention,$ldap_base"
+univention-directory-manager settings/service create "$@" \
+	--ignore_exists \
 	--set name="$NAME" \
 	--position "cn=services,cn=univention,$ldap_base"
 univention-directory-manager "computers/$server_role" modify "$@" \

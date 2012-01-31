@@ -1,0 +1,3 @@
+42asterisk4ucs.inst usr/lib/univention-install/
+listener/asterisk.py usr/lib/univention-directory-listener/system/
+
