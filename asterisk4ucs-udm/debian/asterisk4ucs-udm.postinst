@@ -1,0 +1,18 @@
+#!/bin/sh
+
+. /usr/share/univention-lib/all.sh
+
+#DEBHELPER#
+
+# create default container for asterisk4ucs data
+udm container/cn create \
+        --ignore_exists \
+        --position "$(ucr get ldap/base)" \
+        --set name="asterisk" \
+        --set description="Asterisk4UCS data container"
+
+# install extended attributes for users/user
+./user-phone-extension/install
+
+stop_udm_cli_server
+

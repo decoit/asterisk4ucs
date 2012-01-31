@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. /usr/share/univention-lib/all.sh
+
+#DEBHELPER#
+
+stop_udm_cli_server
+

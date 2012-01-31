@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+# uninstall extended attributes for users/user
+./user-phone-extension/uninstall
+

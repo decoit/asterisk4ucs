@@ -1,5 +1,8 @@
 #!/usr/bin/make -f
 
+DPATH := debian/asterisk4ucs-udm
+ICONPATH := ${DPATH}/usr/share/univention-management-console-frontend/images
+
 %:
 	dh $@
 
@@ -9,4 +12,12 @@ override_dh_auto_build:
 override_dh_auto_install:
 	dh_auto_install
 	univention-install-config-registry
+
+	# install UDM icons into the UMC icon path
+	set -e;\
+	for i in icons/*/*; do\
+		o=${ICONPATH}/$$i;\
+		install -d "`dirname "$$o"`";\
+		install -m 644 "$$i" "$$o";\
+	done
 

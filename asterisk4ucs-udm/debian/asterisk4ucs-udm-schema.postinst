@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#DEBHELPER#
+
 case "$1" in
 configure)
 	univention-config-registry commit /etc/ldap/slapd.conf

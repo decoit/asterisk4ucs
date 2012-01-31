@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#DEBHELPER#
+
 case "$1" in
 remove)
                 test -e /etc/ldap/slapd.conf \
