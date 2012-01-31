@@ -12,7 +12,7 @@ udm container/cn create \
         --set description="Asterisk4UCS data container"
 
 # install extended attributes for users/user
-./user-phone-extension/install
+/usr/lib/asterisk4ucs/user-phone-extension/install
 
 stop_udm_cli_server
 

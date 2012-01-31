@@ -3,5 +3,5 @@
 #DEBHELPER#
 
 # uninstall extended attributes for users/user
-./user-phone-extension/uninstall
+/usr/lib/asterisk4ucs/user-phone-extension/uninstall
 

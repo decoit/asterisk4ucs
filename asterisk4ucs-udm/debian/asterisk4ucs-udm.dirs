@@ -1,4 +1,5 @@
 usr/share/pyshared/univention/admin/handlers/asterisk/
 usr/share/pyshared/univention/admin/syntax.d/
 usr/share/pyshared/univention/admin/hooks.d/
+usr/lib/asterisk4ucs/user-phone-extension/
 
