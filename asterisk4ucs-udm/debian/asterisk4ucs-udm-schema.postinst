@@ -1,0 +1,19 @@
+#!/bin/sh
+
+case "$1" in
+configure)
+	univention-config-registry commit /etc/ldap/slapd.conf
+        test -x /etc/init.d/slapd && invoke-rc.d slapd restart
+        ;;
+
+abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+
+*)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
+

@@ -1,0 +1,3 @@
+schema/asterisk4ucs.schema usr/share/univention-ldap/schema/
+schema/asterisk.schema usr/share/univention-ldap/schema/
+
