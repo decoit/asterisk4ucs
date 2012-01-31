@@ -5,3 +5,11 @@
 # uninstall extended attributes for users/user
 /usr/lib/asterisk4ucs/user-phone-extension/uninstall
 
+# un-patch UMC modules/udm.xml
+/usr/lib/asterisk4ucs/wizard-patch/uninstall
+
+/etc/init.d/univention-management-console-web-server stop
+/etc/init.d/univention-management-console-server restart
+/etc/init.d/univention-management-console-web-server start
+
+

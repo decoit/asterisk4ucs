@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+set -u
+
+cd "`dirname "$0"`"
+
+UNI_UMC_PATH=/usr/share/univention-management-console
+
+echo "Adding module Asterisk to UMC's main menu..."
+# first try to reverse-apply the patch, in case it was applied already.
+# that may fail.
+patch -ufsRr- "$UNI_UMC_PATH/modules/udm.xml" wizard.patch &>/dev/null || true
+# then apply the patch. this must not fail.
+patch -ufsr- "$UNI_UMC_PATH/modules/udm.xml" wizard.patch
+echo -e "\t\t\t\t\t\t\tdone."
+

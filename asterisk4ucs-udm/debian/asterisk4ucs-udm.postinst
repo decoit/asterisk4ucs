@@ -14,5 +14,12 @@ udm container/cn create \
 # install extended attributes for users/user
 /usr/lib/asterisk4ucs/user-phone-extension/install
 
+# patch UMC modules/udm.xml
+/usr/lib/asterisk4ucs/wizard-patch/install
+
+/etc/init.d/univention-management-console-web-server stop
+/etc/init.d/univention-management-console-server restart
+/etc/init.d/univention-management-console-web-server start
+
 stop_udm_cli_server
 
