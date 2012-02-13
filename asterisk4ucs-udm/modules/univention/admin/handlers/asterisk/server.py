@@ -18,7 +18,9 @@ usewizard = 1
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
 		[ "commonName" ],
-		[ "host" ],
+#		[ "host" ],
+		[ "sshuser", "sshhost" ],
+		[ "sshpath", "sshcmd" ],
 		[ "lastupdate_gui", "apply" ],
 		[ "globalCallId" ],
 	]),
@@ -46,15 +48,38 @@ property_descriptions = {
 		identifies=True,
 		required=True
 	),
-	"host": univention.admin.property(
-		short_description="Host",
-		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="(&(objectClass=univentionHost)" + \
-				"(univentionService=Asterisk Server))",
-                        attribute=['computers/computer: name'],
-                        value='computers/computer: dn',
-                ),
-		required=True
+#	"host": univention.admin.property(
+#		short_description="Host",
+#		syntax=univention.admin.syntax.LDAP_Search(
+#                        filter="(&(objectClass=univentionHost)" + \
+#				"(univentionService=Asterisk Server))",
+#                        attribute=['computers/computer: name'],
+#                        value='computers/computer: dn',
+#                ),
+#		required=True
+#	),
+	"sshuser": univention.admin.property(
+		short_description="SSH-User",
+		syntax=univention.admin.syntax.string,
+		default="root",
+		required=True,
+	),
+	"sshhost": univention.admin.property(
+		short_description="SSH-Host",
+		syntax=univention.admin.syntax.string,
+		required=True,
+	),
+	"sshpath": univention.admin.property(
+		short_description="Asterisk-Konfigurationspfad auf Zielhost",
+		syntax=univention.admin.syntax.string,
+		default="/etc/asterisk",
+		required=True,
+	),
+	"sshcmd": univention.admin.property(
+		short_description="Asterisk-Kommando auf Zielhost",
+		syntax=univention.admin.syntax.string,
+		default="asterisk",
+		required=True,
 	),
 	"lastupdate": univention.admin.property(
 		syntax=univention.admin.syntax.integer,
@@ -197,7 +222,15 @@ Weiterhin können die folgenden Escapesequenzen verwendet werden:
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
-mapping.register("host", "ast4ucsServerHost",
+#mapping.register("host", "ast4ucsServerHost",
+#	None, univention.admin.mapping.ListToString)
+mapping.register("sshuser", "ast4ucsServerSshuser",
+	None, univention.admin.mapping.ListToString)
+mapping.register("sshhost", "ast4ucsServerSshhost",
+	None, univention.admin.mapping.ListToString)
+mapping.register("sshpath", "ast4ucsServerSshpath",
+	None, univention.admin.mapping.ListToString)
+mapping.register("sshcmd", "ast4ucsServerSshcmd",
 	None, univention.admin.mapping.ListToString)
 mapping.register("lastupdate", "ast4ucsServerLastupdate",
 	None, univention.admin.mapping.ListToString)

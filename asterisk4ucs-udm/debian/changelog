@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.5.1) unstable; urgency=low
+
+  * asterisk/server um Felder für ssh-Zugriff ergänzt
+
+ -- Tristan Bruns <bruns@decoit.de>  Mon, 13 Feb 2012 16:28:55 +0100
+
 asterisk4ucs-udm (0.5.0) unstable; urgency=low
 
   * Fertig fuer den Test-Rollout
