@@ -11,6 +11,8 @@
 			function="getSettings" />
 		<command name="asteriskUser/setSettings"
 			function="setSettings" />
+		<command name="asteriskUser/phones/query"
+			function="phonesQuery" />
 	</module>
 </umc>
 
