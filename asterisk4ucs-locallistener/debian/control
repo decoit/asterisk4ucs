@@ -1,0 +1,22 @@
+Source: asterisk4ucs-locallistener
+Section: asterisk4ucs
+Priority: optional
+Maintainer: Tristan Bruns (Decoit GmbH) <bruns@decoit.de>
+Build-Depends:
+ debhelper (>= 7.0.50~),
+ univention-config-dev,
+ python-all,
+ python-support
+Standards-Version: 3.5.2
+
+Package: asterisk4ucs-locallistener
+Architecture: all
+Depends:
+ univention-directory-manager-tools (>> 7.0.147),
+ shell-univention-lib (>> 1.0.1-1),
+ univention-directory-listener,
+ univention-base-files,
+ ${misc:Depends},
+ ${python:Depends}
+Description: Asterisk4UCS: Directory-Listener-Modul
+ Dieses Paket enthält das Directory-Listener-Modul von Asterisk4UCS.

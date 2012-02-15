@@ -1,0 +1,4 @@
+#!/bin/sh
+
+invoke-rc.d univention-directory-listener restart
+
