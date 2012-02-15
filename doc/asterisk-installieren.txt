@@ -2,5 +2,26 @@
 Asterisk 1.8.7.2:
 http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-1.8.7.2.tar.gz
 
+...
+
+...
+
+Asterisk ist installiert.
+
+# beispielkonfigs backuppen
+cd /etc/asterisk
+mkdir testkonfigs
+mv * testkonfigs
+
+# asterisk.conf und modules.conf wiederherstellen
+cp testkonfig/{modules,asterisk}.conf .
+
+# aus dem repo die defaultkonfigs kopieren (pfad wird sich wshl. ändern)
+cp -r path/to/asterisk4ucs/member(?)/defaultconf(?)/{{extensions,musiconhold,queues,sip,voicemail}.conf,ucs_autogen} .
+
+/etc/init.d/asterisk restart
+
+# fertig auf dem member.
+
 
 
