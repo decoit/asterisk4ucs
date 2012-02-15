@@ -52,15 +52,19 @@ property_descriptions = {
 	"strategy": univention.admin.property(
 		short_description="Strategie",
 		syntax=SyntaxStrategy,
+		required=True,
+		default="ringall",
 	),
 	"maxCalls": univention.admin.property(
 		short_description="Maximalzahl gleichzeitiger Anrufe",
 		syntax=univention.admin.syntax.integer,
+		required=True,
 		default="50",
 	),
 	"memberDelay": univention.admin.property(
 		short_description="Wartezeit zwischen Anrufen (in Sekunden)",
 		syntax=univention.admin.syntax.integer,
+		required=True,
 		default="10",
 	),
 	"delayMusic": univention.admin.property(
