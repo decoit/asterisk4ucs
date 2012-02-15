@@ -21,16 +21,8 @@ def unpackConfig(configs):
 	return res
 
 def handler(dn, newdata, olddata):
-	univention.debug.debug(
-		univention.debug.LISTENER,
-		univention.debug.WARN,
-		'start')
 	if (not newdata or not "ast4ucsServerSshhost" in newdata
 			or newdata["ast4ucsServerSshhost"] == ""):
-		univention.debug.debug(
-			univention.debug.LISTENER,
-			univention.debug.WARN,
-			'no sshhost :-(')
 		return
 
 	userhost = "%s@%s" % (newdata["ast4ucsServerSshuser"][0],
@@ -41,10 +33,6 @@ def handler(dn, newdata, olddata):
 	command = "%s -rx 'core reload'" % (newdata["ast4ucsServerSshcmd"][0])
 
 	if not configs:
-		univention.debug.debug(
-			univention.debug.LISTENER,
-			univention.debug.WARN,
-			'no configs :-(')
 		return
 
 	listener.setuid(0)
@@ -81,10 +69,6 @@ def handler(dn, newdata, olddata):
 	shutil.rmtree(tempdir)
 
 	listener.unsetuid()
-	univention.debug.debug(
-		univention.debug.LISTENER,
-		univention.debug.WARN,
-		'end')
 
 def postrun():
 	pass
