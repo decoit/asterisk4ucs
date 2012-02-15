@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.5.3) unstable; urgency=low
+
+  * Abhängigkeit zu patch hinzugefügt
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 15 Feb 2012 16:44:28 +0100
+
 asterisk4ucs-udm (0.5.2) unstable; urgency=low
 
   * Typo bei Wählplangenerierung entfernt
