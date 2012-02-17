@@ -27,6 +27,14 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 	buildRendering: function () {
 		this.inherited(arguments);
 
+		this._buttons = [{
+			name: 'submit',
+			label: "Speichern",
+			callback: dojo.hitch(this, function () {
+				return;
+			}),
+		}];
+
 		var tabContainer = new umc.widgets.TabContainer({
 			nested: true,
 		});
@@ -35,11 +43,15 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		tabContainer.addChild(this.renderMailbox());
 		tabContainer.addChild(this.renderPhones());
 		tabContainer.addChild(this.renderForwarding());
+
+		foo = tabContainer;
+		tabContainer.startup();
 	},
 	renderMailbox: function () {
 		var page = new umc.widgets.Page({
 			title: "Anrufbeantworter",
 			headerText: "Anrufbeantwortereinstellungen",
+			footerButtons: this._buttons,
 			closable: false,
 		});
 
@@ -87,7 +99,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			layout: layout,
 			scrollable: true,
 		});
-		page.addChild(form);
+		container.addChild(form);
 
 		return page;
 	},
@@ -95,6 +107,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		var page = new umc.widgets.Page({
 			title: "Telefone",
 			headerText: "Telefoneinstellungen",
+			footerButtons: this._buttons,
 			closable: false,
 		});
 
@@ -120,7 +133,9 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			label: "Klingelreihenfolge",
 			moduleStore: umc.store.getModuleStore("extension",
 				"asteriskUser/phones"),
-			query: {'*':'*'},
+			query: {
+				filter:'*'
+			},
 			columns: [{
 				name: 'name',
 				label: "Telefon",
@@ -157,7 +172,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			layout: layout,
 			scrollable: true,
 		});
-		page.addChild(form);
+		container.addChild(form);
 
 		return page;
 	},
@@ -165,6 +180,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		var page = new umc.widgets.Page({
 			title: "Weiterleitung",
 			headerText: "Weiterleitungseinstellungen",
+			footerButtons: this._buttons,
 			closable: false,
 		});
 
@@ -188,7 +204,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			layout: layout,
 			scrollable: true,
 		});
-		page.addChild(form);
+		container.addChild(form);
 
 		return page;
 	},

@@ -28,7 +28,7 @@ class Instance( univention.management.console.modules.Base ):
     def phonesQuery(self, request):
         request.status = SUCCESS
         self.finished(request.id, [{
-            extension: 42,
-            name: "Telefon 42",
+            "extension": 42,
+            "name": "Telefon 42",
         }])
 
