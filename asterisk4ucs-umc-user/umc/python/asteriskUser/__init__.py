@@ -25,10 +25,22 @@ class Instance( univention.management.console.modules.Base ):
     def setSettings( self, request ):
         self.finished( request.id, "success" )
 
+    def phonesQuery_(self, request):
+        request.status = SUCCESS
+        self.finished(request.id, [{
+            "extension": 42,
+            "name": "Telefon 42",
+        }])
+
     def phonesQuery(self, request):
         request.status = SUCCESS
         self.finished(request.id, [{
             "extension": 42,
             "name": "Telefon 42",
         }])
+
+def getCoLo(userdn, password):
+	co = univention.admin.config.config()
+	lo = univention.admin.uldap.access()
+	return co, lo
 

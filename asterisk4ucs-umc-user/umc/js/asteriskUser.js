@@ -40,8 +40,8 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		});
 		this.addChild(tabContainer);
 
-		tabContainer.addChild(this.renderMailbox());
 		tabContainer.addChild(this.renderPhones());
+		tabContainer.addChild(this.renderMailbox());
 		tabContainer.addChild(this.renderForwarding());
 
 		foo = tabContainer;
@@ -111,26 +111,12 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			closable: false,
 		});
 
-		var container = new umc.widgets.ContainerWidget({
-			scrollable: true,
+		var container = new umc.widgets.ExpandingTitlePane({
+			title: "Klingelreihenfolge",
 		});
 		page.addChild(container);
 
-		var widgets = [{
-			type: 'ComboBox',
-			name: 'phones/interval',
-			label: "Klingelintervall",
-			staticValues: [
-				{ id:   '2', label:  "2 Sekunden" },
-				{ id:   '4', label:  "4 Sekunden" },
-				{ id:   '6', label:  "6 Sekunden" },
-				{ id:   '8', label:  "8 Sekunden" },
-				{ id:  '10', label: "10 Sekunden" },
-			],
-		}, {
-			type: 'Grid',
-			name: 'phones/sequence',
-			label: "Klingelreihenfolge",
+		var grid = new umc.widgets.Grid({
 			moduleStore: umc.store.getModuleStore("extension",
 				"asteriskUser/phones"),
 			query: {
@@ -160,20 +146,35 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 					alert("spaeter" + id);
 				}),
 			}],
+		});
+		container.addChild(grid);
+
+		var widgets = [{
+			type: 'ComboBox',
+			name: 'phones/interval',
+			label: "Klingelintervall",
+			staticValues: [
+				{ id:   '2', label:  "2 Sekunden" },
+				{ id:   '4', label:  "4 Sekunden" },
+				{ id:   '6', label:  "6 Sekunden" },
+				{ id:   '8', label:  "8 Sekunden" },
+				{ id:  '10', label: "10 Sekunden" },
+			],
 		}];
 
 		var layout = [
 			'phones/interval',
-			'phones/sequence',
 		];
 
 		var form = new umc.widgets.Form({
+			region: 'top',
 			widgets: widgets,
 			layout: layout,
 			scrollable: true,
 		});
-		container.addChild(form);
+		page.addChild(form);
 
+		page.startup();
 		return page;
 	},
 	renderForwarding: function () {
