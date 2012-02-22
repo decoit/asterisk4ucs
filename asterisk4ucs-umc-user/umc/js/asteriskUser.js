@@ -24,6 +24,8 @@ dojo.require("umc.widgets.Form");
 dojo.require("umc.widgets.Grid");
 
 dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
+	_forms: [],
+
 	buildRendering: function () {
 		this.inherited(arguments);
 
@@ -44,8 +46,8 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		tabContainer.addChild(this.renderMailbox());
 		tabContainer.addChild(this.renderForwarding());
 
-		foo = tabContainer;
-		tabContainer.startup();
+		this.startup();
+		this.load();
 	},
 	renderMailbox: function () {
 		var page = new umc.widgets.Page({
@@ -100,6 +102,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			scrollable: true,
 		});
 		container.addChild(form);
+		this._forms.push(form);
 
 		return page;
 	},
@@ -173,6 +176,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			scrollable: true,
 		});
 		page.addChild(form);
+		this._forms.push(form);
 
 		page.startup();
 		return page;
@@ -206,8 +210,24 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			scrollable: true,
 		});
 		container.addChild(form);
+		this._forms.push(form);
 
 		return page;
+	},
+	setValues: function (values) {
+		dojo.forEach(this._forms, function (form) {
+			form.setFormValues(values);
+		});
+	},
+	load: function () {
+		this.umcpCommand('asteriskUser/load').then(
+			dojo.hitch(this, function (data) {
+				this.setValues(data.result);
+			}),
+			dojo.hitch(this, function () {
+				// hm...
+			})
+		);
 	},
 });
 
