@@ -7,10 +7,10 @@
 			<category name="system"/>
 		</categories>
 
-		<command name="asteriskUser/getSettings"
-			function="getSettings" />
-		<command name="asteriskUser/setSettings"
-			function="setSettings" />
+		<command name="asteriskUser/load"
+			function="load" />
+		<command name="asteriskUser/save"
+			function="save" />
 		<command name="asteriskUser/phones/query"
 			function="phonesQuery" />
 	</module>

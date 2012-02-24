@@ -27,23 +27,43 @@ import univention.admin.handlers.asterisk.sipPhone
 import univention.admin.handlers.asterisk.mailbox
 
 class Instance( univention.management.console.modules.Base ):
-	def getSettings( self, request ):
+	def load( self, request ):
 		user, mailbox = getUserAndMailbox(self._user_dn)
 
 		result = {
-			"": ,
-			"": ,
-			"": ,
-			"": ,
-			"": ,
+			"phones/interval": user["ringdelay"],
+			"forwarding/number": 42,
+
+			"mailbox/timeout": user["timeout"],
+			"mailbox": False,
 		}
+
+		if mailbox:
+			result.update({
+				"mailbox": True,
+				"mailbox/password": mailbox["password"],
+				"mailbox/email": mailbox["email"],
+			})
 
 		request.status = SUCCESS
 		self.finished( request.id, result )
 
-	def setSettings( self, request ):
+	def save( self, request ):
+		user, mailbox = getUserAndMailbox(self._user_dn)
+
+		user["ringdelay"] = request.options["phones/interval"]
+		user["timeout"] = request.options["mailbox/timeout"]
+		user.modify()
+
+		if mailbox:
+			mailbox["password"] = request.options[
+							"mailbox/password"]
+			mailbox["email"] = request.options["mailbox/email"]
+			mailbox.modify()
+
 		request.status = SUCCESS
-		self.finished( request.id, "success" )
+		self.finished( request.id, "success",
+			"Speichern war erfolgreich!" )
 
 	def phonesQuery(self, request):
 		phones = getPhones(self._user_dn)
@@ -85,7 +105,9 @@ def getPhone(co, lo, dn):
 	return univention.admin.handlers.asterisk.sipPhone.object(co, lo,
 		None, dn)
 
-	return user
+def getMailbox(co, lo, dn):
+	return univention.admin.handlers.asterisk.mailbox.object(co, lo,
+		None, dn)
 
 def getPhones(userdn):
 	co, lo = getCoLo()
@@ -97,4 +119,15 @@ def getPhones(userdn):
 		phones.append(getPhone(co, lo, dn))
 
 	return phones
+
+def getUserAndMailbox(userdn):
+	co, lo = getCoLo()
+
+	user = getUser(co, lo, userdn)
+
+	mailbox = user.get("mailbox")
+	if mailbox:
+		mailbox = getMailbox(co, lo, mailbox)
+
+	return user, mailbox
 

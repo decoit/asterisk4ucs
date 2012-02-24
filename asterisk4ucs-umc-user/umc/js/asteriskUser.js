@@ -24,6 +24,8 @@ dojo.require("umc.widgets.Form");
 dojo.require("umc.widgets.Grid");
 
 dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
+	_buttons: null,
+
 	_forms: [],
 
 	buildRendering: function () {
@@ -33,7 +35,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			name: 'submit',
 			label: "Speichern",
 			callback: dojo.hitch(this, function () {
-				return;
+				this.save();
 			}),
 		}];
 
@@ -43,8 +45,11 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		this.addChild(tabContainer);
 
 		tabContainer.addChild(this.renderPhones());
+
 		tabContainer.addChild(this.renderMailbox());
-		tabContainer.addChild(this.renderForwarding());
+
+		// forwarding is not yet implemented
+		//tabContainer.addChild(this.renderForwarding());
 
 		this.startup();
 		this.load();
@@ -62,17 +67,25 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		});
 		page.addChild(container);
 
+		var noMailboxHint = new umc.widgets.Text({
+			content: "Leider hat Ihnen der Administrator keinen " +
+				"Anrufbeantworter zugewiesen.",
+			region: "top",
+		});
+		container.addChild(noMailboxHint);
+		this._mailboxHint = noMailboxHint;
+
 		var widgets = [{
 			type: 'TextBox',
-			name: 'mailbox/pin',
-			label: "Abruf-Pin",
+			name: 'mailbox/password',
+			label: "PIN-Nummer zum Abrufen",
 		}, {
 			type: 'ComboBox',
 			name: 'mailbox/email',
 			label: "Per eMail benachrichtigen?",
 			staticValues: [
-				{ id: 'false', label: "Nein" },
-				{ id:  'true', label: "Ja, gerne!" },
+				{ id: '0', label: "Nein" },
+				{ id: '1', label: "Ja, gerne!" },
 			],
 		}, {
 			type: 'ComboBox',
@@ -91,7 +104,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		}];
 
 		var layout = [
-			'mailbox/pin',
+			'mailbox/password',
 			'mailbox/email',
 			'mailbox/timeout'
 		];
@@ -103,6 +116,10 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		});
 		container.addChild(form);
 		this._forms.push(form);
+		this._mailboxForm = form;
+
+		this._mailboxForm.domNode.style.display = 'none';
+		this._mailboxHint.domNode.style.display = 'block';
 
 		return page;
 	},
@@ -217,7 +234,23 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 	setValues: function (values) {
 		dojo.forEach(this._forms, function (form) {
 			form.setFormValues(values);
-		});
+		}, this);
+
+		// disable the mailbox form if needed
+		if (values.mailbox) {
+			this._mailboxForm.domNode.style.display = 'block';
+			this._mailboxHint.domNode.style.display = 'none';
+		} else {
+			this._mailboxForm.domNode.style.display = 'none';
+			this._mailboxHint.domNode.style.display = 'block';
+		}
+	},
+	getValues: function () {
+		var values = {};
+		dojo.forEach(this._forms, function (form) {
+			dojo.mixin(values, form.gatherFormValues());
+		}, this);
+		return values;
 	},
 	load: function () {
 		this.umcpCommand('asteriskUser/load').then(
@@ -228,6 +261,10 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 				// hm...
 			})
 		);
+	},
+	save: function () {
+		var data = this.getValues();
+		this.umcpCommand('asteriskUser/save', data);
 	},
 });
 
