@@ -25,6 +25,9 @@ dojo.require("umc.widgets.Grid");
 
 dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 	_buttons: null,
+	_mailboxHint: null,
+	_mailboxForm: null,
+	_grid: null,
 
 	_forms: [],
 
@@ -38,6 +41,8 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 				this.save();
 			}),
 		}];
+
+		this._forms = [];
 
 		var tabContainer = new umc.widgets.TabContainer({
 			nested: true,
@@ -136,13 +141,18 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 		});
 		page.addChild(container);
 
-		var grid = new umc.widgets.Grid({
-			moduleStore: umc.store.getModuleStore("extension",
+		this._grid = new umc.widgets.Grid({
+			moduleStore: umc.store.getModuleStore("dn",
 				"asteriskUser/phones"),
 			query: {
-				filter:'*'
+				filter:'*',
 			},
 			columns: [{
+				name: 'position',
+				label: "Position",
+				editable: false,
+				hidden: true,
+			}, {
 				name: 'name',
 				label: "Telefon",
 				editable: false,
@@ -150,24 +160,38 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 			actions: [{
 				name: 'earlier',
 				label: "Früher",
+				isStandardAction: true,
 				canExecute: dojo.hitch(this, function (values) {
-					return true;
+					return values.position > 0;
 				}),
 				callback: dojo.hitch(this, function (id) {
-					alert("frueher" + id);
+					this._grid.filter({
+						dn: id,
+						position: -1,
+					});
 				}),
 			}, {
 				name: 'later',
 				label: "Später",
+				isStandardAction: true,
 				canExecute: dojo.hitch(this, function (values) {
-					return true;
+					return (values.position + 1 <
+						this._grid._grid.rowCount);
 				}),
 				callback: dojo.hitch(this, function (id) {
-					alert("spaeter" + id);
+					this._grid.filter({
+						dn: id,
+						position: 1,
+					});
 				}),
 			}],
 		});
-		container.addChild(grid);
+		container.addChild(this._grid);
+		foo = this._grid;
+
+		this._grid._grid.canSort = function (index) {
+			return false;
+		};
 
 		var widgets = [{
 			type: 'ComboBox',

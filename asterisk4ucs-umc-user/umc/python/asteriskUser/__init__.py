@@ -66,12 +66,21 @@ class Instance( univention.management.console.modules.Base ):
 			"Speichern war erfolgreich!" )
 
 	def phonesQuery(self, request):
+		if (request.options.get("dn") and
+				request.options.get("position")
+					in ["-1", "1"]):
+			changePhoneOrder(
+					self._user_dn,
+					request.options["dn"],
+					int(request.options["position"]))
+
 		phones = getPhones(self._user_dn)
 
 		result = []
-		for phone in phones:
+		for i,phone in enumerate(phones):
 			result.append({
-				"extension": phone["extension"],
+				"position": i,
+				"dn": phone.dn,
 				"name": phone["name"],
 			})
 
@@ -98,16 +107,22 @@ def getUser(co, lo, dn):
 	univention.admin.modules.init(lo, position,
 		univention.admin.handlers.users.user)
 
-	return univention.admin.handlers.users.user.object(co, lo,
+	obj = univention.admin.handlers.users.user.object(co, lo,
 		None, dn)
+	obj.open()
+	return obj
 
 def getPhone(co, lo, dn):
-	return univention.admin.handlers.asterisk.sipPhone.object(co, lo,
+	obj = univention.admin.handlers.asterisk.sipPhone.object(co, lo,
 		None, dn)
+	obj.open()
+	return obj
 
 def getMailbox(co, lo, dn):
-	return univention.admin.handlers.asterisk.mailbox.object(co, lo,
+	obj = univention.admin.handlers.asterisk.mailbox.object(co, lo,
 		None, dn)
+	obj.open()
+	return obj
 
 def getPhones(userdn):
 	co, lo = getCoLo()
@@ -130,4 +145,20 @@ def getUserAndMailbox(userdn):
 		mailbox = getMailbox(co, lo, mailbox)
 
 	return user, mailbox
+
+def changePhoneOrder(userdn, phonedn, change):
+	co, lo = getCoLo()
+
+	user = getUser(co, lo, userdn)
+
+	phones = user.get("phones", [])
+	i = phones.index(phonedn)
+	phones.pop(i)
+	if change == -1 and i > 0:
+		phones.insert(i-1, phonedn)
+	elif change == 1:
+		phones.insert(i+1, phonedn)
+
+	user["phones"] = phones
+	user.modify()
 
