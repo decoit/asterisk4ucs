@@ -1,3 +1,17 @@
+asterisk4ucs-udm (0.5.7) unstable; urgency=low
+
+  * Workaround für furchtbar nervigen Bug, der bis zur Cebit behoben sein muss
+    (Die Sache mit dem angeblich ungültigen Feld in asterisk/server, das
+    weder required=True ist, noch überhaupt in der GUI angezeigt wird)
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 29 Feb 2012 17:29:31 +0100
+
+asterisk4ucs-udm (0.5.6) unstable; urgency=low
+
+  * ast4ucsServerHost muss optional sein
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 29 Feb 2012 16:27:01 +0100
+
 asterisk4ucs-udm (0.5.5) unstable; urgency=low
 
   * Copyright-Vermerke hinzugefügt

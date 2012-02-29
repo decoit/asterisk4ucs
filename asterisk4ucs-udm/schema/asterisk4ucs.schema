@@ -386,10 +386,10 @@ objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 	SUP top
 	MUST (
 		cn $
-		ast4ucsServerHost $
 		ast4ucsServerLastupdate
 	)
 	MAY (
+		ast4ucsServerHost $
 		ast4ucsServerConfig $
 		ast4ucsServerBlockedareacode $
 		ast4ucsServerMusic $
