@@ -1,3 +1,15 @@
+asterisk4ucs-udm (0.5.9) unstable; urgency=low
+
+  * Syntaxfilter für Mailbox-Timeout angepasst
+
+ -- Tristan Bruns <bruns@decoit.de>  Fri, 02 Mar 2012 17:05:36 +0100
+
+asterisk4ucs-udm (0.5.8) unstable; urgency=low
+
+  * testdaten-script an neues listener-modell angepasst
+
+ -- Tristan Bruns <bruns@decoit.de>  Fri, 02 Mar 2012 16:38:45 +0100
+
 asterisk4ucs-udm (0.5.7) unstable; urgency=low
 
   * Workaround für furchtbar nervigen Bug, der bis zur Cebit behoben sein muss

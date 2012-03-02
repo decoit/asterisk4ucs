@@ -30,13 +30,6 @@ function create {
 		"$@"
 }
 
-# Memberserver-Fake
-create settings/service "cn=services,cn=univention" \
-	--set name="Asterisk Server"
-create computers/memberserver "cn=computers" \
-	--set name="Fakemember" \
-	--set service="Asterisk Server"
-
 # =============== Telefonbuch =================================================
 create asterisk/phoneBook "cn=asterisk" \
 	--set commonName="Testtelefonbuch"
@@ -52,7 +45,7 @@ create asterisk/contact "cn=Testtelefonbuch,cn=asterisk" \
 # ========== Asterisk-Server ==================================================
 create asterisk/server "cn=asterisk" \
 	--set commonName="Testserver" \
-	--set host="cn=Fakemember,cn=computers,$ldap_base"
+	--set sshhost="localhost"
 
 # Konferenzraum
 create asterisk/conferenceRoom "cn=Testserver,cn=asterisk" \

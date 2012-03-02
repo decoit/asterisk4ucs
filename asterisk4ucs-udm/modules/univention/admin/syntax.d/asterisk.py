@@ -31,7 +31,7 @@ class ast4ucsDurationSyntax(integer):
 	def parse(self, text):
 		try:
 			number = int(text)
-			if number > 120 or number < 1:
+			if number > 300 or number < 1:
 				raise ValueError
 		except ValueError:
 			raise univention.admin.uexceptions.valueError, \
