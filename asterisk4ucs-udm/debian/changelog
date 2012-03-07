@@ -1,3 +1,21 @@
+asterisk4ucs-udm (0.5.12) unstable; urgency=low
+
+  * Joinscript wird nun wirklich ausgeführt!
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 07 Mar 2012 17:24:27 +0100
+
+asterisk4ucs-udm (0.5.11) unstable; urgency=low
+
+  * Joinscript wird nun auch tatsächlich ausgeführt
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 07 Mar 2012 17:02:13 +0100
+
+asterisk4ucs-udm (0.5.10) unstable; urgency=low
+
+  * Joinscript mit UMC-Policy hinzugefügt
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 07 Mar 2012 16:42:20 +0100
+
 asterisk4ucs-udm (0.5.9) unstable; urgency=low
 
   * Syntaxfilter für Mailbox-Timeout angepasst

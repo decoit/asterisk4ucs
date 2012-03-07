@@ -21,3 +21,7 @@ override_dh_auto_install:
 		install -m 644 "$$i" "$$o";\
 	done
 
+	install -d ${DPATH}/usr/lib/univention-install
+	install -t ${DPATH}/usr/lib/univention-install -m755 \
+		42asterisk4ucs-udm.inst
+

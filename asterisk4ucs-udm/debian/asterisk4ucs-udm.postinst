@@ -23,3 +23,7 @@ udm container/cn create \
 
 stop_udm_cli_server
 
+# run join script on DC master and DC backup
+. /usr/share/univention-lib/base.sh
+call_joinscript 42asterisk4ucs-udm.inst || true
+
