@@ -8,7 +8,6 @@ pkg="$1"
 cd "`dirname "$0"`"
 
 cd $pkg
-dpkg-buildpackage
-./debian/rules clean
-cd ..
+dpkg-buildpackage -us -tc
+echo Fertig.
 

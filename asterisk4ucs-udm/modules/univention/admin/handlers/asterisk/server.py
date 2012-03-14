@@ -56,9 +56,9 @@ layout = [
 	Tab('Nummernkreise', 'Nummernkreise', layout = [
 		[ "extnums", "defaultext" ],
 	], advanced=True),
-	Tab('Illuminaten-Backdoor', 'Illuminaten-Backdoor', layout = [
-		[ "configs" ],
-	], advanced=True),
+#	Tab('Illuminaten-Backdoor', 'Illuminaten-Backdoor', layout = [
+#		[ "configs" ],
+#	], advanced=True),
 ]
 
 property_descriptions = {
