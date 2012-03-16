@@ -224,25 +224,28 @@ def genQueuesconf(co, lo, srv):
 
 	return conf
 
-def genMusiconholdconfEntry(co, lo, queue):
-	queue = queue.info
-	
-	res  = "[%s]\n" % ( queue["delayMusic"] )
+def genMusiconholdconfEntry(co, lo, moh):
+	moh = moh.info
+
+	if moh["name"] == "default":
+		return "; ignoring the 'default' class\n"
+
+	res  = "[%s]\n" % ( moh["name"] )
 	res += "mode = files\n"
 	res += "random = yes\n"
-	res += "directory = %s\n" % ( queue["delayMusic"] )
+	res += "directory = ucs_moh/%s\n" % ( moh["name"] )
 	
 	return res
 
 def genMusiconholdconf(co, lo, srv):
-	import waitingLoop
+	import music
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
 	
-	for queue in waitingLoop.lookup(co, lo, False):
-		conf += "; dn: %s\n" % (queue.dn)
+	for moh in music.lookup(co, lo, False):
+		conf += "; dn: %s\n" % (moh.dn)
 		try:
-			conf += genMusiconholdconfEntry(co, lo, queue)
+			conf += genMusiconholdconfEntry(co, lo, moh)
 		except:
 			conf += re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] )

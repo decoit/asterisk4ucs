@@ -339,6 +339,19 @@ class object(univention.admin.handlers.simpleLdap):
 		self.info["lastupdate"] = "0"
 		self.saveCheckboxes()
 
+	def _ldap_post_create(self):
+		# this mess just creates the "default" asterisk/music
+		# (dn: "cn=default," + self.dn)
+		music = univention.admin.modules.get("asterisk/music")
+		univention.admin.modules.init(self.lo, self.position, music)
+		pos = univention.admin.uldap.position(self.position.getBase())
+		pos.setDn(self.dn)
+		defaultMoh = music.object(self.co, self.lo, pos)
+		defaultMoh.open()
+		defaultMoh.info["name"] = "default"
+		defaultMoh.info["music"] = ["default"]
+		defaultMoh.create()
+
 	def _ldap_addlist(self):
 		return [('objectClass', ['top', 'ast4ucsServer' ])]
 

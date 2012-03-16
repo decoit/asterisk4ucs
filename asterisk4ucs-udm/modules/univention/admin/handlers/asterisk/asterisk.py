@@ -32,6 +32,7 @@ import univention.admin.handlers.asterisk.faxGroup
 import univention.admin.handlers.asterisk.server
 import univention.admin.handlers.asterisk.fax
 import univention.admin.handlers.asterisk.phoneBook
+import univention.admin.handlers.asterisk.music
 import operator
 
 module = "asterisk/asterisk"
@@ -57,6 +58,7 @@ modulesWithSuperordinates = {
 		univention.admin.handlers.asterisk.mailbox,
 		univention.admin.handlers.asterisk.faxGroup,
 		univention.admin.handlers.asterisk.fax,
+		univention.admin.handlers.asterisk.music,
 	],
 	"asterisk/phoneBook": [
 		univention.admin.handlers.asterisk.contact,
@@ -114,6 +116,8 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	if superordinate:
 		supi = superordinate.module
 	for module in modulesWithSuperordinates[supi]:
+		if module == univention.admin.handlers.asterisk.music:
+			continue
 		ret += module.lookup(co, lo, filter_s, base, superordinate,
 			scope, unique, required, timeout, sizelimit)
 	return ret

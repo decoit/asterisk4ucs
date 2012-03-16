@@ -38,11 +38,15 @@ class ast4ucsDurationSyntax(integer):
 				"Value must be a number between 1 and 120!"
 		return text
 
-class ast4ucsMusicSyntax(select):
-	name = "ast4ucsMusicSyntax"
-	def __init__(self, srv):
-		if srv:
-			self.choices = [(x,x) for x in srv.info.get("music", [])]
-		else:
-			self.choices = [("moh", "moh")]
+class ast4ucsMusicNameSyntax(integer):
+	name = "ast4ucsMusicNameSyntax"
+
+	@classmethod
+	def parse(self, text):
+		if not bool(re.match(r"^[a-zA-Z0-9_-]+$", text)):
+			raise univention.admin.uexceptions.valueError, \
+				"Der Name einer Musikklasse darf nur " \
+					+ "Buchstaben, Zahlen und die " \
+					+ "Zeichen '-' und '_' enthalten."
+		return text
 

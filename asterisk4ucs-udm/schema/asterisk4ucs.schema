@@ -28,6 +28,7 @@ objectIdentifier ast4ucsServer ast4ucsRoot:11
 objectIdentifier ast4ucsUser ast4ucsRoot:12
 objectIdentifier ast4ucsFax ast4ucsRoot:13
 objectIdentifier ast4ucsPhonebook ast4ucsRoot:14
+objectIdentifier ast4ucsMusic ast4ucsRoot:15
 
 
 # -------------- SIP Phones -------------------------
@@ -465,6 +466,21 @@ objectclass ( ast4ucsPhonebook NAME 'ast4ucsPhonebook'
 	DESC 'Asterisk4ucs: Phonebook'
 	SUP top
 	MUST ( cn )
+	)
+
+
+# -------------- Music --------------------------------------------
+
+attributetype ( ast4ucsMusic:1 NAME 'ast4ucsMusicMusic'
+	DESC 'Asterisk4ucs: Music Music'
+	EQUALITY caseIgnoreMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( ast4ucsMusic NAME 'ast4ucsMusic'
+	DESC 'Asterisk4ucs: Music'
+	SUP top
+	MUST ( cn )
+	MAY ( ast4ucsMusicMusic )
 	)
 
 

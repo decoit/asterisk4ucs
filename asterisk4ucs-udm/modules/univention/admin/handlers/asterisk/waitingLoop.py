@@ -86,7 +86,12 @@ property_descriptions = {
 	),
 	"delayMusic": univention.admin.property(
 		short_description="Warteschlangenmusik",
-		syntax=univention.admin.syntax.string,
+		syntax=univention.admin.syntax.LDAP_Search(
+			filter="(&(objectClass=ast4ucsMusic)"
+				+ "(ast4ucsMusicMusic=*))",
+			attribute=["asterisk/music: name"],
+			value="asterisk/music: name",
+		),
 	),
 	"members": univention.admin.property(
 		short_description="Teilnehmer",
@@ -120,8 +125,6 @@ class object(univention.admin.handlers.simpleLdap):
 			attributes=[]):
 		global mapping
 		global property_descriptions
-		property_descriptions["delayMusic"].syntax = \
-			univention.admin.syntax.ast4ucsMusicSyntax(superordinate)
 		self.co = co
 		self.lo = lo
 		self.dn = dn
