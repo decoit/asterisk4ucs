@@ -16,8 +16,71 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 """
 
 import univention.management.console.modules
+from univention.management.console.protocol.definitions import SUCCESS
+
+import univention.config_registry
+import univention.admin.uldap
+import univention.admin.config
+import univention.admin.modules
+
+import univention.admin.handlers.asterisk.server
+import univention.admin.handlers.asterisk.music
 
 class Instance( univention.management.console.modules.Base ):
     def hallo( self, request ):
         self.finished( request.id, "Hallo, Programmierer!" )
 
+	def mohQuery(self, request):
+		mohs = getMohs()
+
+		result = []
+		for moh in mohs:
+			result.append({
+				"dn": moh.dn,
+				"name": moh["name"],
+				"count": len(moh.get("music", [])),
+			})
+
+		request.status = SUCCESS
+		self.finished(request.id, result)
+
+	def songQuery(self, request):
+		moh = getMoh(request.options["mohdn"])
+
+		result = []
+		for song in moh.get("music", []):
+			result.append({
+				"name": song,
+			})
+
+		request.status = SUCCESS
+		self.finished(request.id, result)
+
+def getCoLoPos():
+	co = univention.admin.config.config()
+
+	lo, pos = univention.admin.uldap.getAdminConnection()
+
+	return co, lo, pos
+
+def getMohs():
+	co, lo, pos = getCoLoPos()
+
+	music = univention.admin.modules.get("asterisk/music")
+	univention.admin.modules.init(lo, pos, music)
+	mohs = music.lookup(co, lo, None)
+
+	for moh in mohs:
+		moh.open()
+
+	return mohs
+
+def getMoh(dn):
+	co, lo, pos = getCoLoPos()
+
+	music = univention.admin.modules.get("asterisk/music")
+	univention.admin.modules.init(lo, pos, music)
+	moh = music.object(co, lo, None, dn)
+	moh.open()
+
+	return moh
