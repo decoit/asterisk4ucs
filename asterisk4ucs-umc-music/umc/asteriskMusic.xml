@@ -7,8 +7,10 @@
 			<category name="system"/>
 		</categories>
 
-		<command name="asteriskMusic/hallo" function="hallo">
-		</command>
+		<command name="asteriskMusic/songs/query"
+			function="querySongs" />
+		<command name="asteriskMusic/queryMohs"
+			function="queryMohs" />
 	</module>
 </umc>
 

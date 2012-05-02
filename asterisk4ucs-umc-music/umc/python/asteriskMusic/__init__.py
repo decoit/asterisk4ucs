@@ -21,30 +21,32 @@ from univention.management.console.protocol.definitions import SUCCESS
 import univention.config_registry
 import univention.admin.uldap
 import univention.admin.config
+
 import univention.admin.modules
+univention.admin.modules.update()
 
 import univention.admin.handlers.asterisk.server
 import univention.admin.handlers.asterisk.music
 
-class Instance( univention.management.console.modules.Base ):
-    def hallo( self, request ):
-        self.finished( request.id, "Hallo, Programmierer!" )
+class Instance(univention.management.console.modules.Base):
+	def hallo(self, request):
+		self.finished(request.id, "Hallo, Programmierer!")
 
-	def mohQuery(self, request):
+	def queryMohs(self, request):
 		mohs = getMohs()
 
 		result = []
 		for moh in mohs:
-			result.append({
-				"dn": moh.dn,
-				"name": moh["name"],
-				"count": len(moh.get("music", [])),
-			})
+			if moh["name"] != "default":
+				result.append({
+					"id": moh.dn,
+					"label": moh["name"],
+				})
 
 		request.status = SUCCESS
 		self.finished(request.id, result)
 
-	def songQuery(self, request):
+	def querySongs(self, request):
 		moh = getMoh(request.options["mohdn"])
 
 		result = []
