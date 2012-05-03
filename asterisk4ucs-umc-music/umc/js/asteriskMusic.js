@@ -22,6 +22,9 @@ dojo.require("umc.widgets.Module");
 dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 	_page: null,
 	_form: null,
+	_mohSelect: null,
+	_upload: null,
+	_filename: null,
 
 	i18nClass: "umc.modules.asteriskMusic",
 
@@ -48,10 +51,26 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 			type: 'Button',
 			name: 'create',
 			label: "Musikklasse anlegen",
-//			defaultButton: true,
-			callback: function () {
-				alert("anlegen");
-			},
+			callback: dojo.hitch(this, function () {
+				var server = prompt("Server:", "cn=Testserver,cn=asterisk,dc=asterisk4ucs,dc=decoit");
+
+				var name = prompt("Bitte geben Sie den Namen für die neue Musikklasse ein:");
+				if (!name) {
+					alert("Ungültiger Name.");
+				}
+
+				var call = this.umcpCommand("asteriskMusic/create", {
+					name: name,
+					server: server,
+				});
+				call.then(dojo.hitch(this, function (data) {
+					umc.dialog.notify("Musikklasse wurde angelegt.");
+
+					var mohSelect = this._form.getWidget("moh");
+					mohSelect.setInitialValue(data.newDn);
+					mohSelect.reloadDynamicValues();
+				}));
+			}),
 		}, {
 			type: 'Button',
 			name: 'delete',
@@ -60,12 +79,26 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 				alert("entfernen");
 			},
 		}, {
-			type: 'Button',
+			type: 'Uploader',
 			name: 'upload',
-			label: "Musikstück hinzufügen",
-			callback: function () {
-				alert("upload");
-			},
+			maxSize: 8388608,
+			showClearButton: false,
+			onUploaded: dojo.hitch(this, function () {
+				//alert("upload finished");
+				window.setTimeout(dojo.hitch(this, function() {
+					this._upload._updateLabel();
+				}), 0);
+				var call = this.umcpCommand("asteriskMusic/upload", {
+					moh: this._mohdn,
+					data: this._upload.value,
+					filename: this._filename,
+				});
+				call.then(dojo.hitch(this, function (res) {
+					this._upload._resetLabel();
+					umc.dialog.notify("Musikstück wurde hochgeladen.");
+					this._setMoh(this._mohdn);
+				}));
+			}),
 		}];
 
 		var layout = [
@@ -79,16 +112,6 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 			region: "top",
 		});
 		this._content.addChild(this._form);
-
-		var self = this;
-		dojo.connect(this._form.getWidget("moh"),
-					"onValuesLoaded", function () {
-			self.setMoh(this.getValue());
-		});
-		dojo.connect(this._form.getWidget("moh"),
-					"onChange", function () {
-			self.setMoh(this.getValue());
-		});
 
 		this._grid = new umc.widgets.Grid({
 			moduleStore: umc.store.getModuleStore("name",
@@ -113,7 +136,26 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 		console.log(this);
 		fubar = this;
 	},
-	setMoh: function (mohdn) {
+	postCreate: function () {
+		this.inherited(arguments);
+
+		this._mohSelect = this._form.getWidget("moh");
+		this._mohdn = this._mohSelect.getValue();
+		this._upload = this._form.getWidget("upload");
+
+		dojo.connect(this._mohSelect, "onValuesLoaded", dojo.hitch(this, function () {
+			this._setMoh(this._mohSelect.getValue());
+		}));
+		dojo.connect(this._mohSelect, "onChange", dojo.hitch(this, function () {
+			this._setMoh(this._mohSelect.getValue());
+		}));
+
+		dojo.connect(this._upload._uploader, "onChange", dojo.hitch(this, function (data) {
+			if (data[0])
+				this._filename = data[0].name;
+		}));
+	},
+	_setMoh: function (mohdn) {
 		this._mohdn = mohdn;
 		this._grid.filter({
 			mohdn: this._mohdn,

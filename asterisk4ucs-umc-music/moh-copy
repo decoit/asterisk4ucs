@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+set -u
+
+STEM="$1"
+INPUT="$2"
+CLASS="$3"
+SSHTARGET="$4"
+SSHPATH="$5"
+SSHCMD="$6"
+
+mkdir $CLASS
+
+sox -V $INPUT -r 8000 -c 1 $CLASS/$STEM.wav
+sox -V $INPUT -r 8000 -c 1 $CLASS/$STEM.gsm
+
+chmod 0755 $CLASS
+chmod 0644 $CLASS/*
+
+scp -Bqr $CLASS $SSHTARGET:$SSHPATH
+ssh -oBatchMode=yes $SSHTARGET "$SSHCMD -rx 'core reload'"
+
+echo Done.
+

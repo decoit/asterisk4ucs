@@ -11,6 +11,10 @@
 			function="querySongs" />
 		<command name="asteriskMusic/queryMohs"
 			function="queryMohs" />
+		<command name="asteriskMusic/create"
+			function="create" />
+		<command name="asteriskMusic/upload"
+			function="upload" />
 	</module>
 </umc>
 
