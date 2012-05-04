@@ -353,7 +353,7 @@ class object(univention.admin.handlers.simpleLdap):
 		defaultMoh.create()
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsServer' ])]
+		return [('objectClass', ['ast4ucsServer'])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 

@@ -99,8 +99,7 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 	
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsExtension',
-			'ast4ucsFaxgroup' ])]
+		return [('objectClass', ['ast4ucsFaxgroup'])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 

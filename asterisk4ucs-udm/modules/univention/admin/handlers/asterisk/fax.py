@@ -74,15 +74,15 @@ property_descriptions = {
 mapping = univention.admin.mapping.mapping()
 mapping.register("name", "cn",
 	None, univention.admin.mapping.ListToString)
-mapping.register("extension", "AstExtension",
+mapping.register("extension", "ast4ucsExtensionExtension",
 	None, univention.admin.mapping.ListToString)
-mapping.register("ipaddress", "AstAccountIpaddr",
+mapping.register("ipaddress", "ast4ucsSipclientIp",
 	None, univention.admin.mapping.ListToString)
-mapping.register("macaddress", "macAddress",
+mapping.register("macaddress", "ast4ucsSipclientMacaddr",
 	None, univention.admin.mapping.ListToString)
-mapping.register("hostname", "AstAccountHost",
+mapping.register("hostname", "ast4ucsSipclientHostname",
 	None, univention.admin.mapping.ListToString)
-mapping.register("password", "AstAccountSecret",
+mapping.register("password", "ast4ucsSipclientSecret",
 	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
@@ -120,8 +120,7 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 	
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsFax',
-			'AsteriskExtension', 'AsteriskSIPUser' ])]
+		return [('objectClass', ['ast4ucsFax'])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 

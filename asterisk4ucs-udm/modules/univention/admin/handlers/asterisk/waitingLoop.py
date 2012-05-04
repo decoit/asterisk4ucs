@@ -107,7 +107,7 @@ property_descriptions = {
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
-mapping.register("extension", "AstExtension",
+mapping.register("extension", "ast4ucsExtensionExtension",
 	None, univention.admin.mapping.ListToString)
 mapping.register("strategy", "ast4ucsWaitingloopStrategy",
 	None, univention.admin.mapping.ListToString)
@@ -164,8 +164,7 @@ class object(univention.admin.handlers.simpleLdap):
 		reverseFieldsSave(self)
 	
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsWaitingloop',
-			'AsteriskExtension' ])]
+		return [('objectClass', ['ast4ucsWaitingloop'])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 

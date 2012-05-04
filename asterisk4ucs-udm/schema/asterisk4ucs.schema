@@ -13,8 +13,16 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+# oid root
 objectIdentifier ast4ucsRoot 1.3.6.1.4.1.33820.42
 
+# abstract classes
+objectIdentifier ast4ucsSrvchild ast4ucsRoot:1.1
+objectIdentifier ast4ucsPbchild ast4ucsRoot:1.2
+objectIdentifier ast4ucsExtension ast4ucsRoot:1.3
+objectIdentifier ast4ucsSipclient ast4ucsRoot:1.4
+
+# structural classes
 objectIdentifier ast4ucsPhone ast4ucsRoot:2
 objectIdentifier ast4ucsMailbox ast4ucsRoot:3
 objectIdentifier ast4ucsPhonetype ast4ucsRoot:4
@@ -23,12 +31,122 @@ objectIdentifier ast4ucsPhonegroup ast4ucsRoot:6
 objectIdentifier ast4ucsConfroom ast4ucsRoot:7
 objectIdentifier ast4ucsContact ast4ucsRoot:8
 objectIdentifier ast4ucsFaxgroup ast4ucsRoot:9
-objectIdentifier ast4ucsExtension ast4ucsRoot:10
 objectIdentifier ast4ucsServer ast4ucsRoot:11
 objectIdentifier ast4ucsUser ast4ucsRoot:12
 objectIdentifier ast4ucsFax ast4ucsRoot:13
 objectIdentifier ast4ucsPhonebook ast4ucsRoot:14
 objectIdentifier ast4ucsMusic ast4ucsRoot:15
+
+# --- Class hierarchy ---
+# Abstract classes are in round brackets/parentheses
+#
+#   - Server
+#   - (Srvchild)
+#       - (Extension)
+#           - (Sipclient)
+#               - Phone
+#               - Fax
+#           - Faxgroup
+#           - Waitingloop
+#           - Confroom
+#       - Mailbox
+#       - Phonetype
+#       - Music
+#   - Phonebook
+#   - (Pbchild)
+#       - Contact
+#   - User (auxiliary)
+
+# ------------------------ Abstract Srvchild -------------------------
+
+attributetype ( ast4ucsSrvchild:1 NAME 'ast4ucsSrvchildServer'
+	DESC 'Asterisk4UCS: Srvchild Server'
+	SINGLE-VALUE
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( ast4ucsSrvchild NAME 'ast4ucsSrvchild'
+	DESC 'Asterisk4UCS: Thingie that belongs to a ast4ucsServer'
+	SUP top
+	ABSTRACT
+	MAY (
+		ast4ucsSrvchildServer
+	))
+
+
+# ------------------------ Abstract Pbchild -------------------------
+
+attributetype ( ast4ucsPbchild:1 NAME 'ast4ucsPbchildPhonebook'
+	DESC 'Asterisk4UCS: Pbchild Phonebook'
+	SINGLE-VALUE
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( ast4ucsPbchild NAME 'ast4ucsPbchild'
+	DESC 'Asterisk4UCS: Thingie that belongs to a ast4ucsPhonebook'
+	SUP top
+	ABSTRACT
+	MAY (
+		ast4ucsPbchildPhonebook
+	))
+
+
+# ------------------------ Abstract Extension -------------------------
+
+attributetype ( ast4ucsExtension:1 NAME 'ast4ucsExtensionExtension'
+	DESC 'Asterisk4UCS: Extension Extension'
+	SINGLE-VALUE
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( ast4ucsExtension NAME 'ast4ucsExtension'
+	DESC 'Asterisk4UCS: Thingie that has an extension'
+	SUP ast4ucsSrvchild
+	ABSTRACT
+	MUST (
+		ast4ucsExtensionExtension
+	))
+
+
+# -------------- Abstract Sipclient ----------------------------------
+
+attributetype ( ast4ucsSipclient:1 NAME 'ast4ucsSipclientIp'
+	DESC 'Asterisk4ucs: Sipclient Ip'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsSipclient:2 NAME 'ast4ucsSipclientMacaddr'
+	DESC 'Asterisk4ucs: Sipclient Macaddr'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsSipclient:3 NAME 'ast4ucsSipclientHostname'
+	DESC 'Asterisk4ucs: Sipclient Hostname'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsSipclient:4 NAME 'ast4ucsSipclientSecret'
+	DESC 'Asterisk4ucs: Sipclient Secret'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( ast4ucsSipclient NAME 'ast4ucsSipclient'
+	DESC 'Asterisk4ucs: Sipclient'
+	SUP ast4ucsExtension
+	ABSTRACT
+	MAY (
+		ast4ucsSipclientIp $
+		ast4ucsSipclientMacaddr $
+		ast4ucsSipclientHostname $
+		ast4ucsSipclientSecret
+	))
 
 
 # -------------- SIP Phones -------------------------
@@ -36,34 +154,40 @@ objectIdentifier ast4ucsMusic ast4ucsRoot:15
 attributetype ( ast4ucsPhone:2 NAME 'ast4ucsPhonePhonetype'
 	DESC 'Asterisk4ucs: Phone phonetype'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsPhone:3 NAME 'ast4ucsPhoneProfile'
 	DESC 'Asterisk4ucs: Phone profile'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsPhone:4 NAME 'ast4ucsPhoneCallgroup'
 	DESC 'Asterisk4ucs: Phone Callgroup'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsPhone:5 NAME 'ast4ucsPhonePickupgroup'
 	DESC 'Asterisk4ucs: Phone Pickupgroup'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsPhone:6 NAME 'ast4ucsPhoneWaitingloop'
 	DESC 'Asterisk4ucs: Phone Waitingloop'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 	DESC 'Asterisk4ucs: phone'
-	SUP top STRUCTURAL
-	MUST ( cn )
+	SUP ast4ucsSipclient
+	MUST (
+		cn
+	)
 	MAY (
-		macAddress $
 		ast4ucsPhonePhonetype $
 		ast4ucsPhoneProfile $
 		ast4ucsPhoneCallgroup $
@@ -77,22 +201,25 @@ objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 attributetype ( ast4ucsMailbox:1 NAME 'ast4ucsMailboxPassword'
 	DESC 'Asterisk4ucs: Mailbox Password'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsMailbox:2 NAME 'ast4ucsMailboxNotifybymail'
 	DESC 'Asterisk4ucs: Mailbox Notifybymail'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsMailbox:3 NAME 'ast4ucsMailboxId'
 	DESC 'Asterisk4ucs: Mailbox Id'
-	EQUALITY integerMatch
-	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
 	SINGLE-VALUE )
 
 objectclass ( ast4ucsMailbox NAME 'ast4ucsMailbox'
 	DESC 'Asterisk4ucs: Mailbox'
-	SUP top STRUCTURAL
+	SUP ast4ucsSrvchild
 	MUST (
 		cn $
 		ast4ucsMailboxId
@@ -108,22 +235,27 @@ objectclass ( ast4ucsMailbox NAME 'ast4ucsMailbox'
 attributetype ( ast4ucsPhonetype:1 NAME 'ast4ucsPhonetypeDisplaysize'
 	DESC 'Asterisk4ucs: Phonetype Displaysize'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsPhonetype:2 NAME 'ast4ucsPhonetypeManufacturer'
 	DESC 'Asterisk4ucs: Phonetype Manufacturer'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsPhonetype:3 NAME 'ast4ucsPhonetypeType'
 	DESC 'Asterisk4ucs: Phonetype type'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 objectclass ( ast4ucsPhonetype NAME 'ast4ucsPhonetype'
 	DESC 'Asterisk4ucs: phonetype'
-	SUP top STRUCTURAL
-	MUST ( cn )
+	SUP ast4ucsSrvchild
+	MUST (
+		cn
+	)
 	MAY (
 		ast4ucsPhonetypeDisplaysize $
 		ast4ucsPhonetypeManufacturer $
@@ -157,14 +289,16 @@ attributetype ( ast4ucsWaitingloop:4 NAME 'ast4ucsWaitingloopDelaymusic'
 
 objectclass ( ast4ucsWaitingloop NAME 'ast4ucsWaitingloop'
 	DESC 'Asterisk4ucs: Waitingloop'
-	SUP top
-	MUST ( cn )
+	SUP ast4ucsExtension
+	MUST (
+		cn
+	)
 	MAY (
 		ast4ucsWaitingloopStrategy $
 		ast4ucsWaitingloopMaxcalls $
 		ast4ucsWaitingloopMemberdelay $
 		ast4ucsWaitingloopDelaymusic
-	) )
+	))
 
 
 # ----------------------- Phone Groups -----------------------------
@@ -177,61 +311,64 @@ attributetype ( ast4ucsPhonegroup:1 NAME 'ast4ucsPhonegroupId'
 
 objectclass ( ast4ucsPhonegroup NAME 'ast4ucsPhonegroup'
 	DESC 'Asterisk4ucs: Phonegroup'
-	SUP top
+	SUP ast4ucsSrvchild
 	MUST (
 		cn $
 		ast4ucsPhonegroupId
-	) )
+	))
 
 
 # -------------- Conference Room -------------------------
 
-attributetype ( ast4ucsConfroom:1 NAME 'ast4ucsConfroomExtension'
-	DESC 'Asterisk4ucs: Confroom Extension'
-	EQUALITY caseIgnoreMatch
-	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
 attributetype ( ast4ucsConfroom:2 NAME 'ast4ucsConfroomMaxmembers'
 	DESC 'Asterisk4ucs: Confroom Maxmembers'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsConfroom:3 NAME 'ast4ucsConfroomPin'
 	DESC 'Asterisk4ucs: Confroom Pin'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsConfroom:4 NAME 'ast4ucsConfroomAdminpin'
 	DESC 'Asterisk4ucs: Confroom Adminpin'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsConfroom:5 NAME 'ast4ucsConfroomAnnouncecount'
 	DESC 'Asterisk4ucs: Confroom Announcecount'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsConfroom:6 NAME 'ast4ucsConfroomInitiallymuted'
 	DESC 'Asterisk4ucs: Confroom Initiallymuted'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsConfroom:7 NAME 'ast4ucsConfroomMusiconhold'
 	DESC 'Asterisk4ucs: Confroom Musiconhold'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsConfroom:8 NAME 'ast4ucsConfroomQuietmode'
 	DESC 'Asterisk4ucs: Confroom Quietmode'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 objectclass ( ast4ucsConfroom NAME 'ast4ucsConfroom'
 	DESC 'Asterisk4ucs: Confroom'
-	SUP top
-	MUST ( cn )
+	SUP ast4ucsExtension
+	MUST (
+		cn
+	)
 	MAY (
-		ast4ucsConfroomExtension $
 		ast4ucsConfroomMaxmembers $
 		ast4ucsConfroomPin $
 		ast4ucsConfroomAdminpin $
@@ -246,7 +383,7 @@ objectclass ( ast4ucsConfroom NAME 'ast4ucsConfroom'
 
 objectclass ( ast4ucsContact NAME 'phonebookContact'
 	DESC 'Contact information for a phonebook entry'
-	SUP top
+	SUP ast4ucsPbchild
 	MUST (
 		cn
 	)
@@ -254,22 +391,7 @@ objectclass ( ast4ucsContact NAME 'phonebookContact'
 		telephoneNumber $
 		title $
 		o
-	) )
-
-
-# ------------------------ Extension --------------------------------
-
-attributetype ( ast4ucsExtension:1 NAME 'ast4ucsExtensionExtension'
-	DESC 'Asterisk4ucs: Extension Extension'
-	EQUALITY caseIgnoreMatch
-	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
-objectclass ( ast4ucsExtension NAME 'ast4ucsExtension'
-	DESC 'Asterisk4ucs: Extension'
-	SUP top
-	MAY (
-		ast4ucsExtensionExtension
-	) )
+	))
 
 
 # ------------------------ Faxgroup --------------------------------
@@ -277,6 +399,7 @@ objectclass ( ast4ucsExtension NAME 'ast4ucsExtension'
 attributetype ( ast4ucsFaxgroup:1 NAME 'ast4ucsFaxgroupMember'
 	DESC 'Asterisk4ucs: Faxgroup Member'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 objectclass ( ast4ucsFaxgroup NAME 'ast4ucsFaxgroup'
@@ -287,7 +410,7 @@ objectclass ( ast4ucsFaxgroup NAME 'ast4ucsFaxgroup'
 	)
 	MAY (
 		ast4ucsFaxgroupMember
-	) )
+	))
 
 
 # ------------------------ Server --------------------------------
@@ -295,91 +418,109 @@ objectclass ( ast4ucsFaxgroup NAME 'ast4ucsFaxgroup'
 attributetype ( ast4ucsServer:1 NAME 'ast4ucsServerHost'
 	DESC 'Asterisk4ucs: Server Host'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:2 NAME 'ast4ucsServerLastupdate'
 	DESC 'Asterisk4ucs: Server Lastupdate'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:3 NAME 'ast4ucsServerConfig'
 	DESC 'Asterisk4ucs: Server Config'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:4 NAME 'ast4ucsServerBlockedareacode'
 	DESC 'Asterisk4ucs: Server Blockedareacode'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:5 NAME 'ast4ucsServerMusic'
 	DESC 'Asterisk4ucs: Server Music'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:6 NAME 'ast4ucsServerExtnum'
 	DESC 'Asterisk4ucs: Server Extnum'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:7 NAME 'ast4ucsServerDefaultext'
 	DESC 'Asterisk4ucs: Server Defaultext'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:8 NAME 'ast4ucsServerMailboxmaxlen'
 	DESC 'Asterisk4ucs: Server Mailboxmaxlen'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:9 NAME 'ast4ucsServerMailboxattach'
 	DESC 'Asterisk4ucs: Server Mailboxattach'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:10 NAME 'ast4ucsServerMailboxemailsubject'
 	DESC 'Asterisk4ucs: Server Mailboxemailsubject'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:11 NAME 'ast4ucsServerMailboxemailbody'
 	DESC 'Asterisk4ucs: Server Mailboxemailbody'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:12 NAME 'ast4ucsServerMailboxemaildateformat'
 	DESC 'Asterisk4ucs: Server Mailboxemaildateformat'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:13 NAME 'ast4ucsServerMailboxemailcommand'
 	DESC 'Asterisk4ucs: Server Mailboxemailcommand'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:14 NAME 'ast4ucsServerGlobalCallId'
 	DESC 'Asterisk4ucs: Server Globalcallid'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:15 NAME 'ast4ucsServerSshuser'
 	DESC 'Asterisk4ucs: Server Sshuser'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:16 NAME 'ast4ucsServerSshhost'
 	DESC 'Asterisk4ucs: Server Sshhost'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:17 NAME 'ast4ucsServerSshpath'
 	DESC 'Asterisk4ucs: Server Sshpath'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsServer:18 NAME 'ast4ucsServerSshcmd'
 	DESC 'Asterisk4ucs: Server Sshcmd'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 objectclass ( ast4ucsServer NAME 'ast4ucsServer'
@@ -415,31 +556,37 @@ objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 attributetype ( ast4ucsUser:1 NAME 'ast4ucsUserPhone'
 	DESC 'Asterisk4ucs: User Phone'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsUser:2 NAME 'ast4ucsUserMailbox'
 	DESC 'Asterisk4ucs: User Mailbox'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsUser:3 NAME 'ast4ucsUserRingdelay'
 	DESC 'Asterisk4ucs: User Ringdelay'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsUser:4 NAME 'ast4ucsUserExtmode'
 	DESC 'Asterisk4ucs: User Extmode'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 attributetype ( ast4ucsUser:5 NAME 'ast4ucsUserTimeout'
 	DESC 'Asterisk4ucs: User Timeout'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 	DESC 'Asterisk4ucs: User'
-	SUP top AUXILIARY
+	SUP top
+	AUXILIARY
 	MAY (
 		ast4ucsUserPhone $
 		ast4ucsUserMailbox $
@@ -449,14 +596,13 @@ objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 	) )
 
 
-# -------------- Faxes --------------------------------------------
+# -------------- Fax --------------------------------------------
 
 objectclass ( ast4ucsFax NAME 'ast4ucsFax'
 	DESC 'Asterisk4ucs: Fax'
-	SUP top
-	MUST ( cn )
-	MAY (
-		macAddress
+	SUP ast4ucsSipclient
+	MUST (
+		cn
 	))
 
 
@@ -465,8 +611,9 @@ objectclass ( ast4ucsFax NAME 'ast4ucsFax'
 objectclass ( ast4ucsPhonebook NAME 'ast4ucsPhonebook'
 	DESC 'Asterisk4ucs: Phonebook'
 	SUP top
-	MUST ( cn )
-	)
+	MUST (
+		cn
+	))
 
 
 # -------------- Music --------------------------------------------
@@ -474,14 +621,16 @@ objectclass ( ast4ucsPhonebook NAME 'ast4ucsPhonebook'
 attributetype ( ast4ucsMusic:1 NAME 'ast4ucsMusicMusic'
 	DESC 'Asterisk4ucs: Music Music'
 	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 objectclass ( ast4ucsMusic NAME 'ast4ucsMusic'
 	DESC 'Asterisk4ucs: Music'
-	SUP top
-	MUST ( cn )
-	MAY ( ast4ucsMusicMusic )
+	SUP ast4ucsSrvchild
+	MUST (
+		cn
 	)
-
-
+	MAY (
+		ast4ucsMusicMusic
+	))
 

@@ -108,7 +108,7 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsMailbox' ])]
+		return [('objectClass', ['ast4ucsMailbox' ])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 

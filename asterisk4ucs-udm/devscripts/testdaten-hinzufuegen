@@ -76,6 +76,10 @@ create asterisk/waitingLoop "cn=Testserver,cn=asterisk" \
 
 # Mailboxen
 create asterisk/mailbox "cn=Testserver,cn=asterisk" \
+	--set id="05" \
+	--set password="1234" \
+	--set email="1"
+create asterisk/mailbox "cn=Testserver,cn=asterisk" \
 	--set id="20" \
 	--set password="1234" \
 	--set email="1"
@@ -85,6 +89,15 @@ create asterisk/mailbox "cn=Testserver,cn=asterisk" \
 	--set email="1"
 
 # Telefone
+create asterisk/sipPhone "cn=Testserver,cn=asterisk" \
+	--set extension="05" \
+	--set password="1234" \
+	--set phonetype="cn=Grandstream 12D,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set waitingloops="cn=Support-Hotline,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set callgroups="cn=Systemmanagement,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set pickupgroups="cn=Systemmanagement,cn=Testserver,cn=asterisk,$ldap_base" \
+	--set pickupgroups="cn=Softwareentwicklung,cn=Testserver,cn=asterisk,$ldap_base"
+
 create asterisk/sipPhone "cn=Testserver,cn=asterisk" \
 	--set extension="20" \
 	--set password="1234" \

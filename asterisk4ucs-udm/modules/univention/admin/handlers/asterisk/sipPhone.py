@@ -115,21 +115,23 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
+mapping.register("extension", "ast4ucsExtensionExtension",
+	None, univention.admin.mapping.ListToString)
+
+mapping.register("ipaddress", "ast4ucsSipclientIp",
+	None, univention.admin.mapping.ListToString)
+mapping.register("macaddress", "ast4ucsSipclientMacaddr",
+	None, univention.admin.mapping.ListToString)
+mapping.register("hostname", "ast4ucsSipclientHostname",
+	None, univention.admin.mapping.ListToString)
+mapping.register("password", "ast4ucsSipclientSecret",
+	None, univention.admin.mapping.ListToString)
+
 mapping.register("name", "cn",
-	None, univention.admin.mapping.ListToString)
-mapping.register("extension", "AstExtension",
-	None, univention.admin.mapping.ListToString)
-mapping.register("ipaddress", "AstAccountIpaddr",
-	None, univention.admin.mapping.ListToString)
-mapping.register("macaddress", "macAddress",
-	None, univention.admin.mapping.ListToString)
-mapping.register("hostname", "AstAccountHost",
 	None, univention.admin.mapping.ListToString)
 mapping.register("phonetype", "ast4ucsPhonePhonetype",
 	None, univention.admin.mapping.ListToString)
 mapping.register("profile", "ast4ucsPhoneProfile",
-	None, univention.admin.mapping.ListToString)
-mapping.register("password", "AstAccountSecret",
 	None, univention.admin.mapping.ListToString)
 mapping.register("callgroups", "ast4ucsPhoneCallgroup")
 mapping.register("pickupgroups", "ast4ucsPhonePickupgroup")
@@ -170,8 +172,7 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 	
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsPhone',
-			'AsteriskExtension', 'AsteriskSIPUser' ])]
+		return [('objectClass', ['ast4ucsPhone'])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 

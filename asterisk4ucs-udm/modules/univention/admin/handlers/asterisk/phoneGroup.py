@@ -126,7 +126,7 @@ class object(univention.admin.handlers.simpleLdap):
 		reverseFieldsSave(self)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['top', 'ast4ucsPhonegroup' ])]
+		return [('objectClass', ['ast4ucsPhonegroup'])]
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
