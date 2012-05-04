@@ -1,3 +1,9 @@
+asterisk4ucs-locallistener (0.5.3) unstable; urgency=low
+
+  * Paketbeschreibung angepasst
+
+ -- Tristan Bruns <bruns@decoit.de>  Fri, 04 May 2012 10:00:11 +0200
+
 asterisk4ucs-locallistener (0.5.2) unstable; urgency=low
 
   * Copyright-Vermerke hinzugefügt

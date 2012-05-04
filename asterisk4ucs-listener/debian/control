@@ -19,5 +19,6 @@ Depends:
  univention-base-files,
  ${misc:Depends},
  ${python:Depends}
-Description: Asterisk4UCS: Directory-Listener-Modul
- Dieses Paket enthält das Directory-Listener-Modul von Asterisk4UCS.
+Description: Asterisk4UCS: Directory-Listener-Modul fuer UCS Member-Server
+ Dieses Paket enthält das Asterisk4UCS Directory-Listener-Modul fuer einen
+ UCS Member-Server.
