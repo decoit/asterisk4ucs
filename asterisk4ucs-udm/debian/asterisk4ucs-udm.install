@@ -2,6 +2,6 @@ modules/univention/admin/handlers/asterisk/*.py usr/share/pyshared/univention/ad
 modules/univention/admin/syntax.d/*.py usr/share/pyshared/univention/admin/syntax.d/
 modules/univention/admin/hooks.d/*.py usr/share/pyshared/univention/admin/hooks.d/
 user-phone-extension/* usr/lib/asterisk4ucs/user-phone-extension/
-wizard-patch/* usr/lib/asterisk4ucs/wizard-patch/
+udm-asterisk.xml usr/share/univention-management-console/modules/
 devscripts/* usr/lib/asterisk4ucs/devscripts/
 

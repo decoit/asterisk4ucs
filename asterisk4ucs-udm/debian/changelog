@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.5.15) unstable; urgency=low
+
+  * UMC/UDM-Icon wird sauber installiert
+
+ -- Tristan Bruns <bruns@decoit.de>  Thu, 03 May 2012 16:58:45 +0200
+
 asterisk4ucs-udm (0.5.14) unstable; urgency=low
 
   * Warteschlangenmusiken repariert

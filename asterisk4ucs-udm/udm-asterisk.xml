@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+  <module id="udm" icon="udm/module" version="1.0">
+       <flavor icon="udm-asterisk" id="asterisk/asterisk">
+         <name>Asterisk</name>
+         <description>Managing Asterisk</description>
+       </flavor>
+  </module>
+</umc>
