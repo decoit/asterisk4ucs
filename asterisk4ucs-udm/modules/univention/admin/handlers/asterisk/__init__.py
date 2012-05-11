@@ -148,12 +148,12 @@ def genVoicemailconfEntry(co, lo, box):
 	
 	box = box.info
 	
-	if box.get("email") == "1" and boxUser.get("e-mail"):
+	if box.get("email") == "1" and boxUser.get("mailPrimaryAddress"):
 		return "%s => %s,%s,%s\n" % (
 			box["id"],
 			box["password"],
 			getNameFromUser(boxUser),
-			llist(boxUser["e-mail"])[0],
+			llist(boxUser["mailPrimaryAddress"])[0],
 		)
 	else:
 		return "%s => %s,%s\n" % (

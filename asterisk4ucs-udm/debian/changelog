@@ -1,3 +1,10 @@
+asterisk4ucs-udm (0.6.1) unstable; urgency=low
+
+  * Voicemail.conf bezieht eMail-Adressen nun aus dem Benutzerfeld für die
+    primäre eMail-Adresse.
+
+ -- Tristan Bruns <bruns@decoit.de>  Fri, 11 May 2012 14:05:48 +0200
+
 asterisk4ucs-udm (0.6.0) unstable; urgency=low
 
   * LDAP-Schema überarbeitet

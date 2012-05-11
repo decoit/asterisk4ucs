@@ -121,6 +121,7 @@ create asterisk/sipPhone "cn=Testserver,cn=asterisk" \
 create users/user "cn=users" \
 	--set lastname="Moss" \
 	--set firstname="Maurice" \
+	--set mailPrimaryAddress="moss@localhost" \
 	--set username="mmoss" \
 	--set password="mmoss" \
 	--set overridePWLength="1"
@@ -131,6 +132,7 @@ udm users/user modify --dn "uid=mmoss,cn=users,$ldap_base" \
 create users/user "cn=users" \
 	--set lastname="Trenneman" \
 	--set firstname="Roy" \
+	--set mailPrimaryAddress="trenneman@localhost" \
 	--set username="rtrenneman" \
 	--set password="rtrenneman" \
 	--set overridePWLength="1"
