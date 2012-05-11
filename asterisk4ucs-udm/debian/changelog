@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.2) unstable; urgency=low
+
+  * SIP Hint/Subscription-Funktionalität hinzugefügt
+
+ -- Tristan Bruns <bruns@decoit.de>  Fri, 11 May 2012 15:51:34 +0200
+
 asterisk4ucs-udm (0.6.1) unstable; urgency=low
 
   * Voicemail.conf bezieht eMail-Adressen nun aus dem Benutzerfeld für die

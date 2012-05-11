@@ -80,6 +80,8 @@ def genSipconfEntry(co, lo, phone):
 	res  = "[%s]\n" % (phone["extension"])
 	res += "type=friend\n"
 	res += "host=dynamic\n"
+	res += "subscribecontext=default\n"
+	res += "call-limit=10\n"
 	res += "secret=%s\n" % (phone["password"])
 
 	if phoneUser.get("extmode") == "normal":
@@ -101,7 +103,7 @@ def genSipconfEntry(co, lo, phone):
 
 	if pickupgroups:
 		res += "pickupgroup=%s\n" % (','.join(pickupgroups))
-	
+
 	return res
 
 def genSipconfFaxEntry(co, lo, phone):
@@ -114,7 +116,14 @@ def genSipconfFaxEntry(co, lo, phone):
 def genSipconf(co, lo, srv):
 	import sipPhone, fax
 
-	conf = "; Automatisch generiert von asterisk4UCS\n\n"
+	conf = "; Automatisch generiert von asterisk4UCS\n"
+	conf = "\n"
+	conf = "[general]\n"
+	conf = "allowsubscribe = yes\n"
+	conf = "notifyringing = yes\n"
+	conf = "notifyhold = yes\n"
+	conf = "limitonpeers = yes\n"
+	conf = "\n"
 
 	conf += "\n\n; ===== Phones =====\n\n"
 	for phone in sipPhone.lookup(co, lo, False):
@@ -296,14 +305,16 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 			res.append("Dial(%s,%i,tT)" % (
 				'&'.join(["SIP/%s"%phone for phone in phones]),
 				timeout))
+		hints = '&'.join(["SIP/%s"%phone for phone in phones])
 
 	if phoneUser.get("mailbox"):
 		phoneMailbox = mailbox.object(
 			co, lo, None, phoneUser["mailbox"]).info
 		res.append("Voicemail(%s,u)" % phoneMailbox["id"])
 
-	return ''.join(["exten => %s,%i,%s\n"%(extension, i+1, data)
-		for i,data in enumerate(res)])
+	return ("exten => %s,hint,%s\n" % (extension, hints)
+		+ ''.join(["exten => %s,%i,%s\n"%(extension, i+1, data)
+				for i,data in enumerate(res)]))
 
 def genExtRoomEntry(co, lo, room):
 	room = room.info
