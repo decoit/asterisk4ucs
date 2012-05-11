@@ -23,3 +23,9 @@ eval "$(ucr shell)"
 udm container/cn remove \
 	--dn "cn=asterisk,$ldap_base"
 
+udm container/cn create \
+	--ignore_exists \
+	--position "$ldap_base" \
+	--set name="asterisk" \
+	--set description="Asterisk4UCS data container"
+

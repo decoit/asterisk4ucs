@@ -35,7 +35,7 @@ superordinate = "asterisk/server"
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "commonName", "extension" ],
+		[ "extension" ],
 		[ "strategy", "maxCalls" ],
 		[ "delayMusic", "memberDelay" ],
 		[ "members" ],
@@ -55,15 +55,10 @@ class SyntaxStrategy(univention.admin.syntax.select):
 	]
 
 property_descriptions = {
-	"commonName": univention.admin.property(
-		short_description="Name",
-		syntax=univention.admin.syntax.string,
-		identifies=True,
-		required=True
-	),
 	"extension": univention.admin.property(
 		short_description="Durchwahl",
 		syntax=univention.admin.syntax.string,
+		identifies=True,
 		required=True,
 	),
 	"strategy": univention.admin.property(
@@ -105,8 +100,6 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("commonName", "cn",
-	None, univention.admin.mapping.ListToString)
 mapping.register("extension", "ast4ucsExtensionExtension",
 	None, univention.admin.mapping.ListToString)
 mapping.register("strategy", "ast4ucsWaitingloopStrategy",
@@ -149,8 +142,8 @@ class object(univention.admin.handlers.simpleLdap):
 
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			mapping.mapValue('commonName', self.info['commonName']),
+			mapping.mapName('extension'),
+			mapping.mapValue('extension', self.info['extension']),
 			self.position.getDn()
 		)
 		reverseFieldsSave(self)

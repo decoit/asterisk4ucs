@@ -1,3 +1,10 @@
+asterisk4ucs-udm (0.6.3) unstable; urgency=low
+
+  * Bei SipPhone, Fax, FaxGroup und WaitingLoop wird nun Extension als
+    dn-Attribut verwendet
+
+ -- Tristan Bruns <bruns@decoit.de>  Fri, 11 May 2012 16:44:47 +0200
+
 asterisk4ucs-udm (0.6.2) unstable; urgency=low
 
   * SIP Hint/Subscription-Funktionalität hinzugefügt

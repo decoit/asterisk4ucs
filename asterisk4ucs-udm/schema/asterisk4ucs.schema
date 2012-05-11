@@ -184,10 +184,8 @@ attributetype ( ast4ucsPhone:6 NAME 'ast4ucsPhoneWaitingloop'
 objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 	DESC 'Asterisk4ucs: phone'
 	SUP ast4ucsSipclient
-	MUST (
-		cn
-	)
 	MAY (
+		cn $
 		ast4ucsPhonePhonetype $
 		ast4ucsPhoneProfile $
 		ast4ucsPhoneCallgroup $
@@ -221,10 +219,10 @@ objectclass ( ast4ucsMailbox NAME 'ast4ucsMailbox'
 	DESC 'Asterisk4ucs: Mailbox'
 	SUP ast4ucsSrvchild
 	MUST (
-		cn $
 		ast4ucsMailboxId
 	)
 	MAY (
+		cn $
 		ast4ucsMailboxPassword $
 		ast4ucsMailboxNotifybymail
 	) )
@@ -290,10 +288,8 @@ attributetype ( ast4ucsWaitingloop:4 NAME 'ast4ucsWaitingloopDelaymusic'
 objectclass ( ast4ucsWaitingloop NAME 'ast4ucsWaitingloop'
 	DESC 'Asterisk4ucs: Waitingloop'
 	SUP ast4ucsExtension
-	MUST (
-		cn
-	)
 	MAY (
+		cn $
 		ast4ucsWaitingloopStrategy $
 		ast4ucsWaitingloopMaxcalls $
 		ast4ucsWaitingloopMemberdelay $
@@ -365,10 +361,8 @@ attributetype ( ast4ucsConfroom:8 NAME 'ast4ucsConfroomQuietmode'
 objectclass ( ast4ucsConfroom NAME 'ast4ucsConfroom'
 	DESC 'Asterisk4ucs: Confroom'
 	SUP ast4ucsExtension
-	MUST (
-		cn
-	)
 	MAY (
+		cn $
 		ast4ucsConfroomMaxmembers $
 		ast4ucsConfroomPin $
 		ast4ucsConfroomAdminpin $
@@ -405,10 +399,8 @@ attributetype ( ast4ucsFaxgroup:1 NAME 'ast4ucsFaxgroupMember'
 objectclass ( ast4ucsFaxgroup NAME 'ast4ucsFaxgroup'
 	DESC 'Asterisk4ucs: Faxgroup'
 	SUP ast4ucsExtension
-	MUST (
-		cn
-	)
 	MAY (
+		cn $
 		ast4ucsFaxgroupMember
 	))
 
@@ -601,7 +593,7 @@ objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 objectclass ( ast4ucsFax NAME 'ast4ucsFax'
 	DESC 'Asterisk4ucs: Fax'
 	SUP ast4ucsSipclient
-	MUST (
+	MAY (
 		cn
 	))
 

@@ -44,17 +44,11 @@ layout = [
 ]
 
 property_descriptions = {
-	"name": univention.admin.property(
-		short_description="Name",
-		syntax=univention.admin.syntax.string,
-		identifies=True,
-		required=True,
-		default="foo",
-	),
 	"extension": univention.admin.property(
 		short_description="Durchwahl",
 		syntax=univention.admin.syntax.string,
-		required=True
+		required=True,
+		identifies=True,
 	),
 	"ipaddress": univention.admin.property(
 		short_description="IP-Adresse",
@@ -127,8 +121,6 @@ mapping.register("hostname", "ast4ucsSipclientHostname",
 mapping.register("password", "ast4ucsSipclientSecret",
 	None, univention.admin.mapping.ListToString)
 
-mapping.register("name", "cn",
-	None, univention.admin.mapping.ListToString)
 mapping.register("phonetype", "ast4ucsPhonePhonetype",
 	None, univention.admin.mapping.ListToString)
 mapping.register("profile", "ast4ucsPhoneProfile",
@@ -160,17 +152,14 @@ class object(univention.admin.handlers.simpleLdap):
 	def open(self):
 		univention.admin.handlers.simpleLdap.open(self)
 		self.save()
-	
-	def _ldap_pre_ready(self):
-		self.info['name'] = "phone " + self.info["extension"]
-	
+
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
-			mapping.mapName('name'),
-			mapping.mapValue('name', self.info['name']),
+			mapping.mapName('extension'),
+			mapping.mapValue('extension', self.info['extension']),
 			self.position.getDn()
 		)
-	
+
 	def _ldap_addlist(self):
 		return [('objectClass', ['ast4ucsPhone'])]
 
