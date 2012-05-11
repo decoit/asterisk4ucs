@@ -1,3 +1,9 @@
+asterisk4ucs-umc-user (0.5.3) unstable; urgency=low
+
+  * Telefonauswahlliste zeigt nun Extensions an
+
+ -- Tristan Bruns <bruns@decoit.de>  Fri, 11 May 2012 17:26:08 +0200
+
 asterisk4ucs-umc-user (0.5.2) unstable; urgency=low
 
   * Joinscript mit UMC-Policy hinzugefügt

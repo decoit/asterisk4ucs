@@ -92,7 +92,7 @@ property_descriptions = {
 		short_description="Teilnehmer",
 		syntax=univention.admin.syntax.LDAP_Search(
 			filter="objectClass=ast4ucsPhone",
-			attribute=['asterisk/sipPhone: name'],
+			attribute=['asterisk/sipPhone: extension'],
 			value='asterisk/sipPhone: dn',
 		),
 		multivalue=True,

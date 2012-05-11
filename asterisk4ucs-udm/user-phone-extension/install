@@ -26,7 +26,7 @@ udm settings/syntax create \
 	--position "cn=univention,$ldap_base" \
 	--set viewonly=FALSE \
 	--set filter='(objectClass=ast4ucsPhone)' \
-	--set attribute="asterisk/sipPhone: name" \
+	--set attribute="asterisk/sipPhone: extension" \
 	--set value="asterisk/sipPhone: dn"
 
 udm settings/syntax create \

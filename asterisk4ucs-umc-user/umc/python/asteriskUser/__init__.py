@@ -81,7 +81,7 @@ class Instance( univention.management.console.modules.Base ):
 			result.append({
 				"position": i,
 				"dn": phone.dn,
-				"name": phone["name"],
+				"name": phone["extension"],
 			})
 
 		request.status = SUCCESS

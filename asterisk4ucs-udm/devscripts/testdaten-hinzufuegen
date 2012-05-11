@@ -70,7 +70,7 @@ create asterisk/phoneGroup "cn=Testserver,cn=asterisk" \
 
 # Warteschleifen
 create asterisk/waitingLoop "cn=Testserver,cn=asterisk" \
-	--set extension="50"
+	--set extension="30"
 
 # Mailboxen
 create asterisk/mailbox "cn=Testserver,cn=asterisk" \
