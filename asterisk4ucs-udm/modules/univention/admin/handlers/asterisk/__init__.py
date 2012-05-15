@@ -116,14 +116,14 @@ def genSipconfFaxEntry(co, lo, phone):
 def genSipconf(co, lo, srv):
 	import sipPhone, fax
 
-	conf = "; Automatisch generiert von asterisk4UCS\n"
-	conf = "\n"
-	conf = "[general]\n"
-	conf = "allowsubscribe = yes\n"
-	conf = "notifyringing = yes\n"
-	conf = "notifyhold = yes\n"
-	conf = "limitonpeers = yes\n"
-	conf = "\n"
+	conf  = "; Automatisch generiert von asterisk4UCS\n"
+	conf += "\n"
+	conf += "[general]\n"
+	conf += "allowsubscribe = yes\n"
+	conf += "notifyringing = yes\n"
+	conf += "notifyhold = yes\n"
+	conf += "limitonpeers = yes\n"
+	conf += "\n"
 
 	conf += "\n\n; ===== Phones =====\n\n"
 	for phone in sipPhone.lookup(co, lo, False):
