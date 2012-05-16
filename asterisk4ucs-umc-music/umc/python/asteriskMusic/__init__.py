@@ -35,6 +35,19 @@ import tempfile
 import subprocess
 
 class Instance(univention.management.console.modules.Base):
+	def queryServers(self, request):
+		servers = getServers()
+
+		result = []
+		for server in servers:
+			result.append({
+				"id": server.dn,
+				"label": server["commonName"],
+			})
+
+		request.status = SUCCESS
+		self.finished(request.id, result)
+
 	def queryMohs(self, request):
 		mohs = getMohs()
 
@@ -72,6 +85,15 @@ class Instance(univention.management.console.modules.Base):
 		request.status = SUCCESS
 		self.finished(request.id, result)
 
+	def delete(self, request):
+		moh = getMoh(request.options["mohdn"])
+
+		delete(moh)
+		moh.remove()
+
+		request.status = SUCCESS
+		self.finished(request.id, True)
+
 	def upload(self, request):
 		moh = getMoh(request.options["moh"])
 		server = getServer(re.sub(r"^[^,]+,", "", request.options["moh"]))
@@ -105,6 +127,18 @@ def getCoLoPos():
 	lo, pos = univention.admin.uldap.getAdminConnection()
 
 	return co, lo, pos
+
+def getServers():
+	co, lo, pos = getCoLoPos()
+
+	server = univention.admin.modules.get("asterisk/server")
+	univention.admin.modules.init(lo, pos, server)
+	servers = server.lookup(co, lo, None)
+
+	for item in servers:
+		item.open()
+
+	return servers
 
 def getMohs():
 	co, lo, pos = getCoLoPos()
@@ -171,7 +205,7 @@ def uploadMusic(server, moh, data, stem, filename):
 	tmpdir = tempfile.mkdtemp()
 	try:
 		inputfilename = stem
-		if re.match("\.mp3$", filename):
+		if re.search("\.mp3$", filename):
 			inputfilename += ".mp3"
 
 		inputfile = open("%s/%s" % (tmpdir, inputfilename), "wb")
@@ -184,4 +218,18 @@ def uploadMusic(server, moh, data, stem, filename):
 	finally:
 		shutil.rmtree(tmpdir)
 
+def delete(moh):
+	log = open("/tmp/upload.log", "w", 0)
+
+	mohname = moh.info["name"]
+	sshtarget = "%s@%s" % (server.info["sshuser"], server.info["sshhost"])
+	sshcmd = server.info["sshcmd"]
+	sshmohpath = server.info.get("sshmohpath", "/opt/asterisk4ucs/moh")
+	mohpath = "%s/%s" % (sshmohpath, mohname)
+	remotecmd = "rm -r '%s' && %s -rx 'moh reload'" % (
+			mohpath.replace("'", r"'\''"), # escaping is fun!
+			sshcmd )
+
+	subprocess.check_call(["ssh", "-oBatchMode=yes", sshtarget, remotecmd],
+			stdout=log, stderr=log)
 

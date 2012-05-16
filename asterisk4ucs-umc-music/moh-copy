@@ -19,7 +19,7 @@ chmod 0755 $CLASS
 chmod 0644 $CLASS/*
 
 scp -Bqr $CLASS $SSHTARGET:$SSHPATH
-ssh -oBatchMode=yes $SSHTARGET "$SSHCMD -rx 'core reload'"
+ssh -oBatchMode=yes $SSHTARGET "$SSHCMD -rx 'moh reload'"
 
 echo Done.
 

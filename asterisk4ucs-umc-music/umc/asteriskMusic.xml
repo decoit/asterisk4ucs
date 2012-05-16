@@ -9,10 +9,14 @@
 
 		<command name="asteriskMusic/songs/query"
 			function="querySongs" />
+		<command name="asteriskMusic/queryServers"
+			function="queryServers" />
 		<command name="asteriskMusic/queryMohs"
 			function="queryMohs" />
 		<command name="asteriskMusic/create"
 			function="create" />
+		<command name="asteriskMusic/delete"
+			function="delete" />
 		<command name="asteriskMusic/upload"
 			function="upload" />
 	</module>

@@ -1,3 +1,10 @@
+asterisk4ucs-umc-music (0.0.5) unstable; urgency=low
+
+  * Typo im Upload-Code beseitigt
+  * Server-Auswahlfeld hinzugefügt
+
+ -- Tristan Bruns <bruns@decoit.de>  Tue, 15 May 2012 13:27:09 +0200
+
 asterisk4ucs-umc-music (0.0.4) unstable; urgency=low
 
   * Grundfunktionalität implementiert
