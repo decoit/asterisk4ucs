@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.9) unstable; urgency=low
+
+  * Testdaten-Script angepasst
+
+ -- Tristan Bruns <bruns@decoit.de>  Mon, 21 May 2012 16:20:48 +0200
+
 asterisk4ucs-udm (0.6.8) unstable; urgency=low
 
   * Änderungen an der Superordinate-Logik
