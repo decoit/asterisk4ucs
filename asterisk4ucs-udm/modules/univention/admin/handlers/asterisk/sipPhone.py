@@ -143,6 +143,14 @@ class object(univention.admin.handlers.simpleLdap):
 		self._exists = 0
 		self.mapping = mapping
 		self.descriptions = property_descriptions
+
+		if not superordinate:
+			raise univention.admin.uexceptions.insufficientInformation, \
+					 'superordinate object not present' 
+		if not dn and not position:
+			raise univention.admin.uexceptions.insufficientInformation, \
+					 'neither DN nor position present' 
+
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
 			position, dn, superordinate)
 
@@ -161,8 +169,8 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsPhone'])]
-
+		return [('objectClass', ['ast4ucsPhone']),
+				('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
 		unique=False, required=False, timeout=-1, sizelimit=0):
@@ -170,6 +178,10 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		univention.admin.filter.expression(
 			'objectClass', "ast4ucsPhone")
 	])
+
+	if superordinate:
+		filter.expressions.append(univention.admin.filter.expression(
+				'ast4ucsSrvchildServer', superordinate.dn))
  
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)

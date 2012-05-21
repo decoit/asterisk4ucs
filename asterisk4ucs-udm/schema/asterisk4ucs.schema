@@ -51,6 +51,7 @@ objectIdentifier ast4ucsMusic ast4ucsRoot:15
 #           - Confroom
 #       - Mailbox
 #       - Phonetype
+#       - Phonegroup
 #       - Music
 #   - Phonebook
 #   - (Pbchild)
@@ -70,7 +71,7 @@ objectclass ( ast4ucsSrvchild NAME 'ast4ucsSrvchild'
 	DESC 'Asterisk4UCS: Thingie that belongs to a ast4ucsServer'
 	SUP top
 	ABSTRACT
-	MAY (
+	MUST (
 		ast4ucsSrvchildServer
 	))
 
@@ -88,7 +89,7 @@ objectclass ( ast4ucsPbchild NAME 'ast4ucsPbchild'
 	DESC 'Asterisk4UCS: Thingie that belongs to a ast4ucsPhonebook'
 	SUP top
 	ABSTRACT
-	MAY (
+	MUST (
 		ast4ucsPbchildPhonebook
 	))
 

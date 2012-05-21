@@ -27,6 +27,7 @@ function create {
 	udm $module create \
 		--ignore_exists \
 		--position "$position,$ldap_base" \
+		--superordinate "$position,$ldap_base" \
 		"$@"
 }
 

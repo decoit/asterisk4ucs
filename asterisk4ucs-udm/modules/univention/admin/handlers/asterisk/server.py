@@ -346,7 +346,7 @@ class object(univention.admin.handlers.simpleLdap):
 		univention.admin.modules.init(self.lo, self.position, music)
 		pos = univention.admin.uldap.position(self.position.getBase())
 		pos.setDn(self.dn)
-		defaultMoh = music.object(self.co, self.lo, pos)
+		defaultMoh = music.object(self.co, self.lo, pos, None, self)
 		defaultMoh.open()
 		defaultMoh.info["name"] = "default"
 		defaultMoh.info["music"] = ["default"]
