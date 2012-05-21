@@ -126,7 +126,7 @@ create users/user "cn=users" \
 	--set overridePWLength="1"
 udm users/user modify --dn "uid=mmoss,cn=users,$ldap_base" \
 	--set mailbox="cn=mailbox 20,cn=Testserver,cn=asterisk,$ldap_base" \
-	--set phones="cn=phone 20,cn=Testserver,cn=asterisk,$ldap_base"
+	--set phones="ast4ucsExtensionExtension=20,cn=Testserver,cn=asterisk,$ldap_base"
 
 create users/user "cn=users" \
 	--set lastname="Trenneman" \
@@ -137,5 +137,5 @@ create users/user "cn=users" \
 	--set overridePWLength="1"
 udm users/user modify --dn "uid=rtrenneman,cn=users,$ldap_base" \
 	--set mailbox="cn=mailbox 21,cn=Testserver,cn=asterisk,$ldap_base" \
-	--set phones="cn=phone 21,cn=Testserver,cn=asterisk,$ldap_base"
+	--set phones="ast4ucsExtensionExtension=21,cn=Testserver,cn=asterisk,$ldap_base"
 

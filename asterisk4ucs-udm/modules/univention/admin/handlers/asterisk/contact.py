@@ -84,15 +84,35 @@ class object(univention.admin.handlers.simpleLdap):
 		self.mapping = mapping
 		self.descriptions = property_descriptions
 
-		if not superordinate:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'superordinate object not present' 
-		if not dn and not position:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'neither DN nor position present' 
-
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
 			position, dn, superordinate)
+
+		self.openSuperordinate()
+		if not self.superordinate:
+			raise univention.admin.uexceptions.insufficientInformation, \
+					 'superordinate object not present'
+		if not dn and not position:
+			raise univention.admin.uexceptions.insufficientInformation, \
+					 'neither DN nor position present'
+
+	def openSuperordinate(self):
+		if self.superordinate:
+			return
+
+		self.open()
+		pbdn = self.oldattr.get("ast4ucsPbchildPhonebook")
+		if not pbdn:
+			return
+
+		if pbdn.__iter__:
+			pbdn = pbdn[0]
+
+		univention.admin.modules.update()
+		pbmod = univention.admin.modules.get("asterisk/phoneBook")
+		univention.admin.modules.init(self.lo, self.position, pbmod)
+		self.superordinate = pbmod.object(self.co, self.lo,
+				self.position, pbdn)
+		self.superordinate.open()
 
 	def exists(self):
 		return self._exists

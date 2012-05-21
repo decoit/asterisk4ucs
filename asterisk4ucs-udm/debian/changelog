@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.8) unstable; urgency=low
+
+  * Änderungen an der Superordinate-Logik
+
+ -- Tristan Bruns <bruns@decoit.de>  Mon, 21 May 2012 13:57:05 +0200
+
 asterisk4ucs-udm (0.6.7) unstable; urgency=low
 
   * Superordinate-Referenzen im LDAP hinzugefügt
