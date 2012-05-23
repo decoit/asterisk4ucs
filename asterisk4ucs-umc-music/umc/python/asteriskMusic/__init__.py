@@ -63,7 +63,17 @@ class Instance(univention.management.console.modules.Base):
 		self.finished(request.id, result)
 
 	def querySongs(self, request):
+		if request.options["mohdn"] == "":
+			self.finished(request.id, [])
+			return
+
 		moh = getMoh(request.options["mohdn"])
+
+		if request.options.get("delete"):
+			name = request.options["delete"]
+			moh["music"].remove(name)
+			deleteSong(moh, name)
+			moh.modify()
 
 		result = []
 		for song in moh.get("music", []):
@@ -186,7 +196,7 @@ def create(serverdn, name):
 
 	music = univention.admin.modules.get("asterisk/music")
 	univention.admin.modules.init(lo, pos, music)
-	moh = music.object(co, lo, pos, None)
+	moh = music.object(co, lo, pos, None, srv)
 	moh.open()
 	moh.info["name"] = name
 	moh.create()
@@ -219,6 +229,7 @@ def uploadMusic(server, moh, data, stem, filename):
 		shutil.rmtree(tmpdir)
 
 def delete(moh):
+	server = moh.superordinate
 	log = open("/tmp/upload.log", "w", 0)
 
 	mohname = moh.info["name"]
@@ -226,8 +237,24 @@ def delete(moh):
 	sshcmd = server.info["sshcmd"]
 	sshmohpath = server.info.get("sshmohpath", "/opt/asterisk4ucs/moh")
 	mohpath = "%s/%s" % (sshmohpath, mohname)
-	remotecmd = "rm -r '%s' && %s -rx 'moh reload'" % (
+	remotecmd = "rm -r '%s' ; %s -rx 'moh reload'" % (
 			mohpath.replace("'", r"'\''"), # escaping is fun!
+			sshcmd )
+
+	subprocess.check_call(["ssh", "-oBatchMode=yes", sshtarget, remotecmd],
+			stdout=log, stderr=log)
+def deleteSong(moh, song):
+	server = moh.superordinate
+	log = open("/tmp/upload.log", "w", 0)
+
+	mohname = moh.info["name"]
+	sshtarget = "%s@%s" % (server.info["sshuser"], server.info["sshhost"])
+	sshcmd = server.info["sshcmd"]
+	sshmohpath = server.info.get("sshmohpath", "/opt/asterisk4ucs/moh")
+	mohpath = "%s/%s/%s" % (sshmohpath, mohname, song)
+	bashcmd = "rm '%s'.*" % mohpath.replace("'", r"'\''") # escaping is fun!
+	remotecmd = "bash -c '%s' ; %s -rx 'moh reload'" % (
+			bashcmd.replace("'", r"'\''"), # nested escaping is even more fun!
 			sshcmd )
 
 	subprocess.check_call(["ssh", "-oBatchMode=yes", sshtarget, remotecmd],
