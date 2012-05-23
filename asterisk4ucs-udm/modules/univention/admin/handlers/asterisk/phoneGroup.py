@@ -94,6 +94,11 @@ class object(univention.admin.handlers.simpleLdap):
 		self.mapping = mapping
 		self.descriptions = property_descriptions
 
+		self.reverseFields = [
+			("pickupphones", "asterisk/sipPhone", "pickupgroups"),
+			("callphones", "asterisk/sipPhone", "callgroups"),
+		]
+
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
 			position, dn, superordinate)
 
@@ -104,11 +109,6 @@ class object(univention.admin.handlers.simpleLdap):
 		if not dn and not position:
 			raise univention.admin.uexceptions.insufficientInformation, \
 					 'neither DN nor position present'
-		
-		self.reverseFields = [
-			("pickupphones", "asterisk/sipPhone", "pickupgroups"),
-			("callphones", "asterisk/sipPhone", "callgroups"),
-		]
 
 	def openSuperordinate(self):
 		if self.superordinate:
