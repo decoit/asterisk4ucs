@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
 	<module id="asteriskMusic" icon="asteriskMusic" version="1.0">
-		<name>Asterisk4UCS music upload</name>
-		<description>Upload music for waitingloops</description>
+		<name>Asterisk4UCS Warteschlangenmusiken</name>
+		<description>Musikupload für Asterisk4UCS-Warteschlangen</description>
 		<categories>
 			<category name="system"/>
 		</categories>
