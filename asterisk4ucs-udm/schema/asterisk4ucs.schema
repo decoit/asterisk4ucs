@@ -432,12 +432,6 @@ attributetype ( ast4ucsServer:4 NAME 'ast4ucsServerBlockedareacode'
 	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-attributetype ( ast4ucsServer:5 NAME 'ast4ucsServerMusic'
-	DESC 'Asterisk4ucs: Server Music'
-	EQUALITY caseIgnoreMatch
-	SUBSTR caseIgnoreSubstringsMatch
-	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
 attributetype ( ast4ucsServer:6 NAME 'ast4ucsServerExtnum'
 	DESC 'Asterisk4ucs: Server Extnum'
 	EQUALITY caseIgnoreMatch
@@ -527,7 +521,6 @@ objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 		ast4ucsServerHost $
 		ast4ucsServerConfig $
 		ast4ucsServerBlockedareacode $
-		ast4ucsServerMusic $
 		ast4ucsServerExtnum $
 		ast4ucsServerDefaultext $
 		ast4ucsServerMailboxmaxlen $

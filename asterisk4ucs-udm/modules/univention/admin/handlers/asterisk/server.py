@@ -50,9 +50,6 @@ layout = [
 		[ "mailboxEmaildateformat", "mailboxAttach" ],
 		[ "mailboxMailcommand" ],
 	]),
-	Tab('Musik', 'Warteschlangenmusik', layout = [
-		[ "music" ],
-	], advanced=True),
 	Tab('Nummernkreise', 'Nummernkreise', layout = [
 		[ "extnums", "defaultext" ],
 	], advanced=True),
@@ -132,12 +129,6 @@ property_descriptions = {
 		long_description=u"Blockiert die Vorwahlen 00 und +",
 		syntax=univention.admin.syntax.boolean,
 		default=False,
-	),
-	"music": univention.admin.property(
-		short_description="Installierte Musikklassen",
-		syntax=univention.admin.syntax.string,
-		multivalue=True,
-		default=["moh"],
 	),
 	"extnums": univention.admin.property(
 		short_description="Eigene externe Rufnummer(n)",
@@ -256,7 +247,6 @@ mapping.register("lastupdate", "ast4ucsServerLastupdate",
 	None, univention.admin.mapping.ListToString)
 mapping.register("configs", "ast4ucsServerConfig")
 mapping.register("blockedAreaCodes", "ast4ucsServerBlockedareacode")
-mapping.register("music", "ast4ucsServerMusic")
 mapping.register("extnums", "ast4ucsServerExtnum")
 mapping.register("defaultext", "ast4ucsServerDefaultext",
 	None, univention.admin.mapping.ListToString)
