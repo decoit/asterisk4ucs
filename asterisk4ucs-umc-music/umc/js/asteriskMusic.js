@@ -35,15 +35,9 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 		this.inherited(arguments);
 
 		this._page = new umc.widgets.Page({
-			headerText: "Hallo Welt!",
-			helpText: "Hallo, du digitalisierte Welt!",
+			headerText: "Warteschlangenmusikverwaltungstool",
 		});
 		this.addChild(this._page);
-
-		this._content = new umc.widgets.ExpandingTitlePane({
-			title: "Fubar",
-		});
-		this._page.addChild(this._content);
 
 		var widgets = [{
 			type: 'ComboBox',
@@ -66,11 +60,10 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 			name: 'create',
 			label: "Musikklasse anlegen",
 			callback: dojo.hitch(this, function () {
-//				var server = prompt("Server:", "cn=Testserver,cn=asterisk,dc=asterisk4ucs,dc=decoit");
-
 				var name = prompt("Bitte geben Sie den Namen für die neue Musikklasse ein:");
 				if (!name) {
 					alert("Ungültiger Name.");
+					return;
 				}
 
 				var call = this.umcpCommand("asteriskMusic/create", {
@@ -80,8 +73,8 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 				call.then(dojo.hitch(this, function (data) {
 					umc.dialog.notify("Musikklasse wurde angelegt.");
 
-					this._mohSelect.setInitialValue(data.newDn);
-					this._serverSelect.reloadDynamicValues();
+					this._mohSelect.setInitialValue(data.newDn, false);
+					this._setServer(this._serverdn);
 				}));
 			}),
 		}, {
@@ -95,8 +88,8 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 				call.then(dojo.hitch(this, function (data) {
 					umc.dialog.notify("Musikklasse wurde entfernt.");
 
-					var mohSelect = this._form.getWidget("moh");
-					mohSelect.reloadDynamicValues();
+					this._mohSelect.setInitialValue(null, false);
+					this._setServer(this._serverdn);
 				}));
 			}),
 		}, {
@@ -133,7 +126,7 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 			layout: layout,
 			region: "top",
 		});
-		this._content.addChild(this._form);
+		this._page.addChild(this._form);
 
 		this._grid = new umc.widgets.Grid({
 			moduleStore: umc.store.getModuleStore("name",
@@ -153,7 +146,7 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 				}),
 			}],
 		});
-		this._content.addChild(this._grid);
+		this._page.addChild(this._grid);
 
 		console.log(this);
 		fubar = this;
@@ -188,7 +181,9 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 	},
 	_setServer: function (serverdn) {
 		this._serverdn = serverdn;
-		this._mohSelect.reloadDynamicValues();
+		this._mohSelect._loadValues({
+			"server": this._serverdn,
+		});
 	},
 	_setMoh: function (mohdn) {
 		this._mohdn = mohdn;
