@@ -36,8 +36,6 @@ layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
 		[ "commonName" ],
 #		[ "host" ],
-		[ "sshuser", "sshhost" ],
-		[ "sshpath", "sshcmd" ],
 		[ "lastupdate_gui", "apply" ],
 		[ "globalCallId" ],
 	]),
@@ -52,6 +50,11 @@ layout = [
 	]),
 	Tab('Nummernkreise', 'Nummernkreise', layout = [
 		[ "extnums", "defaultext" ],
+	], advanced=True),
+	Tab('Asterisk-Host', 'Asterisk-Host', layout = [
+		[ "sshuser", "sshhost" ],
+		[ "sshpath", "sshmohpath" ],
+		[ "sshcmd" ],
 	], advanced=True),
 ]
 
@@ -87,6 +90,12 @@ property_descriptions = {
 		short_description="Asterisk-Konfigurationspfad auf Zielhost",
 		syntax=univention.admin.syntax.string,
 		default="/etc/asterisk",
+		required=True,
+	),
+	"sshmohpath": univention.admin.property(
+		short_description="Asterisk-Warteschlangenmusikpfad auf Zielhost",
+		syntax=univention.admin.syntax.string,
+		default="/opt/asterisk4ucs/moh",
 		required=True,
 	),
 	"sshcmd": univention.admin.property(
@@ -232,20 +241,23 @@ mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
 #mapping.register("host", "ast4ucsServerHost",
 #	None, univention.admin.mapping.ListToString)
-mapping.register("sshuser", "ast4ucsServerSshuser",
-	None, univention.admin.mapping.ListToString)
-mapping.register("sshhost", "ast4ucsServerSshhost",
-	None, univention.admin.mapping.ListToString)
-mapping.register("sshpath", "ast4ucsServerSshpath",
-	None, univention.admin.mapping.ListToString)
-mapping.register("sshcmd", "ast4ucsServerSshcmd",
-	None, univention.admin.mapping.ListToString)
 mapping.register("lastupdate", "ast4ucsServerLastupdate",
 	None, univention.admin.mapping.ListToString)
 mapping.register("configs", "ast4ucsServerConfig")
 mapping.register("blockedAreaCodes", "ast4ucsServerBlockedareacode")
 mapping.register("extnums", "ast4ucsServerExtnum")
 mapping.register("defaultext", "ast4ucsServerDefaultext",
+	None, univention.admin.mapping.ListToString)
+
+mapping.register("sshuser", "ast4ucsServerSshuser",
+	None, univention.admin.mapping.ListToString)
+mapping.register("sshhost", "ast4ucsServerSshhost",
+	None, univention.admin.mapping.ListToString)
+mapping.register("sshpath", "ast4ucsServerSshpath",
+	None, univention.admin.mapping.ListToString)
+mapping.register("sshmohpath", "ast4ucsServerSshmohpath",
+	None, univention.admin.mapping.ListToString)
+mapping.register("sshcmd", "ast4ucsServerSshcmd",
 	None, univention.admin.mapping.ListToString)
 
 mapping.register("mailboxMaxlength", "ast4ucsServerMailboxmaxlen",

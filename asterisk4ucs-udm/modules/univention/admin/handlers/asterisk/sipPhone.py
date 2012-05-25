@@ -101,7 +101,7 @@ property_descriptions = {
 		short_description="Warteschleifen",
 		syntax=univention.admin.syntax.LDAP_Search(
                         filter="objectClass=ast4ucsWaitingloop",
-                        attribute=['asterisk/waitingLoop: commonName'],
+                        attribute=['asterisk/waitingLoop: extension'],
                         value='asterisk/waitingLoop: dn'
                 ),
 		multivalue=True,

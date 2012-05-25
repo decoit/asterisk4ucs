@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import univention.config_registry
 import univention.admin.filter
+import univention.admin.modules
 import traceback
 import re
 import shutil
@@ -233,7 +234,7 @@ def genQueuesconf(co, lo, srv):
 
 	return conf
 
-def genMusiconholdconfEntry(co, lo, moh):
+def genMusiconholdconfEntry(co, lo, srv, moh):
 	moh = moh.info
 
 	if moh["name"] == "default":
@@ -242,7 +243,7 @@ def genMusiconholdconfEntry(co, lo, moh):
 	res  = "[%s]\n" % ( moh["name"] )
 	res += "mode = files\n"
 	res += "random = yes\n"
-	res += "directory = ucs_moh/%s\n" % ( moh["name"] )
+	res += "directory = %s/%s\n" % ( srv["sshmohpath"], moh["name"] )
 	
 	return res
 
@@ -254,7 +255,7 @@ def genMusiconholdconf(co, lo, srv):
 	for moh in music.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (moh.dn)
 		try:
-			conf += genMusiconholdconfEntry(co, lo, moh)
+			conf += genMusiconholdconfEntry(co, lo, srv, moh)
 		except:
 			conf += re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] )
@@ -456,27 +457,28 @@ def reverseFieldsLoad(self):
 	if not self.dn:
 		return
 	for field, foreignModule, foreignField in self.reverseFields:
-		foreignModule = __import__("univention.admin.handlers.%s.%s" % (
-			tuple(foreignModule.split("/"))), globals, locals,
-			["lookup", "mapping"])
+		foreignModule = univention.admin.modules.get(foreignModule)
+		univention.admin.modules.init(self.lo, self.position,
+				foreignModule)
 		objects = foreignModule.lookup(self.co, self.lo, "%s=%s" % (
 			foreignModule.mapping.mapName(foreignField),
 			univention.admin.filter.escapeForLdapFilter(self.dn),
-		))
+		), superordinate=self.superordinate)
 		self.info[field] = [obj.dn for obj in objects]
 
 def reverseFieldsSave(self):
 	if not self.dn:
 		return
 	for field, foreignModule, foreignField in self.reverseFields:
-		foreignModule = __import__("univention.admin.handlers.%s.%s" % (
-			tuple(foreignModule.split("/"))), globals, locals,
-			["object"])
+		foreignModule = univention.admin.modules.get(foreignModule)
+		univention.admin.modules.init(self.lo, self.position,
+				foreignModule)
 		oldset = set(self.oldinfo.get(field, []))
 		newset = set(self.info.get(field, []))
 		
 		for dn in (oldset - newset):
-			obj = foreignModule.object(self.co, self.lo, None, dn)
+			obj = foreignModule.object(self.co, self.lo, None, dn,
+					self.superordinate)
 			obj.open()
 			try:
 				obj.info.get(foreignField, []).remove(self.dn)
@@ -485,7 +487,8 @@ def reverseFieldsSave(self):
 			obj.modify()
 		
 		for dn in (newset - oldset):
-			obj = foreignModule.object(self.co, self.lo, None, dn)
+			obj = foreignModule.object(self.co, self.lo, None, dn,
+					self.superordinate)
 			obj.open()
 			obj.info.setdefault(foreignField, []).append(self.dn)
 			obj.modify()

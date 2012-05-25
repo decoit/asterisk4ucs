@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.10) unstable; urgency=low
+
+  * Fieser Bug in reverseFields behoben
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 23 May 2012 13:20:35 +0200
+
 asterisk4ucs-udm (0.6.9) unstable; urgency=low
 
   * Testdaten-Script angepasst
