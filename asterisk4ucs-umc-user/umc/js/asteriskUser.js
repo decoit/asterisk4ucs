@@ -53,8 +53,7 @@ dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 
 		tabContainer.addChild(this.renderMailbox());
 
-		// forwarding is not yet implemented
-		//tabContainer.addChild(this.renderForwarding());
+		tabContainer.addChild(this.renderForwarding());
 
 		this.startup();
 		this.load();

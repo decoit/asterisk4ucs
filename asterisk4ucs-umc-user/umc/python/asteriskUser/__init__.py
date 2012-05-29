@@ -32,7 +32,7 @@ class Instance( univention.management.console.modules.Base ):
 
 		result = {
 			"phones/interval": user["ringdelay"],
-			"forwarding/number": 42,
+			"forwarding/number": user.get("forwarding",""),
 
 			"mailbox/timeout": user["timeout"],
 			"mailbox": False,
@@ -53,6 +53,14 @@ class Instance( univention.management.console.modules.Base ):
 
 		user["ringdelay"] = request.options["phones/interval"]
 		user["timeout"] = request.options["mailbox/timeout"]
+		if request.options["forwarding/number"]:
+			user["forwarding"] = request.options[
+					"forwarding/number"]
+		else:
+			try:
+				del user.info["forwarding"]
+			except KeyError:
+				pass
 		user.modify()
 
 		if mailbox:

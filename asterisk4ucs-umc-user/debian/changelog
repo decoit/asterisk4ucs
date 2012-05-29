@@ -1,3 +1,9 @@
+asterisk4ucs-umc-user (0.5.4) unstable; urgency=low
+
+  * Benutzer-Weiterleitungen können jetzt auch verwaltet werden (Bug 1801)
+
+ -- Tristan Bruns <bruns@decoit.de>  Tue, 29 May 2012 11:28:15 +0200
+
 asterisk4ucs-umc-user (0.5.3) unstable; urgency=low
 
   * Telefonauswahlliste zeigt nun Extensions an
