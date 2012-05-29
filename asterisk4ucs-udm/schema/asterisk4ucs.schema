@@ -182,6 +182,12 @@ attributetype ( ast4ucsPhone:6 NAME 'ast4ucsPhoneWaitingloop'
 	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( ast4ucsPhone:7 NAME 'ast4ucsPhoneForwarding'
+	DESC 'Asterisk4ucs: Phone Forwarding'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 	DESC 'Asterisk4ucs: phone'
 	SUP ast4ucsSipclient
@@ -191,7 +197,8 @@ objectclass ( ast4ucsPhone NAME 'ast4ucsPhone'
 		ast4ucsPhoneProfile $
 		ast4ucsPhoneCallgroup $
 		ast4ucsPhonePickupgroup $
-		ast4ucsPhoneWaitingloop
+		ast4ucsPhoneWaitingloop $
+		ast4ucsPhoneForwarding
 	))
 
 
@@ -576,6 +583,12 @@ attributetype ( ast4ucsUser:5 NAME 'ast4ucsUserTimeout'
 	SUBSTR caseIgnoreSubstringsMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( ast4ucsUser:6 NAME 'ast4ucsUserForwarding'
+	DESC 'Asterisk4ucs: User Forwarding'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 	DESC 'Asterisk4ucs: User'
 	SUP top
@@ -585,7 +598,8 @@ objectclass ( ast4ucsUser NAME 'ast4ucsUser'
 		ast4ucsUserMailbox $
 		ast4ucsUserRingdelay $
 		ast4ucsUserExtmode $
-		ast4ucsUserTimeout
+		ast4ucsUserTimeout $
+		ast4ucsUserForwarding
 	) )
 
 

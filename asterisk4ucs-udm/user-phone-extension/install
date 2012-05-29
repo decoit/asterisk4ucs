@@ -89,3 +89,9 @@ addUserAttribute timeout \
 	--set ldapMapping="ast4ucsUserTimeout" \
 	--set default=10
 
+addUserAttribute forwarding \
+	--set shortDescription="Weiterleitung" \
+	--set tabPosition=6 \
+	--set syntax=string \
+	--set ldapMapping="ast4ucsUserForwarding"
+

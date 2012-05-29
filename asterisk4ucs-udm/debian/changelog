@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.11) unstable; urgency=low
+
+  * Weiterleitungen wurden implementiert (Bug 1801)
+
+ -- Tristan Bruns <bruns@decoit.de>  Tue, 29 May 2012 10:09:34 +0200
+
 asterisk4ucs-udm (0.6.10) unstable; urgency=low
 
   * Fieser Bug in reverseFields behoben

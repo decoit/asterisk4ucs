@@ -37,6 +37,7 @@ layout = [
 		[ "macaddress", "hostname" ],
 		[ "phonetype", "profile" ],
 		[ "password" ],
+		[ "forwarding" ],
 		[ "waitingloops" ],
 		[ "callgroups" ],
 		[ "pickupgroups" ],
@@ -106,6 +107,10 @@ property_descriptions = {
                 ),
 		multivalue=True,
 	),
+	"forwarding": univention.admin.property(
+		short_description="Weiterleitung",
+		syntax=univention.admin.syntax.string
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -128,6 +133,8 @@ mapping.register("profile", "ast4ucsPhoneProfile",
 mapping.register("callgroups", "ast4ucsPhoneCallgroup")
 mapping.register("pickupgroups", "ast4ucsPhonePickupgroup")
 mapping.register("waitingloops", "ast4ucsPhoneWaitingloop")
+mapping.register("forwarding", "ast4ucsPhoneForwarding",
+	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module

@@ -291,31 +291,46 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 	except:
 		ringdelay = 0
 
-	phones = [sipPhone.object(co, lo, None, dn).info["extension"]
-		for dn in phoneUser.get("phones", [])]
+	channels = []
+	hints = []
+	for dn in phoneUser.get("phones", []):
+		phone = sipPhone.object(co, lo, extenPhone.position, dn,
+				extenPhone.superordinate)
+		if phone.get("forwarding"):
+			channels.append("Local/%s" % phone["forwarding"])
+		else:
+			channels.append("SIP/%s" % phone["extension"])
+			hints.append("SIP/%s" % phone["extension"])
 
 	res = []
 
-	if phones:
+	if channels:
 		if ringdelay:
-			for phone in phones[:-1]:
-				res.append("Dial(SIP/%s,%i,tT)" % (phone, ringdelay))
+			for channel in channels[:-1]:
+				res.append("Dial(%s,%i,tT)" % (channel,
+						ringdelay))
 				res.append("Wait(0.5)")
-			res.append("Dial(SIP/%s,%i,tT)" % (phones[-1], timeout))
+			res.append("Dial(%s,%i,tT)" % (channels[-1], timeout))
 		else:
 			res.append("Dial(%s,%i,tT)" % (
-				'&'.join(["SIP/%s"%phone for phone in phones]),
-				timeout))
-		hints = '&'.join(["SIP/%s"%phone for phone in phones])
+				'&'.join(channels), timeout))
 
 	if phoneUser.get("mailbox"):
 		phoneMailbox = mailbox.object(
 			co, lo, None, phoneUser["mailbox"]).info
 		res.append("Voicemail(%s,u)" % phoneMailbox["id"])
 
-	return ("exten => %s,hint,%s\n" % (extension, hints)
-		+ ''.join(["exten => %s,%i,%s\n"%(extension, i+1, data)
-				for i,data in enumerate(res)]))
+	if phoneUser.get("forwarding"):
+		res = [ "Dial(Local/%s,,tT)" % phoneUser["forwarding"] ]
+
+	resStr = ""
+	if hints:
+		resStr += "exten => %s,hint,%s\n" % (extension,
+				'&'.join(hints))
+	for i, data in enumerate(res):
+		resStr += "exten => %s,%i,%s\n" % (extension, i+1, data)
+
+	return resStr
 
 def genExtRoomEntry(co, lo, room):
 	room = room.info
