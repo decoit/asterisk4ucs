@@ -1,0 +1,16 @@
+Source: asterisk4ucs-umc-deploy
+Section: asterisk4ucs
+Priority: optional
+Maintainer: Tristan Bruns (Decoit GmbH) <bruns@decoit.de>
+Build-Depends: debhelper (>= 7.0.50~),
+ python-support,
+ univention-management-console-dev,
+ python-all
+Standards-Version: 3.5.2
+XS-Python-Version: all
+
+Package: asterisk4ucs-umc-deploy
+Architecture: all
+Depends: univention-management-console-server
+Description: Asterisk4UCS UMC module for configuration deployment
+ UMC module for configuration deployment

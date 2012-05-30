@@ -1,0 +1,6 @@
+Module: asteriskDeploy
+Python: umc/python
+Definition: umc/asteriskDeploy.xml
+Javascript: umc/js
+Icons: umc/icons
+

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="asteriskDeploy" icon="asteriskDeploy" version="1.0">
+		<name>Asterisk4UCS Deployment</name>
+		<description>Deploys Asterisk4UCS configuration files</description>
+		<categories>
+			<category name="system"/>
+		</categories>
+
+		<command name="asteriskDeploy/queryServers"
+			function="queryServers" />
+		<command name="asteriskDeploy/copyid"
+			function="copyid" />
+		<command name="asteriskDeploy/create"
+			function="create" />
+		<command name="asteriskDeploy/deploy"
+			function="deploy" />
+		<command name="asteriskDeploy/getLog"
+			function="getLog" />
+	</module>
+</umc>
+
