@@ -1,3 +1,10 @@
+asterisk4ucs-udm (0.6.12) unstable; urgency=low
+
+  * Configs werden nicht mehr im LDAP gespeichert. Stattdessen übernimmt
+    asterisk4ucs-umc-deploy das Deployment. (Bug 2747)
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 30 May 2012 15:32:22 +0200
+
 asterisk4ucs-udm (0.6.11) unstable; urgency=low
 
   * Weiterleitungen wurden implementiert (Bug 1801)

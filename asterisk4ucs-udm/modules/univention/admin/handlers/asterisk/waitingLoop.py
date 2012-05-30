@@ -87,6 +87,8 @@ property_descriptions = {
 			attribute=["asterisk/music: name"],
 			value="asterisk/music: name",
 		),
+		required=True,
+		default="default",
 	),
 	"members": univention.admin.property(
 		short_description="Teilnehmer",

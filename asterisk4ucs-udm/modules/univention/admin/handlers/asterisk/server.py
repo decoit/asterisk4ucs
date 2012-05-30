@@ -35,8 +35,6 @@ usewizard = 1
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
 		[ "commonName" ],
-#		[ "host" ],
-		[ "lastupdate_gui", "apply" ],
 		[ "globalCallId" ],
 	]),
 	Tab('Vorwahlen', 'Gesperrte Vorwahlen', layout = [
@@ -65,16 +63,6 @@ property_descriptions = {
 		identifies=True,
 		required=True
 	),
-#	"host": univention.admin.property(
-#		short_description="Host",
-#		syntax=univention.admin.syntax.LDAP_Search(
-#                        filter="(&(objectClass=univentionHost)" + \
-#				"(univentionService=Asterisk Server))",
-#                        attribute=['computers/computer: name'],
-#                        value='computers/computer: dn',
-#                ),
-#		required=True
-#	),
 	"sshuser": univention.admin.property(
 		short_description="SSH-User",
 		syntax=univention.admin.syntax.string,
@@ -104,26 +92,9 @@ property_descriptions = {
 		default="asterisk",
 		required=True,
 	),
-	"lastupdate": univention.admin.property(
-		syntax=univention.admin.syntax.integer,
-	),
-	"lastupdate_gui": univention.admin.property(
-		short_description=u"Konfiguration zuletzt eingespielt am:",
-		syntax=univention.admin.syntax.string,
-		editable=False,
-	),
 	"globalCallId" : univention.admin.property(
 		syntax=univention.admin.syntax.string,
 		short_description=u"Alle ausgehenden Anrufer übermitteln die folgende Nummer:",
-	),
-	"apply": univention.admin.property(
-		short_description=u"Konfiguration jetzt einspielen?",
-		syntax=univention.admin.syntax.boolean,
-		default="0",
-	),
-	"configs": univention.admin.property(
-		syntax=univention.admin.syntax.string,
-		multivalue=True,
 	),
 	"blockedAreaCodes": univention.admin.property(
 		short_description=u"Blockierte Vorwahlen",
@@ -163,8 +134,8 @@ property_descriptions = {
      ${VM_CIDNAME}   Name des Anrufers
      ${VM_DATE}      Datum und Uhrzeit des Anrufs
      ${VM_MESSAGEFILE}
-                     Name der Sounddatei, in der die
-                     Nachricht abgespeichert ist""".replace("\n","<br>"),
+		     Name der Sounddatei, in der die
+		     Nachricht abgespeichert ist""".replace("\n","<br>"),
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="New message from ${VM_CALLERID}",
@@ -181,12 +152,12 @@ property_descriptions = {
      ${VM_CIDNAME}   Name des Anrufers
      ${VM_DATE}      Datum und Uhrzeit des Anrufs
      ${VM_MESSAGEFILE}
-                     Name der Sounddatei, in der die
-                     Nachricht abgespeichert ist
+		     Name der Sounddatei, in der die
+		     Nachricht abgespeichert ist
 
 Weiterhin können die folgenden Escapesequenzen verwendet werden:
-     \\n             Neue Zeile
-     \\t             Tabulator-Zeichen""".replace("\n","<br>"),
+     \\n	     Neue Zeile
+     \\t	     Tabulator-Zeichen""".replace("\n","<br>"),
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="Hello ${VM_NAME},\n\nThere is a new message " + \
@@ -239,11 +210,6 @@ Weiterhin können die folgenden Escapesequenzen verwendet werden:
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
-#mapping.register("host", "ast4ucsServerHost",
-#	None, univention.admin.mapping.ListToString)
-mapping.register("lastupdate", "ast4ucsServerLastupdate",
-	None, univention.admin.mapping.ListToString)
-mapping.register("configs", "ast4ucsServerConfig")
 mapping.register("blockedAreaCodes", "ast4ucsServerBlockedareacode")
 mapping.register("extnums", "ast4ucsServerExtnum")
 mapping.register("defaultext", "ast4ucsServerDefaultext",
@@ -296,13 +262,6 @@ class object(univention.admin.handlers.simpleLdap):
 		return self._exists
 
 	def open(self):
-		try:
-			self.info["lastupdate_gui"] = time.strftime(
-				"%d.%m.%Y %H:%M:%S", time.localtime(
-				int(self.info.get("lastupdate",""))))
-		except ValueError:
-			self.info["lastupdate_gui"] = "never"
-
 		univention.admin.handlers.simpleLdap.open(self)
 		self.save()
 
@@ -322,12 +281,8 @@ class object(univention.admin.handlers.simpleLdap):
 			self.info["blockedAreaCodes"] = list(set(
 				self.info["blockedAreaCodes"]))
 
-        def _ldap_pre_modify(self):
+	def _ldap_pre_modify(self):
 		self.saveCheckboxes()
-		if self.info.get('apply') == "1":
-	                self.info['lastupdate'] = str(int(time.time()))
-			self.info['configs'] = asterisk.genConfigs(
-							self.co, self.lo, self)
 
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
@@ -335,7 +290,6 @@ class object(univention.admin.handlers.simpleLdap):
 			mapping.mapValue('commonName', self.info['commonName']),
 			self.position.getDn()
 		)
-		self.info["lastupdate"] = "0"
 		self.saveCheckboxes()
 
 	def _ldap_post_create(self):

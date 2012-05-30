@@ -73,7 +73,7 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 				call.then(dojo.hitch(this, function (data) {
 					umc.dialog.notify("Musikklasse wurde angelegt.");
 
-					this._mohSelect.setInitialValue(data.newDn, false);
+					this._mohSelect.setInitialValue(data.result.newDn, false);
 					this._setServer(this._serverdn);
 				}));
 			}),

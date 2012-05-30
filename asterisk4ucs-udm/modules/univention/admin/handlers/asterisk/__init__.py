@@ -58,8 +58,12 @@ def genSipconfEntry(co, lo, phone):
 
 	phoneUser = user.lookup(co, lo, "(ast4ucsUserPhone=%s)" % (
 		univention.admin.filter.escapeForLdapFilter(phone.dn)))
-	if len(phoneUser) != 1:
-		return "; ERROR: Multiple or no users own this phone.\n"
+	if len(phoneUser) == 0:
+		return ";; Phone %s has no user.\n" % phone["extension"]
+	if len(phoneUser) > 1:
+		msg = ";; Phone %s has multiple users:\n" % phone["extension"]
+		for userObj in phoneUser:
+			msg += ";;   * %s\n" % userObj["username"]
 	phoneUser = phoneUser[0].info
 
 	phone = phone.info
@@ -152,8 +156,12 @@ def genVoicemailconfEntry(co, lo, box):
 	from univention.admin.handlers.users import user
 	boxUser = user.lookup(co, lo, "(ast4ucsUserMailbox=%s)"%(
 		univention.admin.filter.escapeForLdapFilter(box.dn)))
-	if len(boxUser) != 1:
-		return "; ERROR: Multiple or no users own this mailbox.\n"
+	if len(boxUser) == 0:
+		return ";; Mailbox %s has no user.\n" % box["id"]
+	if len(boxUser) > 1:
+		msg = ";; Mailbox %s has multiple users:\n" % box["id"]
+		for userObj in boxUser:
+			msg += ";;   * %s\n" % userObj["username"]
 	boxUser = boxUser[0].info
 	
 	box = box.info
@@ -206,13 +214,13 @@ def genQueuesconfEntry(co, lo, queue):
 	members = sipPhone.lookup(co, lo, "(%s=%s)" % (
 		sipPhone.mapping.mapName("waitingloops"), queue.dn))
 	queue = queue.info
-	
+
 	res  = "[%s]\n" % ( queue["extension"] )
 	res += "strategy = %s\n" % ( queue["strategy"] )
 	res += "maxlen = %s\n" % ( queue["maxCalls"] )
 	res += "wrapuptime = %s\n" % ( queue["memberDelay"] )
 	res += "musiconhold = %s\n" % ( queue["delayMusic"] )
-	
+
 	for member in members:
 		res += "member => SIP/%s\n" % (member.info["extension"])
 	
@@ -273,8 +281,12 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 
 	phoneUser = user.lookup(co, lo, "(ast4ucsUserPhone=%s)"%(
 		univention.admin.filter.escapeForLdapFilter(extenPhone.dn)))
-	if len(phoneUser) != 1:
-		return "; ERROR: Multiple or no users own this phone.\n"
+	if len(phoneUser) == 0:
+		return ";; Phone %s has no user.\n" % extenPhone["extension"]
+	if len(phoneUser) > 1:
+		msg = ";; Phone %s has multiple users:\n" % extenPhone["extension"]
+		for userObj in phoneUser:
+			msg += ";;   * %s\n" % userObj["username"]
 	phoneUser = phoneUser[0].info
 
 	try:
@@ -450,23 +462,21 @@ def genExtensionsconf(co, lo, srv):
 
 	return conf
 
-def genConfigs(co, lo, server):
+def genConfigs(server):
 	ucr.load()
+	
+	co = server.co
+	lo = server.lo
 
 	configs = {
-		'sip.conf': genSipconf,
-		'voicemail.conf': genVoicemailconf,
-		'queues.conf': genQueuesconf,
-		'musiconhold.conf': genMusiconholdconf,
-		'extensions.conf': genExtensionsconf,
+		'sip.conf': genSipconf(co, lo, server),
+		'voicemail.conf': genVoicemailconf(co, lo, server),
+		'queues.conf': genQueuesconf(co, lo, server),
+		'musiconhold.conf': genMusiconholdconf(co, lo, server),
+		'extensions.conf': genExtensionsconf(co, lo, server),
 	}
-
-	res = []
-	for filename,genfunc in configs.items():
-		res.append("%s %s" % (filename,
-			zlib.compress(genfunc(co, lo, server)).encode("base64")))
-	return res
-
+	
+	return configs
 
 def reverseFieldsLoad(self):
 	if not self.dn:
