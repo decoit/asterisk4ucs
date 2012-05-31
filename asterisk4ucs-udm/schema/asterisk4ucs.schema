@@ -527,10 +527,10 @@ objectclass ( ast4ucsServer NAME 'ast4ucsServer'
 	DESC 'Asterisk4ucs: Server'
 	SUP top
 	MUST (
-		cn $
-		ast4ucsServerLastupdate
+		cn
 	)
 	MAY (
+		ast4ucsServerLastupdate $
 		ast4ucsServerHost $
 		ast4ucsServerConfig $
 		ast4ucsServerBlockedareacode $
