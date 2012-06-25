@@ -383,6 +383,30 @@ objectclass ( ast4ucsConfroom NAME 'ast4ucsConfroom'
 
 # --------------------- Contact ---------------------------
 
+attributetype ( ast4ucsContact:1 NAME 'ast4ucsContactFirstname'
+	DESC 'Asterisk4ucs: Contact Firstname'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsContact:2 NAME 'ast4ucsContactLastname'
+	DESC 'Asterisk4ucs: Contact Lastname'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsContact:3 NAME 'ast4ucsContactMobilenumber'
+	DESC 'Asterisk4ucs: Contact Mobilenumber'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( ast4ucsContact:4 NAME 'ast4ucsContactFaxnumber'
+	DESC 'Asterisk4ucs: Contact Faxnumber'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( ast4ucsContact NAME 'phonebookContact'
 	DESC 'Contact information for a phonebook entry'
 	SUP ast4ucsPbchild
@@ -390,6 +414,10 @@ objectclass ( ast4ucsContact NAME 'phonebookContact'
 		cn
 	)
 	MAY (
+		ast4ucsContactFirstname $
+		ast4ucsContactLastname $
+		ast4ucsContactMobilenumber $
+		ast4ucsContactFaxnumber $
 		telephoneNumber $
 		title $
 		o

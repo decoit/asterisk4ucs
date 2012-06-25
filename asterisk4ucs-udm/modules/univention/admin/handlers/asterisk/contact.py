@@ -33,8 +33,11 @@ superordinate = "asterisk/phoneBook"
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Kontaktdaten', layout = [
-		[ 'commonName', 'title' ],
-		[ 'organisation', 'telephoneNumber' ],
+		[ 'title', 'firstname', 'lastname' ],
+		[ 'organisation' ],
+		[ 'telephoneNumber' ],
+		[ 'mobileNumber' ],
+		[ 'faxNumber' ],
 	])
 ]
 
@@ -44,6 +47,14 @@ property_descriptions = {
 		syntax=univention.admin.syntax.string,
 		identifies=True,
 		required=True
+	),
+	"firstname": univention.admin.property(
+		short_description="Vorname",
+		syntax=univention.admin.syntax.string
+	),
+	"lastname": univention.admin.property(
+		short_description="Nachname",
+		syntax=univention.admin.syntax.string
 	),
 	"title": univention.admin.property(
 		short_description="Titel",
@@ -58,16 +69,32 @@ property_descriptions = {
 		syntax=univention.admin.syntax.string,
 		multivalue=True
 	),
+	"mobileNumber": univention.admin.property(
+		short_description="Handynummer",
+		syntax=univention.admin.syntax.string,
+		multivalue=True
+	),
+	"faxNumber": univention.admin.property(
+		short_description="Faxnummer",
+		syntax=univention.admin.syntax.string,
+		multivalue=True
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
+	None, univention.admin.mapping.ListToString)
+mapping.register("firstname", "ast4ucsContactFirstname",
+	None, univention.admin.mapping.ListToString)
+mapping.register("lastname", "ast4ucsContactLastname",
 	None, univention.admin.mapping.ListToString)
 mapping.register("title", "title",
 	None, univention.admin.mapping.ListToString)
 mapping.register("organisation", "o",
 	None, univention.admin.mapping.ListToString)
 mapping.register("telephoneNumber", "telephoneNumber")
+mapping.register("mobileNumber", "ast4ucsContactMobilenumber")
+mapping.register("faxNumber", "ast4ucsContactFaxnumber")
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -120,6 +147,13 @@ class object(univention.admin.handlers.simpleLdap):
 	def open(self):
 		univention.admin.handlers.simpleLdap.open(self)
 		self.save()
+
+	def _ldap_pre_ready(self):
+		self["commonName"] = "%s %s %s" % (
+			self.get("firstname",""),
+			self.get("lastname",""),
+			self.get("organisation",""),
+		)
 
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
