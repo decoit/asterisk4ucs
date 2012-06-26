@@ -48,6 +48,12 @@ create asterisk/server "cn=asterisk" \
 	--set commonName="Testserver" \
 	--set sshhost="localhost"
 
+# AGI-Script
+create asterisk/agiscript "cn=Testserver,cn=asterisk" \
+	--set name="number2name" \
+	--set priority="500" \
+	--set content=""
+
 # Konferenzraum
 create asterisk/conferenceRoom "cn=Testserver,cn=asterisk" \
 	--set extension="50" \
