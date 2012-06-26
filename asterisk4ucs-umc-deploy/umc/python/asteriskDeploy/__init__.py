@@ -28,7 +28,9 @@ univention.admin.modules.update()
 import univention.admin.handlers.asterisk
 import univention.admin.handlers.asterisk.server
 import univention.admin.handlers.asterisk.music
+import univention.admin.handlers.asterisk.agiscript as agiscript
 
+import os
 import re
 from time import strftime, localtime, sleep
 import shutil
@@ -188,17 +190,34 @@ def deployConfigs(log, server, configs):
 	print >>log, "=================================%s" % (
 			"=" * len(server["commonName"]))
 	print >>log
-	
+
+	agis = {}
+	for agi in agiscript.lookup(server.co, server.lo, False):
+		agis[agi["name"]] = agi.get("content", "")
+
 	sshtarget = "%s@%s" % (server["sshuser"], server["sshhost"])
 	scptarget = "%s:%s/ucs_autogen" % (sshtarget, server["sshpath"])
+	scptarget2 = "%s:%s/" % (sshtarget, server["sshagipath"])
 	sshcmd = server["sshcmd"]
 
 	tmpdir = tempfile.mkdtemp()
+	tmpdir2 = tempfile.mkdtemp()
 	try:
 		for name, data in configs.items():
-			open("%s/%s" % (tmpdir, name), "w").write(data)
+			f = open("%s/%s" % (tmpdir, name), "w")
+			f.write(data)
+			f.close()
+
+		for name, data in agis.items():
+			f = open("%s/%s" % (tmpdir2, name), "w")
+			f.write(data)
+			os.fchmod(f.fileno(), 0755)
+			f.close()
 
 		logCall(log, ["scp", "-Bq"] + configs.keys() + [scptarget], tmpdir)
+		logCall(log, ["scp", "-Bq"] + agis.keys() + [scptarget2], tmpdir2)
 		logCall(log, ["ssh", "-oBatchMode=yes", sshtarget, sshcmd], tmpdir)
 	finally:
 		shutil.rmtree(tmpdir)
+		shutil.rmtree(tmpdir2)
+
