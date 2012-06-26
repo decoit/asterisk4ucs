@@ -4,6 +4,16 @@
 
 #DEBHELPER#
 
+# make sure the udm-cli-server is running
+if [ ! -e "/tmp/admincli_0/sock" ]; then
+	/usr/share/univention-directory-manager-tools/univention-cli-server
+	sleep 1
+	while [ ! -e "/tmp/admincli_0/sock" ]; do
+		echo "Waiting for univention-cli-server..."
+		sleep 1
+	done
+fi
+
 # create default container for asterisk4ucs data
 udm container/cn create \
         --ignore_exists \
