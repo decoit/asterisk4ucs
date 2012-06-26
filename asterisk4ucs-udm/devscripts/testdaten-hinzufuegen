@@ -79,6 +79,10 @@ create asterisk/phoneGroup "cn=Testserver,cn=asterisk" \
 create asterisk/waitingLoop "cn=Testserver,cn=asterisk" \
 	--set extension="30"
 
+# Warteschleifenmusik
+create asterisk/music "cn=Testserver,cn=asterisk" \
+	--set name="jeopardy"
+
 # Mailboxen
 create asterisk/mailbox "cn=Testserver,cn=asterisk" \
 	--set id="05" \
