@@ -271,7 +271,7 @@ def genMusiconholdconf(co, lo, srv):
 
 	return conf
 
-def genExtSIPPhoneEntry(co, lo, extenPhone):
+def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 	from univention.admin.handlers.users import user
 	import mailbox
 	extension = extenPhone.info["extension"]
@@ -316,6 +316,10 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 
 	res = []
 
+	# copy agis into res
+	for agi in agis:
+		res.append(agi)
+
 	if channels:
 		if ringdelay:
 			for channel in channels[:-1]:
@@ -344,7 +348,7 @@ def genExtSIPPhoneEntry(co, lo, extenPhone):
 
 	return resStr
 
-def genExtRoomEntry(co, lo, room):
+def genExtRoomEntry(co, lo, agis, room):
 	room = room.info
 
 	flags = "s"
@@ -362,7 +366,20 @@ def genExtRoomEntry(co, lo, room):
 	except ValueError:
 		maxusers = 100
 
-	res  = "exten => %s1,1,Answer()\n" % (room["extension"])
+	res = ""
+	for i, agi in enumerate(agis):
+		res += "exten => %s1,%i,%s\n" % (
+			room["extension"],
+			i + 1,
+			agi
+		)
+		res += "exten => %s,%i,%s\n" % (
+			room["extension"],
+			i + 1,
+			agi
+		)
+	res += "exten => %s1,%i,Answer()\n" % (
+		room["extension"], len(agis) + 1)
 	res += "exten => %s1,n,Set(GROUP()=conf_%s)\n" % (
 		room["extension"], room["extension"])
 	res += "exten => %s1,n,GotoIf($[ ${GROUP_COUNT()} > %i ]?limit)\n" % (
@@ -377,7 +394,8 @@ def genExtRoomEntry(co, lo, room):
 	res += "exten => %s1,n,Congestion()\n" % (
 		room["extension"])
 	res += "; -------\n"
-	res += "exten => %s,1,Answer()\n" % (room["extension"])
+	res += "exten => %s,%i,Answer()\n" % (
+		room["extension"], len(agis) + 1)
 	res += "exten => %s,n,Set(GROUP()=conf_%s)\n" % (
 		room["extension"], room["extension"])
 	res += "exten => %s,n,GotoIf($[ ${GROUP_COUNT()} > %i ]?limit)\n" % (
@@ -394,18 +412,38 @@ def genExtRoomEntry(co, lo, room):
 
 	return res
 
-def genExtQueueEntry(co, lo, queue):
+def genExtQueueEntry(co, lo, agis, queue):
 	queue = queue.info
-	
-	res  = "exten => %s,1,Answer()\n" % (queue["extension"])
+
+	res = ""
+	for i, agi in enumerate(agis):
+		res += "exten => %s,%i,%s\n" % (
+			queue["extension"],
+			i + 1,
+			agi
+		)
+	res += "exten => %s,%i,Answer()\n" % (
+		queue["extension"], len(agis) + 1)
 	res += "exten => %s,n,Queue(%s)\n" % (
 		queue["extension"], queue["extension"])
-	res += "exten => %s,n,Hangup()\n" % (queue["extension"])
+	res += "exten => %s,n,Hangup()\n" % (
+		queue["extension"])
 	
 	return res
 
 def genExtensionsconf(co, lo, srv):
 	import sipPhone, conferenceRoom, waitingLoop
+
+	# AGI-Script lookup and sorting
+	agis = []
+	for agi in agiscript.lookup(co, lo, False):
+		agis.append((
+			int(agi["priority"]),
+			"AGI(%s)" % agi["name"]
+		))
+	sortkey = lambda x: x[0]
+	agis.sort(key=sortkey, reverse=True)
+	agis = [x[1] for x in agis]
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n"
 
@@ -415,7 +453,7 @@ def genExtensionsconf(co, lo, srv):
 	for phone in sipPhone.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (phone.dn)
 		try:
-			conf += genExtSIPPhoneEntry(co, lo, phone)
+			conf += genExtSIPPhoneEntry(co, lo, agis, phone)
 		except:
 			conf += re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] )
@@ -425,7 +463,7 @@ def genExtensionsconf(co, lo, srv):
 	for room in conferenceRoom.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (room.dn)
 		try:
-			conf += genExtRoomEntry(co, lo, room)
+			conf += genExtRoomEntry(co, lo, agis, room)
 		except:
 			conf += re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] )
@@ -435,7 +473,7 @@ def genExtensionsconf(co, lo, srv):
 	for queue in waitingLoop.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (queue.dn)
 		try:
-			conf += genExtQueueEntry(co, lo, queue)
+			conf += genExtQueueEntry(co, lo, agis, queue)
 		except:
 			conf += re.sub("(?m)^", ";",
 				traceback.format_exc()[:-1] )
@@ -447,8 +485,15 @@ def genExtensionsconf(co, lo, srv):
 
 	conf += "\n\n; ===== Faxe =====\n\n"
 	for phone in fax.lookup(co, lo, False):
-		conf += "exten => %s,1,Dial(SIP/%s)\n" % (
+		for i, agi in enumerate(agis):
+			conf += "exten => %s,%i,%s" % (
+				phone["extension"],
+				i + 1,
+				agi
+			)
+		conf += "exten => %s,%i,Dial(SIP/%s)\n" % (
 			phone.info["extension"],
+			len(agis) + 1,
 			phone.info["extension"])
 
 	conf += "\n[extern-incoming]\n"
