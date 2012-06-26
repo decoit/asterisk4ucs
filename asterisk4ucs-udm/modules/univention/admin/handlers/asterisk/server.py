@@ -52,7 +52,7 @@ layout = [
 	Tab('Asterisk-Host', 'Asterisk-Host', layout = [
 		[ "sshuser", "sshhost" ],
 		[ "sshpath", "sshmohpath" ],
-		[ "sshcmd" ],
+		[ "sshagipath", "sshcmd" ],
 	], advanced=True),
 ]
 
@@ -84,6 +84,12 @@ property_descriptions = {
 		short_description="Asterisk-Warteschlangenmusikpfad auf Zielhost",
 		syntax=univention.admin.syntax.string,
 		default="/opt/asterisk4ucs/moh",
+		required=True,
+	),
+	"sshagipath": univention.admin.property(
+		short_description="Asterisk-Agibinpfad auf Zielhost",
+		syntax=univention.admin.syntax.string,
+		default="/var/lib/asterisk/agi-bin",
 		required=True,
 	),
 	"sshcmd": univention.admin.property(
@@ -222,6 +228,8 @@ mapping.register("sshhost", "ast4ucsServerSshhost",
 mapping.register("sshpath", "ast4ucsServerSshpath",
 	None, univention.admin.mapping.ListToString)
 mapping.register("sshmohpath", "ast4ucsServerSshmohpath",
+	None, univention.admin.mapping.ListToString)
+mapping.register("sshagipath", "ast4ucsServerSshagipath",
 	None, univention.admin.mapping.ListToString)
 mapping.register("sshcmd", "ast4ucsServerSshcmd",
 	None, univention.admin.mapping.ListToString)
