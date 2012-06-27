@@ -37,7 +37,7 @@ layout = [
 		[ "macaddress", "hostname" ],
 		[ "phonetype", "profile" ],
 		[ "password" ],
-		[ "forwarding" ],
+		[ "forwarding", "skipExtension" ],
 		[ "waitingloops" ],
 		[ "callgroups" ],
 		[ "pickupgroups" ],
@@ -111,6 +111,10 @@ property_descriptions = {
 		short_description="Weiterleitung",
 		syntax=univention.admin.syntax.string
 	),
+	"skipExtension": univention.admin.property(
+		short_description="Bei Wählplangenerierung überspringen",
+		syntax=univention.admin.syntax.boolean
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -134,6 +138,8 @@ mapping.register("callgroups", "ast4ucsPhoneCallgroup")
 mapping.register("pickupgroups", "ast4ucsPhonePickupgroup")
 mapping.register("waitingloops", "ast4ucsPhoneWaitingloop")
 mapping.register("forwarding", "ast4ucsPhoneForwarding",
+	None, univention.admin.mapping.ListToString)
+mapping.register("skipExtension", "ast4ucsPhoneSkipextension",
 	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):

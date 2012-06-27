@@ -272,9 +272,15 @@ def genMusiconholdconf(co, lo, srv):
 	return conf
 
 def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
+	extension = extenPhone.info["extension"]
+
+	# check if this phone is managed manually (not by ast4ucs)
+	if extenPhone.get("skipExtension") == "1":
+		return ";; Extension %s is managed manually.\n" % (
+				extenPhone["extension"])
+
 	from univention.admin.handlers.users import user
 	import mailbox
-	extension = extenPhone.info["extension"]
 
 	import univention.admin.modules
 	univention.admin.modules.init(lo, extenPhone.position, user)
