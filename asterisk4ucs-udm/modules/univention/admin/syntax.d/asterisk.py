@@ -50,3 +50,15 @@ class ast4ucsMusicNameSyntax(integer):
 					+ "Zeichen '-' und '_' enthalten."
 		return text
 
+class ast4ucsPhoneNumberSyntax(string):
+	name = "ast4ucsPhoneNumberSyntax"
+
+	@classmethod
+	def parse(self, text):
+		if not bool(re.match(r"^\+[0-9]{2,30}$", text)):
+			raise univention.admin.uexceptions.valueError, \
+				"Eine Telefonnummer muss im internationalen " \
+				+ "Format angegeben werden, z.B. " \
+				+ "+494215960640 anstatt 0421 596064-0"
+		return text
+

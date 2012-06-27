@@ -37,11 +37,15 @@ create asterisk/phoneBook "cn=asterisk" \
 
 # Kontakte
 create asterisk/contact "cn=Testtelefonbuch,cn=asterisk" \
-	--set commonName="Hans Dieter" \
-	--set telephoneNumber="0118 999 881 999 119 725 3"
+	--set firstname="Maurice" \
+	--set lastname="Moss" \
+	--set telephoneNumber="+441189998819991197253" \
+	--set telephoneNumber="+44483759749579375948375" \
+	--set mobileNumber="+441234567890" \
+	--set faxNumber="+441234567890847329"
 create asterisk/contact "cn=Testtelefonbuch,cn=asterisk" \
-	--set commonName="Peter Müller" \
-	--set telephoneNumber="1234567890"
+	--set organisation="DECOIT GmbH" \
+	--set telephoneNumber="+494215960640"
 
 # ========== Asterisk-Server ==================================================
 create asterisk/server "cn=asterisk" \

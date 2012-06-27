@@ -50,15 +50,15 @@ property_descriptions = {
 	),
 	"firstname": univention.admin.property(
 		short_description="Vorname",
-		syntax=univention.admin.syntax.string
+		syntax=univention.admin.syntax.OneThirdString,
 	),
 	"lastname": univention.admin.property(
 		short_description="Nachname",
-		syntax=univention.admin.syntax.string
+		syntax=univention.admin.syntax.OneThirdString,
 	),
 	"title": univention.admin.property(
 		short_description="Titel",
-		syntax=univention.admin.syntax.string
+		syntax=univention.admin.syntax.OneThirdString,
 	),
 	"organisation": univention.admin.property(
 		short_description="Organisation",
@@ -66,17 +66,17 @@ property_descriptions = {
 	),
 	"telephoneNumber": univention.admin.property(
 		short_description="Telefonnummer",
-		syntax=univention.admin.syntax.string,
+		syntax=univention.admin.syntax.ast4ucsPhoneNumberSyntax,
 		multivalue=True
 	),
 	"mobileNumber": univention.admin.property(
 		short_description="Handynummer",
-		syntax=univention.admin.syntax.string,
+		syntax=univention.admin.syntax.ast4ucsPhoneNumberSyntax,
 		multivalue=True
 	),
 	"faxNumber": univention.admin.property(
 		short_description="Faxnummer",
-		syntax=univention.admin.syntax.string,
+		syntax=univention.admin.syntax.ast4ucsPhoneNumberSyntax,
 		multivalue=True
 	),
 }
@@ -149,11 +149,11 @@ class object(univention.admin.handlers.simpleLdap):
 		self.save()
 
 	def _ldap_pre_ready(self):
-		self["commonName"] = "%s %s %s" % (
+		self["commonName"] = ("%s %s %s" % (
 			self.get("firstname",""),
 			self.get("lastname",""),
 			self.get("organisation",""),
-		)
+		)).strip()
 
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
