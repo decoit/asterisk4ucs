@@ -56,7 +56,7 @@ create asterisk/server "cn=asterisk" \
 create asterisk/agiscript "cn=Testserver,cn=asterisk" \
 	--set name="number2name" \
 	--set priority="500" \
-	--set content=""
+	--set content="IyEvYmluL3NoCgpleGl0IDAKCg=="
 
 # Konferenzraum
 create asterisk/conferenceRoom "cn=Testserver,cn=asterisk" \

@@ -55,15 +55,9 @@ property_descriptions = {
 	"content": univention.admin.property(
 		short_description=u"Script",
 		syntax=univention.admin.syntax.Base64Upload,
+		required=True,
 	),
 }
-
-def base64DecodeMapping(value):
-	return value.decode("base64")
-
-def base64EncodeMapping(values):
-	value = univention.admin.mapping.ListToString(values)
-	return value.encode("base64")
 
 mapping = univention.admin.mapping.mapping()
 mapping.register("name", "cn",
@@ -71,7 +65,7 @@ mapping.register("name", "cn",
 mapping.register("priority", "ast4ucsAgiscriptPriority",
 	None, univention.admin.mapping.ListToString)
 mapping.register("content", "ast4ucsAgiscriptContent",
-	base64DecodeMapping, base64EncodeMapping)
+	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -117,6 +111,9 @@ class object(univention.admin.handlers.simpleLdap):
 		self.superordinate = servermod.object(self.co, self.lo,
 				self.position, serverdn)
 		self.superordinate.open()
+
+	def getContent(self):
+		return self.get("content", "").decode("base64")
 
 	def exists(self):
 		return self._exists

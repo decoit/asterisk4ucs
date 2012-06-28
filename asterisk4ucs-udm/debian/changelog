@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.15) unstable; urgency=low
+
+  * Bugfix für AGI-Einbindungsfunktionalität
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 27 Jun 2012 12:43:07 +0200
+
 asterisk4ucs-udm (0.6.14) unstable; urgency=low
 
   * Telefonbucheinträge unterscheiden jetzt Vorname, Nachname, Telefon-, Handy-
