@@ -40,20 +40,21 @@ dojo.declare("umc.modules.asteriskDeploy", [ umc.widgets.Module ], {
 			name: 'server',
 			label: "Server",
 			dynamicValues: "asteriskDeploy/queryServers",
-		}, {
-			type: 'Button',
-			name: 'copyid',
-			label: "SSH-Schlüssel kopieren",
-			callback: dojo.hitch(this, function () {
-				var rootpw = prompt("Root-Passwort des Asterisk-Servers?");
-				if (!rootpw || !rootpw.length)
-					return;
-
-				this._startAction("asteriskDeploy/copyid", {
-					server: this._serverdn,
-					rootpw: rootpw,
-				});
-			}),
+// ssh-copy-id is not supported yet
+//		}, {
+//			type: 'Button',
+//			name: 'copyid',
+//			label: "SSH-Schlüssel kopieren",
+//			callback: dojo.hitch(this, function () {
+//				var rootpw = prompt("Root-Passwort des Asterisk-Servers?");
+//				if (!rootpw || !rootpw.length)
+//					return;
+//
+//				this._startAction("asteriskDeploy/copyid", {
+//					server: this._serverdn,
+//					rootpw: rootpw,
+//				});
+//			}),
 		}, {
 			type: 'Button',
 			name: 'create',

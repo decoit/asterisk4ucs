@@ -1,3 +1,10 @@
+asterisk4ucs-umc-deploy (0.5.1) unstable; urgency=low
+
+  * Toten ssh-copy-id-Button auskommentiert
+  * Fertig für Test-Rollout
+
+ -- Tristan Bruns <bruns@decoit.de>  Thu, 28 Jun 2012 11:05:41 +0200
+
 asterisk4ucs-umc-deploy (0.0.3) unstable; urgency=low
 
   * Bugfix für AGI-Kopierfunktion
