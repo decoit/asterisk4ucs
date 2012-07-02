@@ -108,9 +108,13 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 					filename: this._filename,
 				});
 				call.then(dojo.hitch(this, function (res) {
+					if (res.result.error){
+						this._buildErrorPopUp(res.result.error);
+					} else {
+						umc.dialog.notify("Musikstück wurde hochgeladen.");
+						this._setMoh(this._mohdn);
+					}
 					this._upload._resetLabel();
-					umc.dialog.notify("Musikstück wurde hochgeladen.");
-					this._setMoh(this._mohdn);
 				}));
 			}),
 		}];
@@ -190,6 +194,14 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 		this._grid.filter({
 			mohdn: this._mohdn,
 		});
+	},
+	_buildErrorPopUp: function(errorMsg) {
+		var container = new umc.widgets.ContainerWidget({});
+		container.addChild(new umc.widgets.Text({
+			content: '<pre>'+errorMsg+'</pre>',
+		}));
+		
+		umc.dialog.alert( container );
 	},
 });
 
