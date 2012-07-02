@@ -445,7 +445,7 @@ def genExtensionsconf(co, lo, srv):
 	for agi in agiscript.lookup(co, lo, False):
 		agis.append((
 			int(agi["priority"]),
-			"AGI(%s)" % agi["name"]
+			"AGI(ast4ucs-%s)" % agi["name"]
 		))
 	sortkey = lambda x: x[0]
 	agis.sort(key=sortkey, reverse=True)

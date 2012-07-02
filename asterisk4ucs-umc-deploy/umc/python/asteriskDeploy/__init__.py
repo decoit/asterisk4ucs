@@ -193,7 +193,7 @@ def deployConfigs(log, server, configs):
 
 	agis = {}
 	for agi in agiscript.lookup(server.co, server.lo, False):
-		agis[agi["name"]] = agi.getContent()
+		agis["ast4ucs-" + agi["name"]] = agi.getContent()
 
 	sshtarget = "%s@%s" % (server["sshuser"], server["sshhost"])
 	scptarget = "%s:%s/ucs_autogen" % (sshtarget, server["sshpath"])

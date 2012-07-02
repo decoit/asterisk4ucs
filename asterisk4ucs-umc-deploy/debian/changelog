@@ -1,3 +1,9 @@
+asterisk4ucs-umc-deploy (0.5.4) unstable; urgency=low
+
+  * Präfixe für AGI-Skripte (bug 2884)
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Mon, 02 Jul 2012 17:28:35 +0200
+
 asterisk4ucs-umc-deploy (0.5.3) unstable; urgency=low
 
   * Asterisk-Befehl erhält nun passende Argumente

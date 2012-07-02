@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.16) unstable; urgency=low
+
+  * Präfix für AGI Skripte eingepflegt (BUG 2884)
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Mon, 02 Jul 2012 17:51:21 +0200
+
 asterisk4ucs-udm (0.6.15) unstable; urgency=low
 
   * Bugfix für AGI-Einbindungsfunktionalität
