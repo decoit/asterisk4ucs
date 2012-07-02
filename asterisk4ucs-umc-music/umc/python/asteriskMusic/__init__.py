@@ -34,6 +34,8 @@ import shutil
 import tempfile
 import subprocess
 
+logFilename = "/var/log/univention/asteriskMusicUpload.log"
+
 class Instance(univention.management.console.modules.Base):
 	def queryServers(self, request):
 		servers = getServers()
@@ -204,7 +206,7 @@ def create(serverdn, name):
 	return moh.dn
 
 def uploadMusic(server, moh, data, stem, filename):
-	log = open("/tmp/upload.log", "w", 0)
+	log = open(logFilename, "w", 0)
 
 	mohname = moh.info["name"]
 	scriptpath = "/usr/lib/asterisk4ucs/moh-copy"
@@ -230,7 +232,7 @@ def uploadMusic(server, moh, data, stem, filename):
 
 def delete(moh):
 	server = moh.superordinate
-	log = open("/tmp/upload.log", "w", 0)
+	log = open(logFilename, "w", 0)
 
 	mohname = moh.info["name"]
 	sshtarget = "%s@%s" % (server.info["sshuser"], server.info["sshhost"])
@@ -245,7 +247,7 @@ def delete(moh):
 			stdout=log, stderr=log)
 def deleteSong(moh, song):
 	server = moh.superordinate
-	log = open("/tmp/upload.log", "w", 0)
+	log = open(logFilename, "w", 0)
 
 	mohname = moh.info["name"]
 	sshtarget = "%s@%s" % (server.info["sshuser"], server.info["sshhost"])

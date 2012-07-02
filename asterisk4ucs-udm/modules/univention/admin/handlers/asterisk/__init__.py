@@ -513,6 +513,13 @@ def genExtensionsconf(co, lo, srv):
 
 	return conf
 
+def genLdapcredentialsconf(co, lo, server):
+	conf = "%s.%s\n" % (ucr['hostname'],ucr['domainname'])
+	if server.get('agi-user') and server.get('agi-password'):
+		conf += "%s\n" % (server['agi-user'])
+		conf += "%s" % (server['agi-password'])
+	return conf
+
 def genConfigs(server):
 	ucr.load()
 	
@@ -525,6 +532,7 @@ def genConfigs(server):
 		'queues.conf': genQueuesconf(co, lo, server),
 		'musiconhold.conf': genMusiconholdconf(co, lo, server),
 		'extensions.conf': genExtensionsconf(co, lo, server),
+		'ldapcredentials.conf': genLdapcredentialsconf(co, lo, server),
 	}
 	
 	return configs

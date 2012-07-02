@@ -54,6 +54,9 @@ layout = [
 		[ "sshpath", "sshmohpath" ],
 		[ "sshagipath", "sshcmd" ],
 	], advanced=True),
+	Tab('Namensauflösung', 'Namensauflösung für Anrufer', layout = [
+		[ "agi-user", "agi-password" ],
+	], advanced=True),
 ]
 
 property_descriptions = {
@@ -211,6 +214,16 @@ Weiterhin können die folgenden Escapesequenzen verwendet werden:
 		required=True,
 		default="/usr/sbin/sendmail -t",
 	),
+	"agi-user": univention.admin.property(
+		short_description="Ldap bind DN für AGI-Skripte",
+		long_description=u"Der Ldap bind DN für die Authentifikation der AGI Skripte",
+		syntax=univention.admin.syntax.string,
+	),
+	"agi-password": univention.admin.property(
+		short_description="Ldap Passwort für AGI-Skripte",
+		long_description=u"Das Passwort für den Ldap bind DN",
+		syntax=univention.admin.syntax.string,
+	),
 }
 
 mapping = univention.admin.mapping.mapping()
@@ -247,6 +260,11 @@ mapping.register("mailboxAttach", "ast4ucsServerMailboxattach",
 mapping.register("mailboxMailcommand", "ast4ucsServerMailboxemailcommand",
 	None, univention.admin.mapping.ListToString)
 mapping.register("globalCallId", "ast4ucsServerGlobalCallId",
+	None, univention.admin.mapping.ListToString)
+
+mapping.register("agi-user", "ast4ucsServerAgiuser",
+	None, univention.admin.mapping.ListToString)
+mapping.register("agi-password", "ast4ucsServerAgipassword",
 	None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
@@ -312,6 +330,18 @@ class object(univention.admin.handlers.simpleLdap):
 		defaultMoh.info["name"] = "default"
 		defaultMoh.info["music"] = ["default"]
 		defaultMoh.create()
+
+		# this mess just creates the "number2name" asterisk/agiscript
+		agiscript = univention.admin.modules.get("asterisk/agiscript")
+		univention.admin.modules.init(self.lo, self.position, agiscript)
+		pos = univention.admin.uldap.position(self.position.getBase())
+		pos.setDn(self.dn)
+		number2name = agiscript.object(self.co, self.lo, pos, None, self)
+		number2name.open()
+		number2name.info["name"] = "number2name"
+		number2name.info["priority"] = "2000"
+		number2name.setContent(open("/usr/lib/asterisk4ucs/number2name.agi").read())
+		number2name.create()
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['ast4ucsServer'])]
