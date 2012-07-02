@@ -198,7 +198,7 @@ def deployConfigs(log, server, configs):
 	sshtarget = "%s@%s" % (server["sshuser"], server["sshhost"])
 	scptarget = "%s:%s/ucs_autogen" % (sshtarget, server["sshpath"])
 	scptarget2 = "%s:%s/" % (sshtarget, server["sshagipath"])
-	sshcmd = server["sshcmd"]
+	sshcmd = "%s -rx 'core reload'" % server["sshcmd"]
 
 	tmpdir = tempfile.mkdtemp()
 	tmpdir2 = tempfile.mkdtemp()

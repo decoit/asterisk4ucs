@@ -1,3 +1,15 @@
+asterisk4ucs-umc-deploy (0.5.3) unstable; urgency=low
+
+  * Asterisk-Befehl erhält nun passende Argumente
+
+ -- Tristan Bruns <bruns@decoit.de>  Mon, 02 Jul 2012 14:20:54 +0200
+
+asterisk4ucs-umc-deploy (0.5.2) unstable; urgency=low
+
+  * bugfix
+
+ -- Tristan Bruns <bruns@decoit.de>  Mon, 02 Jul 2012 13:54:11 +0200
+
 asterisk4ucs-umc-deploy (0.5.1) unstable; urgency=low
 
   * Toten ssh-copy-id-Button auskommentiert

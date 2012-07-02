@@ -76,7 +76,8 @@ dojo.declare("umc.modules.asteriskDeploy", [ umc.widgets.Module ], {
 		}];
 
 		var layout = [
-			[ "server", "copyid" ],
+//			[ "server", "copyid" ],
+			[ "server" ],
 			[ "create", "deploy" ],
 		];
 
@@ -115,7 +116,7 @@ dojo.declare("umc.modules.asteriskDeploy", [ umc.widgets.Module ], {
 	},
 	_startAction: function (action, args) {
 		this._form.getWidget("server")._setDisabledAttr(true);
-		this._form.getWidget("copyid")._setDisabledAttr(true);
+//		this._form.getWidget("copyid")._setDisabledAttr(true);
 		this._form.getWidget("create")._setDisabledAttr(true);
 		this._form.getWidget("deploy")._setDisabledAttr(true);
 		
@@ -130,7 +131,7 @@ dojo.declare("umc.modules.asteriskDeploy", [ umc.widgets.Module ], {
 	},
 	_stopAction: function () {
 		this._form.getWidget("server")._setDisabledAttr(false);
-		this._form.getWidget("copyid")._setDisabledAttr(false);
+//		this._form.getWidget("copyid")._setDisabledAttr(false);
 		this._form.getWidget("create")._setDisabledAttr(false);
 		this._form.getWidget("deploy")._setDisabledAttr(false);
 
