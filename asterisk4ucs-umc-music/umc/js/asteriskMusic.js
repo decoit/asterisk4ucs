@@ -95,7 +95,7 @@ dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 		}, {
 			type: 'Uploader',
 			name: 'upload',
-			maxSize: 8388608,
+			maxSize: 8129000,
 			showClearButton: false,
 			onUploaded: dojo.hitch(this, function () {
 				//alert("upload finished");

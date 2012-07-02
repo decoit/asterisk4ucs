@@ -10,3 +10,7 @@ else
 	echo "No old module processes are running."
 fi
 
+eval `ucr shell umc/server/upload/max`
+if [ $umc_server_upload_max -lt 8192  ]; then
+	ucr set umc/server/upload/max="8192"
+fi

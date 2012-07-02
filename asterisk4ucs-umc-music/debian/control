@@ -11,6 +11,8 @@ XS-Python-Version: all
 
 Package: asterisk4ucs-umc-music
 Architecture: all
-Depends: univention-management-console-server
+Depends: univention-management-console-server,
+ sox,
+ libsox-fmt-mp3
 Description: Asterisk4UCS UMC module for music upload
  UMC module for music upload to an Asterisk4UCS member server
