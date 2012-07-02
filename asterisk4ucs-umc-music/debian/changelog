@@ -1,3 +1,10 @@
+asterisk4ucs-umc-music (0.5.2) unstable; urgency=low
+
+  * Logdateinamen und Pfad für Musikupload
+  * Bug 2911: Fehlermeldung über "non-zero exit status" wurde präzisiert
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Mon, 02 Jul 2012 23:56:32 +0200
+
 asterisk4ucs-umc-music (0.5.1) unstable; urgency=low
 
   * Bugfix 2909: Keine Fehlermeldung bei zu großen Uploaddateien

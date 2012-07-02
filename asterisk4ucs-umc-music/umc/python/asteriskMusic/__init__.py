@@ -124,14 +124,15 @@ class Instance(univention.management.console.modules.Base):
 			})
 			return
 
-		uploadMusic(server, moh, data, stem, filename)
-
-		moh.info.setdefault("music", []).append(stem)
-		moh.modify()
-
-		request.status = SUCCESS
-		self.finished(request.id, {"foo":"bar"})
-
+		if uploadMusic(server, moh, data, stem, filename):
+			moh.info.setdefault("music", []).append(stem)
+			moh.modify()
+			request.status = SUCCESS
+			self.finished(request.id, {"foo":"bar"})
+		else:
+			log = open(logFilename).read()
+			request.status = SUCCESS
+			self.finished(request.id, {"error": log})
 
 def getCoLoPos():
 	co = univention.admin.config.config()
@@ -227,8 +228,12 @@ def uploadMusic(server, moh, data, stem, filename):
 		subprocess.check_call([scriptpath, stem, inputfilename,
 				mohname, sshtarget, sshmohpath, sshcmd],
 				stdout=log, stderr=log, cwd=tmpdir)
+	except subprocess.CalledProcessError:
+		return False
 	finally:
 		shutil.rmtree(tmpdir)
+
+	return True
 
 def delete(moh):
 	server = moh.superordinate
