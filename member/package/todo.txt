@@ -1,6 +1,0 @@
-
-* .inst muss nach /usr/lib/univention-install/
-    danach muss wahrscheinlich univention-run-join-scripts aufgerufen werden
-    (wird bei joinen des gesamten servers evtl. automatisch aufgerufen?!)
-
-
