@@ -1,0 +1,209 @@
+asterisk4ucs-udm
+	Quellen für die Pakete asterisk4ucs-udm und asterisk4ucs-udm-schema.
+	Enthält das UDM-Modul "Asterisk" und die Erweiterung für das UDM-Modul
+	"Benutzer".
+	Das LDAP-Schema wurde in das Paket asterisk4ucs-udm-schema ausgelagert,
+	um später mehr Spielraum für LDAP-Migrationen zu haben.
+
+	schema/asterisk4ucs.schema
+		Das LDAP-Schema
+
+	udm-asterisk.xml
+		Erweiterung der UMC-Modulbeschreibung für das UDM.
+		Ergänzt den "asterisk" Flavour und erzeugt damit das
+		Asterisk-Icon im Domänenverwaltungsteil des UMCs.
+
+	devscripts/
+		Für die Entwickler nützliche Bash-Scripte.
+		Werden nach /usr/lib/asterisk4ucs/devscripts installiert.
+
+		hardrestart
+			Startet das ganze UMC neu und erhöht damit die
+			Chancen, dass tatsächlich der soeben neu geschriebene
+			Code ausgeführt wird.
+
+		testdaten-hinzufuegen
+			Fügt einige UDM-Objekte hinzu. (Idealerweise mindestens
+			ein Objekt jedes Objekttyps in asterisk/*)
+			Eignet sich klasse zum Debuggen von neuem Code:
+			Wenn das Script crasht, ist der Code noch kaputt.
+
+		ldap-leeren
+			Löscht alle Objekte in cn=asterisk,$ldap_base.
+			Kann verwendet werden, um nach Ausführen von
+			testdaten-hinzufügen wieder ein halbwegs unberührtes
+			LDAP zu erhalten.
+
+	debian/
+		Debian-Paketierungskrams.
+		Zu beachten ist hier, dass diese Paketquellen zwei
+		Binärpakete erzeugen und daher auch jeweils zwei
+		Pre-/Post-Install-/Remove-scripte existieren. In fast allen
+		Fällen ist asterisk4ucs-udm das relevante Paket.
+
+	conffiles/etc/ldap/slapd.conf.d/80asterisk
+		Ein Teil der UCR-Magie, die das LDAP-Schema einbindet.
+		Das Vorgehen ist im UCS-Benutzerhandbuch unter der Überschrift
+		"Univention Configuration Registry in selbst erstellten Paketen"
+		beschrieben.
+
+	modules/univention/admin/
+		Erweiterungen für das Python-Modul univention.admin.
+
+		handlers/asterisk/
+			Das Python-Modul univention.admin.handlers.asterisk.
+			Definiert das UDM-Modul "Asterisk".
+
+			phoneType.py
+			music.py
+			waitingLoop.py
+			sipPhone.py
+			phoneGroup.py
+			conferenceRoom.py
+			faxGroup.py
+			agiscript.py
+			server.py
+			contact.py
+			fax.py
+			phoneBook.py
+			mailbox.py
+				Definiert die einzelnen Objekttypen
+
+			asterisk.py
+				Virtuelles Objekt, dass die Hierachie
+				zwischen den Objekten festlegt.
+
+			__init__.py
+				Enthält Funktionen, die von mehreren Objekten
+				benötigt werden. Unter anderem liegt hier der
+				Konfigurationsgenerierungscode.
+
+		syntax.d/asterisk.py
+			Syntaxdefinitionen von Asterisk4UCS
+
+		hooks.d/asterisk.py
+			Hooks für das UDM-Modul "Benutzer"
+
+	user-phone-extension/uninstall
+	user-phone-extension/install
+		Scripte zum Installieren bzw. Deinstallieren der Extended
+		Attributes im UDM-Modul "Benutzer"
+
+	42asterisk4ucs-udm.inst
+		Join-Script.
+		Erzeugt UMC Operations und Policies für dieses Modul.
+
+	icons/scalable/
+	icons/16x16/
+	icons/50x50/
+		Icons in verschiedenen Größen sowie als Vektorgrafik
+
+asterisk4ucs-umc-deploy/
+	Quellen für das Paket asterisk4ucs-umc-deploy.
+	Enthält das UMC-Modul "Asterisk4UCS Deployment".
+
+	debian/
+		Dateien für Debians Paketierungskrams
+
+	42asterisk4ucs-umc-deploy.inst
+		Join-Script.
+		Erzeugt UMC Operations und Policies für dieses Modul.
+
+	umc/
+		Der wichtige Teil des Pakets
+
+		asteriskDeploy.xml
+			UMC-Modulbeschreibung
+
+		python/asteriskDeploy/
+			Das Python-Backend Modul
+
+		js/asteriskDeploy.js
+			Das JavaScript-Frontend
+
+		icons/16x16/
+		icons/50x50/
+			Icons in verschiedenen Größen
+
+asterisk4ucs-umc-music/
+	Quellen für das Paket asterisk4ucs-umc-music.
+	Enthält das UMC-Modul "Asterisk4UCS music upload".
+
+	debian/
+		Dateien für Debians Paketierungskrams
+
+	42asterisk4ucs-umc-music.inst
+		Join-Script.
+		Erzeugt UMC Operations und Policies für dieses Modul.
+
+	moh-copy
+		Bash-Script, dass Musikdateien konvertiert und per scp
+		kopiert. Wird vom Backend aufgerufen.
+
+	umc/
+		Der wichtige Teil des Pakets
+
+		asteriskMusic.xml
+			UMC-Modulbeschreibung
+
+		python/asteriskMusic/
+			Das Python-Backend Modul
+
+		js/asteriskMusic.js
+			Das JavaScript-Frontend
+
+		icons/16x16/
+		icons/50x50/
+			Icons in verschiedenen Größen
+
+asterisk4ucs-umc-user/
+	Quellen für das Paket asterisk4ucs-umc-user.
+	Enthält das UMC-Modul "Telefoneinstellungen".
+
+	debian/
+		Dateien für Debians Paketierungskrams
+
+	42asterisk4ucs-umc-user.inst
+		Join-Script.
+		Erzeugt UMC Operations und Policies für dieses Modul.
+
+	umc/
+		Der wichtige Teil des Pakets
+
+		asteriskUser.xml
+			UMC-Modulbeschreibung
+
+		python/asteriskUser/
+			Das Python-Backend Modul
+
+		js/asteriskUser.js
+			Das JavaScript-Frontend
+
+		icons/16x16/
+		icons/50x50/
+			Icons in verschiedenen Größen
+
+build
+	Bash-Script, dass ein Paket generiert.
+	Der Name des Pakets wird als erstes Argument übergeben.
+
+doc/
+	Dokumentation (natürlich)
+
+	asterisk-installieren.txt
+		Altes Kommandozeilenlog einer Asterisk-Konfigurationssession.
+		Müsste mal in die Online-Doku reingepflegt werden.
+
+	dateiuebersicht.txt
+		Diese Datei
+
+icons/
+	Originalquellen der UMC-Icons
+
+	quellen.txt
+		quellenangaben und lizenzen der icons
+
+defaultconf/
+	Beispielkonfiguration für Asterisk
+	Der Inhalt kann nach /etc/asterisk/ kopiert werden.
+
