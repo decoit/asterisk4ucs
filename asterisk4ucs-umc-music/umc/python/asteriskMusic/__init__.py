@@ -214,7 +214,7 @@ def uploadMusic(server, moh, data, stem, filename):
 
 	tmpdir = tempfile.mkdtemp()
 	try:
-		inputfilename = stem
+		inputfilename = "input_file"
 		if re.search("\.mp3$", filename):
 			inputfilename += ".mp3"
 

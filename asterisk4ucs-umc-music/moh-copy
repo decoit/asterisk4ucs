@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Copyright (C) 2012 DECOIT GmbH <asterisk4ucs@decoit.de>
 #
@@ -27,8 +27,8 @@ SSHCMD="$6"
 
 mkdir $CLASS
 
-sox -V $INPUT -r 8000 -c 1 $CLASS/$STEM.wav
-sox -V $INPUT -r 8000 -c 1 $CLASS/$STEM.gsm
+sox -V3 $INPUT -r 8000 -c 1 $CLASS/$STEM.wav
+sox -V3 $INPUT -r 8000 -c 1 $CLASS/$STEM.gsm
 
 chmod 0755 $CLASS
 chmod 0644 $CLASS/*
