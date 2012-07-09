@@ -48,15 +48,10 @@ create asterisk/contact "cn=Testtelefonbuch,cn=asterisk" \
 	--set telephoneNumber="+494215960640"
 
 # ========== Asterisk-Server ==================================================
+# Server (Erstellt intern auch AGI-Script und Wartschlangenmusik)
 create asterisk/server "cn=asterisk" \
 	--set commonName="Testserver" \
 	--set sshhost="localhost"
-
-# AGI-Script
-create asterisk/agiscript "cn=Testserver,cn=asterisk" \
-	--set name="number2name" \
-	--set priority="500" \
-	--set content="IyEvYmluL3NoCgpleGl0IDAKCg=="
 
 # Konferenzraum
 create asterisk/conferenceRoom "cn=Testserver,cn=asterisk" \
@@ -82,10 +77,6 @@ create asterisk/phoneGroup "cn=Testserver,cn=asterisk" \
 # Warteschleifen
 create asterisk/waitingLoop "cn=Testserver,cn=asterisk" \
 	--set extension="30"
-
-# Warteschleifenmusik
-create asterisk/music "cn=Testserver,cn=asterisk" \
-	--set name="jeopardy"
 
 # Mailboxen
 create asterisk/mailbox "cn=Testserver,cn=asterisk" \
