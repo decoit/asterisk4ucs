@@ -20,6 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
+import univention.admin.uexceptions
 from univention.admin.layout import Tab
 
 module = "asterisk/contact"
@@ -46,7 +47,8 @@ property_descriptions = {
 		short_description="Name",
 		syntax=univention.admin.syntax.string,
 		identifies=True,
-		required=True
+		required=True,
+		default="fubar",
 	),
 	"firstname": univention.admin.property(
 		short_description="Vorname",
@@ -95,6 +97,10 @@ mapping.register("organisation", "o",
 mapping.register("telephoneNumber", "telephoneNumber")
 mapping.register("mobileNumber", "ast4ucsContactMobilenumber")
 mapping.register("faxNumber", "ast4ucsContactFaxnumber")
+
+class noNameError(univention.admin.uexceptions.insufficientInformation):
+	message = (u"Eines der Felder Vorname, Nachname und Organisation "
+			u"muss ausgefüllt sein.")
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -149,11 +155,29 @@ class object(univention.admin.handlers.simpleLdap):
 		self.save()
 
 	def _ldap_pre_ready(self):
-		self["commonName"] = ("%s %s %s" % (
-			self.get("firstname",""),
-			self.get("lastname",""),
-			self.get("organisation",""),
-		)).strip()
+		orga = self.get("organisation")
+		first = self.get("firstname")
+		last = self.get("lastname")
+
+		if first and last:
+			name = "%s %s" % (first, last)
+		elif last:
+			name = last
+		else:
+			name = first  # could be string or None
+
+		if orga and name:
+			cn = "%s: %s" % (orga, name)
+		elif orga:
+			cn = orga
+		else:
+			cn = name  # could be string or None
+
+		# if cn is None, all three fields were empty => error
+		if not cn:
+			raise noNameError
+
+		self.info["commonName"] = cn
 
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
