@@ -37,6 +37,9 @@ import shutil
 import tempfile
 import subprocess
 
+ucr = univention.config_registry.ConfigRegistry()
+ucr.load()
+
 class Instance(univention.management.console.modules.Base):
 	def queryServers(self, request):
 		servers = getServers()
@@ -186,7 +189,8 @@ def logCall(log, args, cwd):
 		raise subprocess.CalledProcessError(proc.returncode, args[0])
 
 def deployConfigs(log, server, configs):
-	print >>log, "Deploying config files to server %s" % server["commonName"]
+	print >>log, "Deploying config files to server %s" % (
+			server["commonName"])
 	print >>log, "=================================%s" % (
 			"=" * len(server["commonName"]))
 	print >>log
@@ -196,28 +200,43 @@ def deployConfigs(log, server, configs):
 		agis["ast4ucs-" + agi["name"]] = agi.getContent()
 
 	sshtarget = "%s@%s" % (server["sshuser"], server["sshhost"])
-	scptarget = "%s:%s/ucs_autogen" % (sshtarget, server["sshpath"])
-	scptarget2 = "%s:%s/" % (sshtarget, server["sshagipath"])
+	scptargetLdapconf = "%s:/etc/asterisk4ucs.ldapconfig" % (sshtarget)
+	scptargetConfig = "%s:%s/ucs_autogen" % (sshtarget, server["sshpath"])
+	scptargetAgi = "%s:%s/" % (sshtarget, server["sshagipath"])
 	sshcmd = "%s -rx 'core reload'" % server["sshcmd"]
 
-	tmpdir = tempfile.mkdtemp()
-	tmpdir2 = tempfile.mkdtemp()
+	tmpdirConfig = tempfile.mkdtemp()
+	tmpdirAgi = tempfile.mkdtemp()
+	fd, tmpfileLdapconf = tempfile.mkstemp()
 	try:
+		f = os.fdopen(fd, "wb")
+		f.write("%s.%s\n" % (ucr['hostname'], ucr['domainname']))
+		f.write("cn=asterisk,%s\n" % (ucr['ldap/base']))
+		f.write("%s\n" % (server.get('agi-user', "")))
+		f.write("%s\n" % (server.get('agi-password', "")))
+		f.close()
+
 		for name, data in configs.items():
-			f = open("%s/%s" % (tmpdir, name), "w")
+			f = open("%s/%s" % (tmpdirConfig, name), "w")
 			f.write(data)
 			f.close()
 
 		for name, data in agis.items():
-			f = open("%s/%s" % (tmpdir2, name), "w")
+			f = open("%s/%s" % (tmpdirAgi, name), "w")
 			f.write(data)
 			os.fchmod(f.fileno(), 0755)
 			f.close()
 
-		logCall(log, ["scp", "-Bq"] + configs.keys() + [scptarget], tmpdir)
-		logCall(log, ["scp", "-Bq"] + agis.keys() + [scptarget2], tmpdir2)
-		logCall(log, ["ssh", "-oBatchMode=yes", sshtarget, sshcmd], tmpdir)
+		logCall(log, ["scp", "-Bq", tmpfileLdapconf,
+				scptargetLdapconf], tmpdirConfig)
+		logCall(log, ["scp", "-Bq"] + configs.keys()
+				+ [scptargetConfig], tmpdirConfig)
+		logCall(log, ["scp", "-Bq"] + agis.keys()
+				+ [scptargetAgi], tmpdirAgi)
+		logCall(log, ["ssh", "-oBatchMode=yes", sshtarget, sshcmd],
+				tmpdirConfig)
 	finally:
-		shutil.rmtree(tmpdir)
-		shutil.rmtree(tmpdir2)
+		shutil.rmtree(tmpdirConfig)
+		shutil.rmtree(tmpdirAgi)
+		os.remove(tmpfileLdapconf)
 

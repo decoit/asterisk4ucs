@@ -1,3 +1,10 @@
+asterisk4ucs-udm (0.6.17) unstable; urgency=low
+
+  * Namensauflösung der Anrufer (bug 2886)
+  * Kontakte: Fehler beim Erstellen behoben (bug 2918)
+
+ -- Tristan Bruns <bruns@decoit.de>  Mon, 09 Jul 2012 12:39:14 +0200
+
 asterisk4ucs-udm (0.6.16) unstable; urgency=low
 
   * Präfix für AGI Skripte eingepflegt (BUG 2884)

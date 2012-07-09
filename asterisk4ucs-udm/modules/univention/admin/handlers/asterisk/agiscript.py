@@ -115,6 +115,9 @@ class object(univention.admin.handlers.simpleLdap):
 	def getContent(self):
 		return self.get("content", "").decode("base64")
 
+	def setContent(self, content):
+		self["content"] = content.encode("base64").replace("\n","")
+
 	def exists(self):
 		return self._exists
 

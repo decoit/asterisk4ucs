@@ -1,3 +1,9 @@
+asterisk4ucs-umc-deploy (0.5.5) unstable; urgency=low
+
+  * Namensauflösung der Anrufer (bug #2886)
+
+ -- Tristan Bruns <bruns@decoit.de>  Fri, 06 Jul 2012 12:10:57 +0200
+
 asterisk4ucs-umc-deploy (0.5.4) unstable; urgency=low
 
   * Präfixe für AGI-Skripte (bug 2884)

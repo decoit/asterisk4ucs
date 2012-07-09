@@ -4,4 +4,4 @@ modules/univention/admin/hooks.d/*.py usr/share/pyshared/univention/admin/hooks.
 user-phone-extension/* usr/lib/asterisk4ucs/user-phone-extension/
 udm-asterisk.xml usr/share/univention-management-console/modules/
 devscripts/* usr/lib/asterisk4ucs/devscripts/
-
+number2name.agi usr/lib/asterisk4ucs/
