@@ -17,6 +17,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+import re
+
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
@@ -182,7 +184,8 @@ class object(univention.admin.handlers.simpleLdap):
 	def _ldap_pre_create(self):
 		self.dn = '%s=%s,%s' % (
 			mapping.mapName('commonName'),
-			mapping.mapValue('commonName', self.info['commonName']),
+			re.sub(r"[,;+\\]", "", mapping.mapValue('commonName',
+					self.info['commonName'])),
 			self.position.getDn()
 		)
 
