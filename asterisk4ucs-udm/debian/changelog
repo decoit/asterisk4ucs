@@ -1,3 +1,10 @@
+asterisk4ucs-udm (0.6.19) unstable; urgency=low
+
+  * API für Telefonbuch hinzugefügt (Bug 2919)
+  * OSGA-Importscript hinzugefügt
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 11 Jul 2012 11:36:31 +0200
+
 asterisk4ucs-udm (0.6.18) unstable; urgency=low
 
   * Kontakt maskiert nun Sonderzeichen im DN

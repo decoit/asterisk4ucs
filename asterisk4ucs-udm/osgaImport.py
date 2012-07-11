@@ -2,7 +2,10 @@
 # coding=utf-8
 
 """
-API zum unkomplizierten Erstellen neuer Asterisk4UCS-Kontakte
+Asterisk4UCS-Importscript für OSGA-Kontakte
+
+Dieses Script importiert Kontakte aus der OSGA-Groupware in ein Asterisk4UCS-
+Adressbuch.
 
 Copyright (C) 2012 DECOIT GmbH <asterisk4ucs@decoit.de>
 
@@ -34,13 +37,17 @@ except IndexError:
 	sys.exit(1)
 
 import re
-import ast4ucs
+from asterisk4ucs import PhoneBookWrapper
 import psycopg2
 import psycopg2.extras
 import univention.admin.uexceptions
 
-pb = ast4ucs.phoneBookWrapper(astpbdn)
+pb = PhoneBookWrapper(astpbdn)
+print "Deleting all contacts in phonebook %s, may take a while..." % (
+		pb.getName())
 pb.empty()
+print "Done."
+print "Importing..."
 
 conn = psycopg2.connect(host=pghost, database=pgdb,
 		user=pguser, password=pgpass)
