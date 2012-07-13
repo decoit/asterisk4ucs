@@ -31,6 +31,7 @@ childs = 0
 usewizard = 1
 superordinate = "asterisk/server"
 
+# Definiert das Layout der Eingabefelder in der Weboberfläche
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
 		[ "id" ],
@@ -39,6 +40,8 @@ layout = [
 	])
 ]
 
+# Definiert die verschiedenen UDM-Attribute
+# http://wiki.univention.de/index.php?title=Entwicklung_und_Integration_eigener_Module_in_Univention_Directory_Manager#property-descriptions
 property_descriptions = {
 	"commonName": univention.admin.property(
 		short_description="Name",
@@ -63,6 +66,8 @@ property_descriptions = {
 	),
 }
 
+# Definiert die Zuordnung von UDM-Attributen zu LDAP-Attributen.
+# http://wiki.univention.de/index.php?title=Entwicklung_und_Integration_eigener_Module_in_Univention_Directory_Manager#mapping
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
@@ -100,6 +105,21 @@ class object(univention.admin.handlers.simpleLdap):
 					 'neither DN nor position present'
 
 	def openSuperordinate(self):
+		"""Wird von __init__ (siehe oben) aufgerufen.
+		Falls das Superordinate-Object dieses Objects nicht bereits
+		bekannt ist (weil es als Argument an __init__ übergeben wurde),
+		versucht diese Funktion das Superordinate aus dem LDAP
+		auszulesen, zu öffnen, und in self.superordinate zu
+		referenzieren.
+
+		Diese Funktionalität erleichtert es extrem, untergeordnete
+		Objekte zu modifizieren und wird von den UMC-Modulen
+		(insbesondere dem Musikupload) oft genutzt. Die von
+		Univention definierten Module haben diese Funktion nicht.
+		(Um diese modifizieren zu können muss man also von Hand erst
+		das übergeordnete Objekt öffnen, und dann dieses beim
+		Aufruf von __init__ übergeben)"""
+
 		if self.superordinate:
 			return
 
@@ -119,16 +139,30 @@ class object(univention.admin.handlers.simpleLdap):
 		self.superordinate.open()
 
 	def exists(self):
+		"""Wurde aus dem Beispiel gecopypasted und funktioniert."""
+
 		return self._exists
 
 	def open(self):
+		"""Wurde aus dem Beispiel gecopypasted und funktioniert."""
+
 		univention.admin.handlers.simpleLdap.open(self)
 		self.save()
 
 	def _ldap_pre_ready(self):
+		"""Wird vor der Syntaxprüfung der Eingabefelder aufgerufen und
+		setzt das (auf der Weboberfläche nicht sichtbare) Feld
+		"commonName" auf eine menschenlesbare Beschreibung des
+		Objekts. Dieser Hack ist notwendig, weil UMC/UDM grundsätzlich
+		das Attribut mit identifies=True als "Name" in der Tabelle
+		der Suchergebnisse verwendet."""
+
 		self['commonName'] = "mailbox " + self["id"]
 
 	def _ldap_pre_create(self):
+		"""Wird von der Methode create() aufgerufen und definiert
+		den Distinguished Name des LDAP-Objekts"""
+
 		self.dn = '%s=%s,%s' % (
 			mapping.mapName('commonName'),
 			mapping.mapValue('commonName', self.info['commonName']),
@@ -136,10 +170,21 @@ class object(univention.admin.handlers.simpleLdap):
 		)
 
 	def _ldap_addlist(self):
+		"""Wird kurz vor Schreiben des LDAP-Objects aufgerufen und
+		fügt die Attribute objectClass und ast4ucsSrvchild (Verweis
+		zum Superordinate) hinzu.
+		Bei neuen Modulen müssen die objectClass und der Attributname
+		des Superordinate-Verweises angepasst werden"""
+
 		return [('objectClass', ['ast4ucsMailbox' ]),
-				('ast4ucsSrvchildServer', self.superordinate.dn)]
+			('ast4ucsSrvchildServer', self.superordinate.dn)]
 
-
+# Sucht nach diesem Modul zugehörigen Objekten. Berücksichtigt dabei eventuell
+# übergebene Einschränkungen (filter_s) und übergeordnete Objekte
+# (superordinate).
+# Für neue Module müssen in diesem Code nur die objectClass und das
+# LDAP-Attribut für die Superordinate-Zuordnung angepasst werden.
+# (in diesem Fall ast4ucsMailbox und ast4ucsSrvchildServer)
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
@@ -164,6 +209,8 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+# Funktion, die True zurückliefert, wenn dieses Modul für das übergebene
+# Objekt zuständig ist. Prüft einfach nur die LDAP objectClass.
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsMailbox' in attr.get('objectClass', [])
 
