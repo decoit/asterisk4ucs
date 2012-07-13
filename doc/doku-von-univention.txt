@@ -1,0 +1,48 @@
+http://forge.univention.org/websvn/listing.php?repname=dev&path=%2Fbranches%2Fucs-3.0%2Fucs%2F
+	Der Quellcode.
+
+===== UDM ====================================================================
+
+http://wiki.univention.de/index.php?title=Entwicklung_und_Integration_eigener_Module_in_Univention_Directory_Manager
+	Beschreibt den Aufbau eines UDM-Moduls. (Auch Paketierung)
+	Achtung: Bezieht sich auf 2.4 und ist daher leicht veraltet
+
+http://wiki.univention.de/index.php?title=Erstellen_eines_erweiterten_Attributs_mit_Hook
+	Erklärt den Aufbau von UDM-Hooks
+	Achtung: Bezieht sich auf 2.4 und ist daher leicht veraltet
+
+http://sdb.univention.de/1080
+	Erklärt ebenfalls den Aufbau von UDM-Hooks
+	Achtung: Bezieht sich auf 2.4 und ist daher leicht veraltet
+
+===== UMC ====================================================================
+
+http://wiki.univention.de/index.php?title=UCS_3.0_UMC_Architecture_and_Protocol
+	Allgemeiner Krams über das UMC
+	Tatsächlich aktuell
+
+http://wiki.univention.de/index.php?title=UCS_3.0_UMC_API_for_Modules
+	Beschreibt Backend- und Frontend-API des UMCs und geht auch ein bischen
+	auf die Paketierung ein.
+	Tatsächlich aktuell
+
+http://wiki.univention.de/index.php?title=Entwicklung_eigener_Univention_Management_Console_Module
+	Total veraltet, hiermit sollte keine Zeit verschwendet werden.
+
+===== Metakrams ==============================================================
+
+http://wiki.univention.de/index.php?title=Join-Skripte
+	Ganz langer Text über Join-Skripte, sieht brauchbar aus.
+	Könnte leicht angestaubt sein. (Afaik hat sich in der Ecke aber auch
+	nicht viel geändert)
+
+http://wiki.univention.de/index.php?title=Paketierung_von_Software_f%C3%BCr_UCS
+	Allgemeiner Krams über Debian-Paketierung
+	Ist vielleicht ganz interessant, aber kein must-read.
+
+http://download.univention.de/doc/ucs-handbuch-3.0-2.pdf
+	UCS-Handbuch für 3.0-2
+	Interessant ist u.a. das Kapitel über das UCR (Univention Configuration
+	Registry)
+	Sehr aktuell.
+

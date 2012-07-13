@@ -3,7 +3,8 @@ asterisk4ucs-udm
 	Enthält das UDM-Modul "Asterisk" und die Erweiterung für das UDM-Modul
 	"Benutzer".
 	Das LDAP-Schema wurde in das Paket asterisk4ucs-udm-schema ausgelagert,
-	um später mehr Spielraum für LDAP-Migrationen zu haben.
+	da das Schema auf einem UCS-Slave nicht installiert werden kann, das
+	UDM-Modul an sich dort aber installiert werden sollte.
 
 	schema/asterisk4ucs.schema
 		Das LDAP-Schema
@@ -82,7 +83,7 @@ asterisk4ucs-udm
 			Syntaxdefinitionen von Asterisk4UCS
 
 		hooks.d/asterisk.py
-			Hooks für das UDM-Modul "Benutzer"
+			Hooks für das UDM-Modul "Benutzer".
 
 	user-phone-extension/uninstall
 	user-phone-extension/install
