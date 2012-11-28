@@ -37,7 +37,7 @@ define([
    "umc/widgets/ExpandingTitlePane",
    "umc/store",
    "umc/i18n!umc/modules/umc"
-], 
+],
 function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabContainer,ExpandingTitlePane,_){
    return declare("umc.modules.asteriskUser",[ Module ],{
       _buttons: null,
@@ -45,6 +45,7 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
       _mailboxForm: null,
       _grid: null,
       _forms: [],
+
 
       buildRendering: function () {
          this.inherited(arguments);
@@ -54,12 +55,12 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
             label: "Speichern",
             callback: lang.hitch(this, function () {
                this.save();
-            }),
+            })
          }];
 
          this._forms = [];
 
-         var tabContainer = new umc.widgets.TabContainer({
+         var tabContainer = new TabContainer({
             nested: true
          });
 
@@ -76,38 +77,27 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
          this.load();
       },
       renderMailbox: function () {
-         var page = new umc.widgets.Page({
+         var page = new Page({
             title: "Anrufbeantworter",
             headerText: "Anrufbeantwortereinstellungen",
             footerButtons: this._buttons,
-            closable: false,
+            closable: false
          });
 
-         var container = new umc.widgets.ContainerWidget({
-            scrollable: true,
-         });
-         page.addChild(container);
-
-         var noMailboxHint = new umc.widgets.Text({
-            content: "Leider hat Ihnen der Administrator keinen " +
-               "Anrufbeantworter zugewiesen.",
-            region: "top",
-         });
-         container.addChild(noMailboxHint);
-         this._mailboxHint = noMailboxHint;
-
+         
+	    
          var widgets = [{
             type: 'TextBox',
             name: 'mailbox/password',
-            label: "PIN-Nummer zum Abrufen",
+            label: "PIN-Nummer zum Abrufen"
          }, {
             type: 'ComboBox',
             name: 'mailbox/email',
             label: "Per eMail benachrichtigen?",
             staticValues: [
                { id: '0', label: "Nein" },
-               { id: '1', label: "Ja, gerne!" },
-            ],
+               { id: '1', label: "Ja, gerne!" }
+            ]
          }, {
             type: 'ComboBox',
             name: 'mailbox/timeout',
@@ -120,20 +110,32 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
                { id:  '45', label: "45 Sekunden" },
                { id:  '60', label: "einer Minute" },
                { id: '120', label: "zwei Minuten" },
-               { id: '180', label: "π Minuten" },
-            ],
+               { id: '180', label: "π Minuten" }
+            ]
          }];
+		
+	    var container = new ContainerWidget({
+            scrollable: true
+         });
+         page.addChild(container);
 
+         var noMailboxHint = new widgets.Text({
+            content: "Leider hat Ihnen der Administrator keinen " +
+               "Anrufbeantworter zugewiesen.",
+            region: "top"
+         });
+         container.addChild(noMailboxHint);
+         this._mailboxHint = noMailboxHint;
          var layout = [
             'mailbox/password',
             'mailbox/email',
             'mailbox/timeout'
          ];
 
-         var form = new umc.widgets.Form({
+         var form = new Form({
             widgets: widgets,
             layout: layout,
-            scrollable: true,
+            scrollable: true
          });
          container.addChild(form);
          this._forms.push(form);
@@ -145,33 +147,33 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
          return page;
       },
       renderPhones: function () {
-         var page = new umc.widgets.Page({
+         var page = new Page({
             title: "Telefone",
             headerText: "Telefoneinstellungen",
             footerButtons: this._buttons,
-            closable: false,
+            closable: false
          });
 
-         var container = new umc.widgets.ExpandingTitlePane({
-            title: "Klingelreihenfolge",
+         var container = new ExpandingTitlePane({
+            title: "Klingelreihenfolge"
          });
          page.addChild(container);
 
-         this._grid = new umc.widgets.Grid({
+         this._grid = new Grid({
             moduleStore: store("dn",
                "asteriskUser/phones"),
             query: {
-               filter:'*',
+               filter:'*'
             },
             columns: [{
                name: 'position',
                label: "Position",
                editable: false,
-               hidden: true,
+               hidden: true
             }, {
                name: 'name',
                label: "Telefon",
-               editable: false,
+               editable: false
             }],
             actions: [{
                name: 'earlier',
@@ -183,9 +185,9 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
                callback: lang.hitch(this, function (id) {
                   this._grid.filter({
                      dn: id,
-                     position: -1,
+                     position: -1
                   });
-               }),
+               })
             }, {
                name: 'later',
                label: "Später",
@@ -197,13 +199,13 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
                callback: lang.hitch(this, function (id) {
                   this._grid.filter({
                      dn: id,
-                     position: 1,
+                     position: 1
                   });
-               }),
-            }],
+               })
+            }]
          });
          container.addChild(this._grid);
-         foo = this._grid;
+
 
          this._grid._grid.canSort = function (index) {
             return false;
@@ -218,19 +220,19 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
                { id:   '4', label:  "4 Sekunden" },
                { id:   '6', label:  "6 Sekunden" },
                { id:   '8', label:  "8 Sekunden" },
-               { id:  '10', label: "10 Sekunden" },
-            ],
+               { id:  '10', label: "10 Sekunden" }
+            ]
          }];
 
          var layout = [
-            'phones/interval',
+            'phones/interval'
          ];
 
-         var form = new umc.widgets.Form({
+         var form = new Form({
             region: 'top',
             widgets: widgets,
             layout: layout,
-            scrollable: true,
+            scrollable: true
          });
          page.addChild(form);
          this._forms.push(form);
@@ -239,32 +241,32 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
          return page;
       },
       renderForwarding: function () {
-         var page = new umc.widgets.Page({
+         var page = new Page({
             title: "Weiterleitung",
             headerText: "Weiterleitungseinstellungen",
             footerButtons: this._buttons,
-            closable: false,
+            closable: false
          });
 
-         var container = new umc.widgets.ContainerWidget({
-            scrollable: true,
+         var container = new ContainerWidget({
+            scrollable: true
          });
          page.addChild(container);
 
          var widgets = [{
             type: 'TextBox',
             name: 'forwarding/number',
-            label: "Weiterleitungsziel",
+            label: "Weiterleitungsziel"
          }];
 
          var layout = [
             'forwarding/number'
          ];
 
-         var form = new umc.widgets.Form({
+         var form = new Form({
             widgets: widgets,
             layout: layout,
-            scrollable: true,
+            scrollable: true
          });
          container.addChild(form);
          this._forms.push(form);
@@ -305,6 +307,6 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
       save: function () {
          var data = this.getValues();
          this.umcpCommand('asteriskUser/save', data);
-      },
+      }
    });
 });
