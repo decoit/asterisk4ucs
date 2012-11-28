@@ -1,3 +1,4 @@
+/*global define*/
 /*
 Copyright (C) 2012 DECOIT GmbH <asterisk4ucs@decoit.de>
 
@@ -15,31 +16,21 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-//dojo.provide("umc.modules.asteriskUser");
-
-//dojo.require("umc.widgets.Module");
-//dojo.require("umc.widgets.ContainerWidget");
-//dojo.require("umc.widgets.Page");
-//dojo.require("umc.widgets.Form");
-//dojo.require("umc.widgets.Grid");
-
-//dojo.declare("umc.modules.asteriskUser", [ umc.widgets.Module ], {
 define([
    "dojo/_base/declare",
    "dojo/_base/lang",
    "dojo/_base/array",
-   "umc/widgets/Module",
+   "umc/widgets/TabbedModule",
    "umc/widgets/ContainerWidget",
    "umc/widgets/Page",
    "umc/widgets/Form",
    "umc/widgets/Grid",
-   "umc/widgets/TabContainer",
    "umc/widgets/ExpandingTitlePane",
    "umc/store",
-   "umc/i18n!umc/modules/umc"
+   "umc/i18n!umc/modules/asteriskUser"
 ],
-function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabContainer,ExpandingTitlePane,_){
-   return declare("umc.modules.asteriskUser",[ Module ],{
+function(declare,store,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,_){
+   return declare("umc.modules.asteriskUser",[ TabbedModule ],{
       _buttons: null,
       _mailboxHint: null,
       _mailboxForm: null,
@@ -60,18 +51,13 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
 
          this._forms = [];
 
-         var tabContainer = new TabContainer({
-            nested: true
-         });
+                  
 
-         
+         this.addChild(this.renderPhones());
 
-         tabContainer.addChild(this.renderPhones());
+         this.addChild(this.renderMailbox());
 
-         tabContainer.addChild(this.renderMailbox());
-
-         tabContainer.addChild(this.renderForwarding());
-         this.addChild(tabContainer);
+         this.addChild(this.renderForwarding());
 
          //this.startup();
          this.load();
@@ -237,7 +223,7 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
          page.addChild(form);
          this._forms.push(form);
 
-         page.startup();
+         //page.startup();
          return page;
       },
       renderForwarding: function () {
@@ -295,18 +281,28 @@ function(declare,store,lang,array,Module,ContainerWidget,Page,Form,Grid,TabConta
          return values;
       },
       load: function () {
+	    this.standby(true);
          this.umcpCommand('asteriskUser/load').then(
             lang.hitch(this, function (data) {
+			this.standby(false);
                this.setValues(data.result);
             }),
             lang.hitch(this, function () {
                // hm...
+			this.standby(false);
             })
          );
       },
       save: function () {
+	    this.standby(true);
          var data = this.getValues();
-         this.umcpCommand('asteriskUser/save', data);
+         this.umcpCommand('asteriskUser/save', data).then(
+		   lang.hitch(this, function() {
+			this.standby(false);
+	    }),
+		   lang.hitch(this, function() {
+			this.standby(false);
+	    }));
       }
    });
 });
