@@ -28,13 +28,12 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/ExpandingTitlePane",
 	"umc/store",	
-	"umc/dialog/notify",
 	"umc/widgets/Text",
-	"umc/dialog/alert",
+	"umc/dialog",
 	"dojo/on",
 	"umc/i18n!umc/modules/asteriskMusic"
 ],
-function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,store,notify,Text,alert,on,_){
+function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,store,Text,dialog,on,_){
 	return declare("umc.modules.asteriskMusic",[TabbedModule],{
 		_page: null,
 		_form: null,
@@ -79,7 +78,7 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 				callback: lang.hitch(this, function () {
 					var name = prompt("Bitte geben Sie den Namen für die neue Musikklasse ein:");
 					if (!name) {
-						alert("Ungültiger Name.");
+						dialog.alert("Ungültiger Name.");
 						return;
 					}
 
@@ -115,7 +114,7 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 				maxSize: 8129000,
 				showClearButton: false,
 				onUploaded: lang.hitch(this, function () {
-					//alert("upload finished");
+					//dialog.alert("upload finished");
 					window.setTimeout(lang.hitch(this, function() {
 						this._upload._updateLabel();
 					}), 0);
@@ -218,7 +217,7 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 				content: '<pre>'+errorMsg+'</pre>'
 			}));
 		
-			alert( container );
+			dialog.alert( container );
 		}
 	});
 });

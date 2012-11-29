@@ -24,12 +24,12 @@ define([
 	"umc/widgets/Form",
 	"umc/widgets/Text",
 	"umc/widgets/ExpandingTitlePane",
-	"umc/dialog/notify",
+	"umc/dialog",
 	"dojo/_base/array",
 	"dojo/on",
 	"umc/i18n!umc/modules/asteriskDeploy"
 ],
-function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,notify,array,on,_){
+function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,_){
 	return declare("umc.modules.asteriskDeploy",[Module], {
 		_page: null,
 		_form: null,
@@ -134,10 +134,10 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,notify,array,on,_
 			var call = this.umcpCommand(action, args);
 			call.then(lang.hitch(this, function (data) {
 				this._stopAction();
-				notify("Befehl ausgeführt; Siehe Logdatei im unteren Teil des Fensters");
+				dialog.notify("Befehl ausgeführt; Siehe Logdatei im unteren Teil des Fensters");
 			}), lang.hitch(this, function (data) {
 				this._stopAction();
-				notify("Fehler!");
+				dialog.notify("Fehler!");
 			}));
 		},
 		_stopAction: function () {
