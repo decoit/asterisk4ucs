@@ -30,7 +30,7 @@ define([
    "umc/store",
    "umc/i18n!umc/modules/asteriskUser"
 ],
-function(declare,store,lang,array,Text,TabbedModule,ContainerWidget,Page,Form,Grid,ExpandingTitlePane){
+function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,Text,store,_){
    return declare("umc.modules.asteriskUser",[ TabbedModule ],{
       _buttons: null,
       _mailboxHint: null,

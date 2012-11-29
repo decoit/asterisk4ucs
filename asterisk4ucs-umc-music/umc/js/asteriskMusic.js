@@ -27,14 +27,14 @@ define([
 	"umc/widgets/Form",
 	"umc/widgets/Grid",
 	"umc/widgets/ExpandingTitlePane",
-	"umc/store",
-	"umc/i18n!umc/modules/asteriskMusic",
+	"umc/store",	
 	"umc/dialog/notify",
 	"umc/widgets/Text",
 	"umc/dialog/alert",
-	"dojo/on"
+	"dojo/on",
+	"umc/i18n!umc/modules/asteriskMusic"
 ],
-function(TabbedModule,Page,Form,Grid,declare, lang, array,notify,store,Text,alert,on,ContainerWidget){
+function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,store,notify,Text,alert,on,_){
 	return declare("umc.modules.asteriskMusic",[TabbedModule],{
 		_page: null,
 		_form: null,
@@ -45,7 +45,7 @@ function(TabbedModule,Page,Form,Grid,declare, lang, array,notify,store,Text,aler
 		_upload: null,
 		_filename: null,
 
-		//i18nClass: "umc.modules.asteriskMusic",
+		i18nClass: "umc.modules.asteriskMusic",
 	
 
 		buildRendering: function () {

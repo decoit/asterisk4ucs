@@ -29,14 +29,14 @@ define([
 	"dojo/on",
 	"umc/i18n!umc/modules/asteriskDeploy"
 ],
-function(Module,declare, lang, array,Page,Form,Text,ExpandingTitlePane,notify,on,asteriskDeploy){
+function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,notify,array,on,_){
 	return declare("umc.modules.asteriskDeploy",[Module], {
 		_page: null,
 		_form: null,
 		_serverSelect: null,
 		_serverdn: null,
 
-		//i18nClass: "umc.modules.asteriskDeploy",
+		i18nClass: "umc.modules.asteriskDeploy",
 
 		buildRendering: function () {
 			this.inherited(arguments);
