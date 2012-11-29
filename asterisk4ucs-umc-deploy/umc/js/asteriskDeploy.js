@@ -1,3 +1,4 @@
+/*global define*/
 /*
 Copyright (C) 2012 DECOIT GmbH <asterisk4ucs@decoit.de>
 
@@ -15,31 +16,33 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-//dojo.provide("umc.modules.asteriskDeploy");
-
-//dojo.require("umc.widgets.Module");
-
-//dojo.declare("umc.modules.asteriskDeploy", [ umc.widgets.Module ], {
 define([
 	"umc/widgets/Module",
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dojo/_base/array"
+	"umc/widgets/Page",
+	"umc/widgets/Form",
+	"umc/widgets/Text",
+	"umc/widgets/ExpandingTitlePane",
+	"umc/dialog/notify",
+	"dojo/_base/array",
+	"dojo/on",
+	"umc/i18n!umc/modules/asteriskDeploy"
 ],
-function(Module,declare, lang, array){
+function(Module,declare, lang, array,Page,Form,Text,ExpandingTitlePane,notify,on,asteriskDeploy){
 	return declare("umc.modules.asteriskDeploy",[Module], {
 		_page: null,
 		_form: null,
 		_serverSelect: null,
 		_serverdn: null,
 
-		i18nClass: "umc.modules.asteriskDeploy",
+		//i18nClass: "umc.modules.asteriskDeploy",
 
 		buildRendering: function () {
 			this.inherited(arguments);
 
-			this._page = new umc.widgets.Page({
-				headerText: "Deployment von Asterisk-Konfigurationen",
+			this._page = new Page({
+				headerText: "Deployment von Asterisk-Konfigurationen"
 			});
 			this.addChild(this._page);
 
@@ -47,7 +50,7 @@ function(Module,declare, lang, array){
 				type: 'ComboBox',
 				name: 'server',
 				label: "Server",
-				dynamicValues: "asteriskDeploy/queryServers",
+				dynamicValues: "asteriskDeploy/queryServers"
 	// ssh-copy-id is not supported yet
 	//		}, {
 	//			type: 'Button',
@@ -69,39 +72,39 @@ function(Module,declare, lang, array){
 				label: "Konfiguration testen",
 				callback: lang.hitch(this, function () {
 					this._startAction("asteriskDeploy/create", {
-						server: this._serverdn,
+						server: this._serverdn
 					});
-				}),
+				})
 			}, {
 				type: 'Button',
 				name: 'deploy',
 				label: "Konfiguration anwenden",
 				callback: lang.hitch(this, function () {
 					this._startAction("asteriskDeploy/deploy", {
-						server: this._serverdn,
+						server: this._serverdn
 					});
-				}),
+				})
 			}];
 
 			var layout = [
 	//			[ "server", "copyid" ],
 				[ "server" ],
-				[ "create", "deploy" ],
+				[ "create", "deploy" ]
 			];
 
-			this._form = new umc.widgets.Form({
+			this._form = new Form({
 				widgets: widgets,
 				layout: layout,
-				region: "top",
+				region: "top"
 			});
 			this._page.addChild(this._form);
 		
-			this._log = new umc.widgets.Text({
-				style: "font-family: monospace; overflow: scroll; white-space: pre;",
+			this._log = new Text({
+				style: "font-family: monospace; overflow: scroll; white-space: pre;"
 			});
 
-			var container = new umc.widgets.ExpandingTitlePane({
-				title: "Letzte Logdatei",
+			var container = new ExpandingTitlePane({
+				title: "Letzte Logdatei"
 			});
 			this._page.addChild(container);
 			container.addChild(this._log);
@@ -131,10 +134,10 @@ function(Module,declare, lang, array){
 			var call = this.umcpCommand(action, args);
 			call.then(lang.hitch(this, function (data) {
 				this._stopAction();
-				umc.dialog.notify("Befehl ausgeführt; Siehe Logdatei im unteren Teil des Fensters");
+				notify("Befehl ausgeführt; Siehe Logdatei im unteren Teil des Fensters");
 			}), lang.hitch(this, function (data) {
 				this._stopAction();
-				umc.dialog.notify("Fehler!");
+				notify("Fehler!");
 			}));
 		},
 		_stopAction: function () {
@@ -149,11 +152,11 @@ function(Module,declare, lang, array){
 			this._log._setContentAttr("[Logdatei lädt...]");
 
 			var call = this.umcpCommand("asteriskDeploy/getLog", {
-				server: this._serverdn,
+				server: this._serverdn
 			});
 			call.then(lang.hitch(this, function (data) {
 				this._log._setContentAttr(data.result);
 			}));
-		},
+		}
 	});
 });

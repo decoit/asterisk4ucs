@@ -1,3 +1,4 @@
+/*global define*/
 /*
 Copyright (C) 2012 DECOIT GmbH <asterisk4ucs@decoit.de>
 
@@ -15,19 +16,26 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-//dojo.provide("umc.modules.asteriskMusic");
-
-//dojo.require("umc.widgets.Module");
-
-//dojo.declare("umc.modules.asteriskMusic", [ umc.widgets.Module ], {
 define([
-	"umc/widgets/Module",
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dojo/_base/array"
+	"dojo/_base/array",
+	"umc/widgets/TabbedModule",
+	"umc/widgets/Module",
+	"umc/widgets/ContainerWidget",
+	"umc/widgets/Page",
+	"umc/widgets/Form",
+	"umc/widgets/Grid",
+	"umc/widgets/ExpandingTitlePane",
+	"umc/store",
+	"umc/i18n!umc/modules/asteriskMusic",
+	"umc/dialog/notify",
+	"umc/widgets/Text",
+	"umc/dialog/alert",
+	"dojo/on"
 ],
-function(Module,declare, lang, array){
-	return declare("umc.modules.asteriskMusic",[Module],{
+function(TabbedModule,Page,Form,Grid,declare, lang, array,notify,store,Text,alert,on,ContainerWidget){
+	return declare("umc.modules.asteriskMusic",[TabbedModule],{
 		_page: null,
 		_form: null,
 		_serverSelect: null,
@@ -37,14 +45,14 @@ function(Module,declare, lang, array){
 		_upload: null,
 		_filename: null,
 
-		i18nClass: "umc.modules.asteriskMusic",
+		//i18nClass: "umc.modules.asteriskMusic",
 	
 
 		buildRendering: function () {
 			this.inherited(arguments);
 
-			this._page = new umc.widgets.Page({
-				headerText: "Warteschlangenmusikverwaltungstool",
+			this._page = new Page({
+				headerText: "Warteschlangenmusikverwaltungstool"
 			});
 			this.addChild(this._page);
 
@@ -52,7 +60,7 @@ function(Module,declare, lang, array){
 				type: 'ComboBox',
 				name: 'server',
 				label: "Server",
-				dynamicValues: "asteriskMusic/queryServers",
+				dynamicValues: "asteriskMusic/queryServers"
 			}, {
 				type: 'ComboBox',
 				name: 'moh',
@@ -62,8 +70,8 @@ function(Module,declare, lang, array){
 					return { serverdn: values.server };
 				},
 				depends: [
-					"server",
-				],
+					"server"
+				]
 			}, {
 				type: 'Button',
 				name: 'create',
@@ -77,30 +85,30 @@ function(Module,declare, lang, array){
 
 					var call = this.umcpCommand("asteriskMusic/create", {
 						name: name,
-						server: this._serverdn,
+						server: this._serverdn
 					});
 					call.then(lang.hitch(this, function (data) {
-						umc.dialog.notify("Musikklasse wurde angelegt.");
+						notify("Musikklasse wurde angelegt.");
 
 						this._mohSelect.setInitialValue(data.result.newDn, false);
 						this._setServer(this._serverdn);
 					}));
-				}),
+				})
 			}, {
 				type: 'Button',
 				name: 'delete',
 				label: "Musikklasse löschen",
 				callback: lang.hitch(this, function () {
 					var call = this.umcpCommand("asteriskMusic/delete", {
-						mohdn: this._mohdn,
+						mohdn: this._mohdn
 					});
 					call.then(lang.hitch(this, function (data) {
-						umc.dialog.notify("Musikklasse wurde entfernt.");
+						notify("Musikklasse wurde entfernt.");
 
 						this._mohSelect.setInitialValue(null, false);
 						this._setServer(this._serverdn);
 					}));
-				}),
+				})
 			}, {
 				type: 'Uploader',
 				name: 'upload',
@@ -114,39 +122,39 @@ function(Module,declare, lang, array){
 					var call = this.umcpCommand("asteriskMusic/upload", {
 						moh: this._mohdn,
 						data: this._upload.value,
-						filename: this._filename,
+						filename: this._filename
 					});
 					call.then(lang.hitch(this, function (res) {
 						if (res.result.error){
 							this._buildErrorPopUp(res.result.error);
 						} else {
-							umc.dialog.notify("Musikstück wurde hochgeladen.");
+							notify("Musikstück wurde hochgeladen.");
 							this._setMoh(this._mohdn);
 						}
 						this._upload._resetLabel();
 					}));
-				}),
+				})
 			}];
 
 			var layout = [
 				[ "server", "create" ],
 				[ "moh", "delete" ],
-				[ "upload" ],
+				[ "upload" ]
 			];
 
-			this._form = new umc.widgets.Form({
+			this._form = new Form({
 				widgets: widgets,
 				layout: layout,
-				region: "top",
+				region: "top"
 			});
 			this._page.addChild(this._form);
 
-			this._grid = new umc.widgets.Grid({
-				moduleStore: umc.store.getModuleStore("name",
+			this._grid = new Grid({
+				moduleStore: store("name",
 						"asteriskMusic/songs"),
 				columns: [{
 					name: 'name',
-					label: 'Name des Musikstücks',
+					label: 'Name des Musikstücks'
 				}],
 				actions: [{
 					name: 'delete',
@@ -154,15 +162,14 @@ function(Module,declare, lang, array){
 					callback: lang.hitch(this, function (id) {
 						this._grid.filter({
 							mohdn: this._mohdn,
-							delete: id,
+							del: id
 						});
-					}),
-				}],
+					})
+				}]
 			});
 			this._page.addChild(this._grid);
 
 			console.log(this);
-			fubar = this;
 		},
 		postCreate: function () {
 			this.inherited(arguments);
@@ -188,30 +195,31 @@ function(Module,declare, lang, array){
 			}));
 
 			on(this._upload._uploader, "onChange", lang.hitch(this, function (data) {
-				if (data[0])
+				if (data[0]){
 					this._filename = data[0].name;
+				}
 			}));
 		},
 		_setServer: function (serverdn) {
 			this._serverdn = serverdn;
 			this._mohSelect._loadValues({
-				"server": this._serverdn,
+				"server": this._serverdn
 			});
 		},
 		_setMoh: function (mohdn) {
 			this._mohdn = mohdn;
 			this._grid.filter({
-				mohdn: this._mohdn,
+				mohdn: this._mohdn
 			});
 		},
 		_buildErrorPopUp: function(errorMsg) {
-			var container = new umc.widgets.ContainerWidget({});
-			container.addChild(new umc.widgets.Text({
-				content: '<pre>'+errorMsg+'</pre>',
+			var container = new ContainerWidget({});
+			container.addChild(new Text({
+				content: '<pre>'+errorMsg+'</pre>'
 			}));
 		
-			umc.dialog.alert( container );
-		},
+			alert( container );
+		}
 	});
 });
 

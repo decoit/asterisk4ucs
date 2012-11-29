@@ -26,10 +26,11 @@ define([
    "umc/widgets/Form",
    "umc/widgets/Grid",
    "umc/widgets/ExpandingTitlePane",
+   "umc/widgets/Text",
    "umc/store",
    "umc/i18n!umc/modules/asteriskUser"
 ],
-function(declare,store,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,_){
+function(declare,store,lang,array,Text,TabbedModule,ContainerWidget,Page,Form,Grid,ExpandingTitlePane){
    return declare("umc.modules.asteriskUser",[ TabbedModule ],{
       _buttons: null,
       _mailboxHint: null,
@@ -105,7 +106,7 @@ function(declare,store,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,Ex
          });
          page.addChild(container);
 
-         var noMailboxHint = new widgets.Text({
+         var noMailboxHint = new Text({
             content: "Leider hat Ihnen der Administrator keinen " +
                "Anrufbeantworter zugewiesen.",
             region: "top"
