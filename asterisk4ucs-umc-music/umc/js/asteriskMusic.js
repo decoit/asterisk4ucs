@@ -31,10 +31,11 @@ define([
 	"umc/widgets/Text",
 	"umc/dialog",
 	"dojo/on",
+	"umc/tools",
 	"umc/i18n!umc/modules/asteriskMusic"
 ],
-function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,store,Text,dialog,on,_){
-	return declare("umc.modules.asteriskMusic",[TabbedModule],{
+function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,store,Text,dialog,on,tools,_){
+	return declare("umc.modules.asteriskMusic",[Module],{
 		_page: null,
 		_form: null,
 		_serverSelect: null,
@@ -43,13 +44,15 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 		_mohdn: null,
 		_upload: null,
 		_filename: null,
-
-		i18nClass: "umc.modules.asteriskMusic",
+		umcpCommand: tools.umcpCommand,
 	
+		i18nClass: "umc.modules.asteriskMusic",
+		
+		
 
 		buildRendering: function () {
 			this.inherited(arguments);
-
+			
 			this._page = new Page({
 				headerText: "Warteschlangenmusikverwaltungstool"
 			});
@@ -76,18 +79,20 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 				name: 'create',
 				label: "Musikklasse anlegen",
 				callback: lang.hitch(this, function () {
+					this.postCreate();
 					var name = prompt("Bitte geben Sie den Namen für die neue Musikklasse ein:");
 					if (!name) {
 						dialog.alert("Ungültiger Name.");
 						return;
 					}
-
+					/*this._serverSelect = this._form.getWidget("server");
+					this._serverdn = this._serverSelect.getValue();*/
 					var call = this.umcpCommand("asteriskMusic/create", {
 						name: name,
 						server: this._serverdn
 					});
 					call.then(lang.hitch(this, function (data) {
-						notify("Musikklasse wurde angelegt.");
+						dialog.notify("Musikklasse wurde angelegt.");
 
 						this._mohSelect.setInitialValue(data.result.newDn, false);
 						this._setServer(this._serverdn);
@@ -98,11 +103,12 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 				name: 'delete',
 				label: "Musikklasse löschen",
 				callback: lang.hitch(this, function () {
+					this.postCreate();
 					var call = this.umcpCommand("asteriskMusic/delete", {
 						mohdn: this._mohdn
 					});
 					call.then(lang.hitch(this, function (data) {
-						notify("Musikklasse wurde entfernt.");
+						dialog.notify("Musikklasse wurde entfernt.");
 
 						this._mohSelect.setInitialValue(null, false);
 						this._setServer(this._serverdn);
@@ -114,10 +120,13 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 				maxSize: 8129000,
 				showClearButton: false,
 				onUploaded: lang.hitch(this, function () {
+
 					//dialog.alert("upload finished");
 					window.setTimeout(lang.hitch(this, function() {
 						this._upload._updateLabel();
 					}), 0);
+					this.postCreate();
+
 					var call = this.umcpCommand("asteriskMusic/upload", {
 						moh: this._mohdn,
 						data: this._upload.value,
@@ -147,7 +156,7 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 				region: "top"
 			});
 			this._page.addChild(this._form);
-
+			this.postCreate();
 			this._grid = new Grid({
 				moduleStore: store("name",
 						"asteriskMusic/songs"),
@@ -167,7 +176,6 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 				}]
 			});
 			this._page.addChild(this._grid);
-
 			console.log(this);
 		},
 		postCreate: function () {

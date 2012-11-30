@@ -12,8 +12,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
-51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-"""
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 import univention.management.console.modules
 from univention.management.console.protocol.definitions import SUCCESS
@@ -33,13 +32,20 @@ import base64
 import shutil
 import tempfile
 import subprocess
+import logging
 
+logfile = "/var/log/univention/asteriskMusicPython.log"
 logFilename = "/var/log/univention/asteriskMusicUpload.log"
 
 class Instance(univention.management.console.modules.Base):
+	logging.basicConfig(filename=logfile,
+		#level=logging.INFO,
+          level=logging.DEBUG,
+		format = "%(asctime)s\t%(levelname)s\t%(message)s",
+		datefmt = "%d.%m.%Y %H:%M:%S"
+		)
 	def queryServers(self, request):
 		servers = getServers()
-
 		result = []
 		for server in servers:
 			result.append({
@@ -87,9 +93,9 @@ class Instance(univention.management.console.modules.Base):
 		self.finished(request.id, result)
 
 	def create(self, request):
-		server = request.options["server"]
+		server = request.options['server']
 		name = request.options["name"]
-
+		logging.debug('__init__.py: server: %s , %s',request.options['server'],name)
 		result = {
 			"newDn": create(server, name),
 		}
@@ -98,8 +104,8 @@ class Instance(univention.management.console.modules.Base):
 		self.finished(request.id, result)
 
 	def delete(self, request):
+		logging.debug('__init__.py: moh: %s' , request)
 		moh = getMoh(request.options["mohdn"])
-
 		delete(moh)
 		moh.remove()
 
@@ -110,7 +116,7 @@ class Instance(univention.management.console.modules.Base):
 		moh = getMoh(request.options["moh"])
 		server = getServer(re.sub(r"^[^,]+,", "", request.options["moh"]))
 		data = base64.b64decode(request.options["data"])
-
+		logging.debug('__init__.py: Upload Filename: %s',request)
 		filename = request.options["filename"]
 		stem = re.sub(r"\.\w+$", "", filename)
 		stem = re.sub(r"[^a-zA-Z0-9-]+", "_", stem)
@@ -120,7 +126,7 @@ class Instance(univention.management.console.modules.Base):
 		if stem in moh.info.get("music", []):
 			self.finished(request.id, {
 				"success": False,
-				"details": "Ein Musikstück mit diesem Namen wurde bereits hochgeladen!",
+				"details": "Ein Musikstueck mit diesem Namen wurde bereits hochgeladen!",
 			})
 			return
 
@@ -136,8 +142,9 @@ class Instance(univention.management.console.modules.Base):
 
 def getCoLoPos():
 	co = univention.admin.config.config()
-
+	#logging.debug('__init__.py: co: %s',co)"""
 	lo, pos = univention.admin.uldap.getAdminConnection()
+	#logging.debug('__init__.py: lo: %s pos: %s',lo, pos)
 
 	return co, lo, pos
 
@@ -170,6 +177,7 @@ def getMoh(dn):
 
 	music = univention.admin.modules.get("asterisk/music")
 	univention.admin.modules.init(lo, pos, music)
+	logging.debug('__init__.py: music: %s',music.object(co, lo ,None ,dn))
 	moh = music.object(co, lo, None, dn)
 	moh.open()
 
@@ -218,6 +226,8 @@ def uploadMusic(server, moh, data, stem, filename):
 	tmpdir = tempfile.mkdtemp()
 	try:
 		inputfilename = "input_file"
+		logging.debug('__init__.py: filename: %s',filename);
+		logging.debug('__init__.py: inputfilename: %s',inputfilename);
 		if re.search("\.mp3$", filename):
 			inputfilename += ".mp3"
 
