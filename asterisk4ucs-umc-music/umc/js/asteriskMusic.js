@@ -45,14 +45,14 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 		_upload: null,
 		_filename: null,
 		umcpCommand: tools.umcpCommand,
-	
+
 		i18nClass: "umc.modules.asteriskMusic",
-		
-		
+
+
 
 		buildRendering: function () {
 			this.inherited(arguments);
-			
+
 			this._page = new Page({
 				headerText: "Warteschlangenmusikverwaltungstool"
 			});
@@ -89,13 +89,13 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 					this._serverdn = this._serverSelect.getValue();*/
 					var call = this.umcpCommand("asteriskMusic/create", {
 						name: name,
-						server: this._serverdn
+						server: this._serverdn = this._form.getWidget("server").get("value")
 					});
 					call.then(lang.hitch(this, function (data) {
 						dialog.notify("Musikklasse wurde angelegt.");
 
 						this._mohSelect.setInitialValue(data.result.newDn, false);
-						this._setServer(this._serverdn);
+						this._setServer(this._serverdn = this._form.getWidget("server").get("value"));
 					}));
 				})
 			}, {
@@ -111,32 +111,38 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 						dialog.notify("Musikklasse wurde entfernt.");
 
 						this._mohSelect.setInitialValue(null, false);
-						this._setServer(this._serverdn);
+						this._setServer(this._serverdn = this._form.getWidget("server").get("value"));
 					}));
 				})
 			}, {
 				type: 'Uploader',
 				name: 'upload',
 				maxSize: 8129000,
-				showClearButton: true,
-				onUploaded: lang.hitch(this, function () {
-					this.postCreate();
+				showClearButton: false,
+				onUploaded: lang.hitch(this, function (data) {
+
 					//dialog.alert("upload finished");
 					window.setTimeout(lang.hitch(this, function() {
 						this._upload._updateLabel();
-					}), 0);					
+					}), 0);
+
+					console.debug("Test");
+					console.debug(data.filename);
+					//console.debug(this._form.getWidget("upload")._uploader);
+				
 
 					var call = this.umcpCommand("asteriskMusic/upload", {
-						moh: this._mohdn,
+						moh: this._form.getWidget("moh").get("value"),
 						data: this._upload.value,
-						filename: this._filename
-					});					
+						filename: data.filename
+					});
 					call.then(lang.hitch(this, function (res) {
 						if (res.result.error){
+							console.debug(res.result.error);
 							this._buildErrorPopUp(res.result.error);
 						} else {
-							notify("Musikstück wurde hochgeladen.");
-							this._setMoh(this._mohdn);
+							dialog.notify("Musikstück wurde hochgeladen.");
+							this._setMoh(this._form.getWidget("moh").get("value"));
 						}
 						this._upload._resetLabel();
 					}));
@@ -181,29 +187,29 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 			this.inherited(arguments);
 
 			this._serverSelect = this._form.getWidget("server");
-			this._serverdn = this._serverSelect.getValue();
+			this._serverdn = this._serverdn = this._form.getWidget("server").get("value");
 			this._mohSelect = this._form.getWidget("moh");
-			this._mohdn = this._mohSelect.getValue();
+			this._mohdn = this._mohSelect.get("value");
 			this._upload = this._form.getWidget("upload");
 
 			on(this._serverSelect, "onValuesLoaded", lang.hitch(this, function () {
-				this._setServer(this._serverSelect.getValue());
+				this._setServer(this._serverdn = this._form.getWidget("server").get("value"));
 			}));
 			on(this._serverSelect, "onChange", lang.hitch(this, function () {
-				this._setServer(this._serverSelect.getValue());
+				this._setServer(this._serverdn = this._form.getWidget("server").get("value"));
 			}));
 
 			on(this._mohSelect, "onValuesLoaded", lang.hitch(this, function () {
-				this._setMoh(this._mohSelect.getValue());
+				this._setMoh(this._mohSelect.get("value"));
 			}));
 			on(this._mohSelect, "onChange", lang.hitch(this, function () {
-				this._setMoh(this._mohSelect.getValue());
+				this._setMoh(this._mohSelect.get("value"));
 			}));
 
 			on(this._upload._uploader, "onChange", lang.hitch(this, function (data) {
-				if (data){
-					//this._filename = data[0].name;
-					this._filename = "air.mp3"
+				console.debug(this._form.getWidget("upload").get("value"));
+				if (data[0]){
+					this._filename = data[0].name;
 				}
 			}));
 		},
@@ -224,9 +230,8 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 			container.addChild(new Text({
 				content: '<pre>'+errorMsg+'</pre>'
 			}));
-		
+
 			dialog.alert( container );
 		}
 	});
 });
-

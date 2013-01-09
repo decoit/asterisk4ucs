@@ -114,23 +114,32 @@ class Instance(univention.management.console.modules.Base):
 		self.finished(request.id, True)
 
 	def upload(self, request):
+		logging.debug('__init__.py: Upload requestMoh: %s',request.options["moh"])
 		moh = getMoh(request.options["moh"])
+		logging.debug('__init__.py: getMoh: %s', moh)
 		server = getServer(re.sub(r"^[^,]+,", "", request.options["moh"]))
+		logging.debug('__init__.py: getServer: %s', server)
 		data = base64.b64decode(request.options["data"])
-		logging.debug('__init__.py: Upload Filename: %s',request.options)
+
 		filename = request.options["filename"]
+		logging.debug('__init__.py: Filename: %s', filename)
 		stem = re.sub(r"\.\w+$", "", filename)
 		stem = re.sub(r"[^a-zA-Z0-9-]+", "_", stem)
 		stem = re.sub(r"^_+", "", stem)
 		stem = re.sub(r"_+$", "", stem)
+		logging.debug('__init__.py: stem: %s', stem)
+		logging.debug('__init__.py: moh.info.get: %s',moh.info.get("music"));
 
 		if stem in moh.info.get("music", []):
+			logging.debug('__init__.py: moh.info.get: %s',moh.info.get("music"));
 			self.finished(request.id, {
 				"success": False,
 				"details": "Ein Musikstueck mit diesem Namen wurde bereits hochgeladen!",
 			})
+			logging.debug('__init__.py: vor return');
 			return
 
+		logging.debug('__init__.py: Upload Server: %s, MOH: %s, stem: %s, filename: %s',server,moh,stem,filenane)
 		if uploadMusic(server, moh, data, stem, filename):
 			moh.info.setdefault("music", []).append(stem)
 			moh.modify()
@@ -178,7 +187,7 @@ def getMoh(dn):
 
 	music = univention.admin.modules.get("asterisk/music")
 	univention.admin.modules.init(lo, pos, music)
-	logging.debug('__init__.py: music: %s',music.object(co, lo ,None ,dn))
+	
 	moh = music.object(co, lo, None, dn)
 	moh.open()
 
