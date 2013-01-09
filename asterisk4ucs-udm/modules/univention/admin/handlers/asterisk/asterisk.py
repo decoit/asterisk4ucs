@@ -37,7 +37,7 @@ import univention.admin.handlers.asterisk.agiscript
 import operator
 
 module = "asterisk/asterisk"
-short_description = u"Asterisk"
+short_description = "Asterisk"
 long_description = ''
 operations = ['search']
 default_containers = [ "cn=asterisk" ]
@@ -66,7 +66,6 @@ modulesWithSuperordinates = {
 		univention.admin.handlers.asterisk.contact,
 	]
 }
-
 usewizard = 1
 wizardmenustring="Asterisk"
 wizarddescription="Asterisk verwalten"

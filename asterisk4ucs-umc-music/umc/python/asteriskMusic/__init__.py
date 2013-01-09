@@ -16,6 +16,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import univention.management.console.modules
 from univention.management.console.protocol.definitions import SUCCESS
+from univention.management.console.log import MODULE
 
 import univention.config_registry
 import univention.admin.uldap
@@ -116,7 +117,7 @@ class Instance(univention.management.console.modules.Base):
 		moh = getMoh(request.options["moh"])
 		server = getServer(re.sub(r"^[^,]+,", "", request.options["moh"]))
 		data = base64.b64decode(request.options["data"])
-		logging.debug('__init__.py: Upload Filename: %s',request)
+		logging.debug('__init__.py: Upload Filename: %s',request.options)
 		filename = request.options["filename"]
 		stem = re.sub(r"\.\w+$", "", filename)
 		stem = re.sub(r"[^a-zA-Z0-9-]+", "_", stem)

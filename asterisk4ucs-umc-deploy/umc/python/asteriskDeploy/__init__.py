@@ -17,6 +17,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import univention.management.console.modules
 from univention.management.console.protocol.definitions import SUCCESS
+from univention.management.console.log import MODULE
 
 import univention.config_registry
 import univention.admin.uldap
@@ -43,14 +44,12 @@ ucr.load()
 class Instance(univention.management.console.modules.Base):
 	def queryServers(self, request):
 		servers = getServers()
-
 		result = []
 		for server in servers:
 			result.append({
 				"id": server.dn,
 				"label": server["commonName"],
 			})
-
 		self.finished(request.id, result)
 
 	def copyid(self, request):
@@ -62,7 +61,10 @@ class Instance(univention.management.console.modules.Base):
 		self.finished(request.id, True)
 
 	def create(self, request):
+		
 		server = getServer(request.options["server"])
+		MODULE.error('### request: %s' % request)
+		MODULE.error('### self: %s' % self)
 		log = openLog(server["commonName"])
 		createConfigs(log, server)
 		closeLog(log)

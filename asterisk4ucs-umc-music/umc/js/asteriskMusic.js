@@ -118,20 +118,19 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 				type: 'Uploader',
 				name: 'upload',
 				maxSize: 8129000,
-				showClearButton: false,
+				showClearButton: true,
 				onUploaded: lang.hitch(this, function () {
-
+					this.postCreate();
 					//dialog.alert("upload finished");
 					window.setTimeout(lang.hitch(this, function() {
 						this._upload._updateLabel();
-					}), 0);
-					this.postCreate();
+					}), 0);					
 
 					var call = this.umcpCommand("asteriskMusic/upload", {
 						moh: this._mohdn,
 						data: this._upload.value,
 						filename: this._filename
-					});
+					});					
 					call.then(lang.hitch(this, function (res) {
 						if (res.result.error){
 							this._buildErrorPopUp(res.result.error);
@@ -202,8 +201,9 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 			}));
 
 			on(this._upload._uploader, "onChange", lang.hitch(this, function (data) {
-				if (data[0]){
-					this._filename = data[0].name;
+				if (data){
+					//this._filename = data[0].name;
+					this._filename = "air.mp3"
 				}
 			}));
 		},

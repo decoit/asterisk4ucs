@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
-
+from univention.management.console.log import MODULE
 import univention.config_registry
 import univention.admin.filter
 import univention.admin.modules
@@ -25,7 +25,9 @@ import re
 import shutil
 import time
 import zlib
+import logging
 
+logfile = "/var/log/univention/asteriskMusicPython.log"
 ucr = univention.config_registry.ConfigRegistry()
 
 def getNameFromUser(userinfo):
@@ -515,7 +517,7 @@ def genExtensionsconf(co, lo, srv):
 
 def genConfigs(server):
 	ucr.load()
-	
+	MODULE.error('### server: %s' % server)
 	co = server.co
 	lo = server.lo
 

@@ -27,15 +27,17 @@ define([
 	"umc/dialog",
 	"dojo/_base/array",
 	"dojo/on",
+	"umc/tools",
 	"umc/i18n!umc/modules/asteriskDeploy"
 ],
-function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,_){
+function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,tools,asteriskDeploy,_){
 	return declare("umc.modules.asteriskDeploy",[Module], {
 		_page: null,
 		_form: null,
 		_serverSelect: null,
 		_serverdn: null,
-
+		umcpCommand: tools.umcpCommand,
+		asteriskDeploy: null,
 		i18nClass: "umc.modules.asteriskDeploy",
 
 		buildRendering: function () {
@@ -115,10 +117,10 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,_
 			this.inherited(arguments);
 
 			this._serverSelect = this._form.getWidget("server");
-			this._serverdn = this._serverSelect.getValue();
+			this._serverdn = this._serverSelect.get("value");
 
 			on(this._serverSelect, "onChange", lang.hitch(this, function () {
-				this._setServer(this._serverSelect.getValue());
+				this._setServer(this._serverSelect.get("value"));
 			}));
 		},
 		_setServer: function (serverdn) {
@@ -126,21 +128,23 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,_
 			this._refreshLog();
 		},
 		_startAction: function (action, args) {
+
 			this._form.getWidget("server")._setDisabledAttr(true);
 	//		this._form.getWidget("copyid")._setDisabledAttr(true);
 			this._form.getWidget("create")._setDisabledAttr(true);
 			this._form.getWidget("deploy")._setDisabledAttr(true);
-		
-			var call = this.umcpCommand(action, args);
+			
+			var call = tools.umcpCommand(action, args);
 			call.then(lang.hitch(this, function (data) {
 				this._stopAction();
 				dialog.notify("Befehl ausgeführt; Siehe Logdatei im unteren Teil des Fensters");
 			}), lang.hitch(this, function (data) {
 				this._stopAction();
-				dialog.notify("Fehler!");
+				dialog.notify(this._form.getWidget("server").get("value"));
 			}));
 		},
 		_stopAction: function () {
+
 			this._form.getWidget("server")._setDisabledAttr(false);
 	//		this._form.getWidget("copyid")._setDisabledAttr(false);
 			this._form.getWidget("create")._setDisabledAttr(false);
@@ -151,7 +155,7 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,_
 		_refreshLog: function () {
 			this._log._setContentAttr("[Logdatei lädt...]");
 
-			var call = this.umcpCommand("asteriskDeploy/getLog", {
+			var call = tools.umcpCommand("asteriskDeploy/getLog", {
 				server: this._serverdn
 			});
 			call.then(lang.hitch(this, function (data) {
