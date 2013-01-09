@@ -174,8 +174,9 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 					label: "Löschen",
 					callback: lang.hitch(this, function (id) {
 						this._grid.filter({
-							mohdn: this._mohdn,
-							del: id
+							//mohdn: this._mohdn,
+							mohdn: this._form.getWidget("moh").get("value"),
+							delete: id
 						});
 					})
 				}]
@@ -192,26 +193,39 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 			this._mohdn = this._mohSelect.get("value");
 			this._upload = this._form.getWidget("upload");
 
-			on(this._serverSelect, "onValuesLoaded", lang.hitch(this, function () {
+			on(this._serverSelect, "valuesLoaded", lang.hitch(this, function () {
 				this._setServer(this._serverdn = this._form.getWidget("server").get("value"));
 			}));
-			on(this._serverSelect, "onChange", lang.hitch(this, function () {
+			this._serverSelect.watch("value",lang.hitch(this, function () {
 				this._setServer(this._serverdn = this._form.getWidget("server").get("value"));
 			}));
 
-			on(this._mohSelect, "onValuesLoaded", lang.hitch(this, function () {
+			/*on(this._serverSelect, "change", lang.hitch(this, function () {
+				this._setServer(this._serverdn = this._form.getWidget("server").get("value"));
+			}));*/
+
+			on(this._mohSelect, "valuesLoaded", lang.hitch(this, function () {
 				this._setMoh(this._mohSelect.get("value"));
 			}));
-			on(this._mohSelect, "onChange", lang.hitch(this, function () {
+			/*on(this._mohSelect, "change", lang.hitch(this, function () {
+				this._setMoh(this._mohSelect.get("value"));
+			}));*/
+			this._mohSelect.watch("value",lang.hitch(this, function () {
 				this._setMoh(this._mohSelect.get("value"));
 			}));
 
-			on(this._upload._uploader, "onChange", lang.hitch(this, function (data) {
+			on(this._upload._uploader, "change", lang.hitch(this, function (data) {
 				console.debug(this._form.getWidget("upload").get("value"));
 				if (data[0]){
 					this._filename = data[0].name;
 				}
 			}));
+			/*this._upload_uploader.watch("value", lang.hitch(this, function (data) {
+				console.debug(this._form.getWidget("upload").get("value"));
+				if (data[0]){
+					this._filename = data[0].name;
+				}
+			}));*/
 		},
 		_setServer: function (serverdn) {
 			this._serverdn = serverdn;

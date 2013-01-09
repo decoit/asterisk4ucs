@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+set -u
+
+./build asterisk4ucs-umc-deploy 
+wait 2
+dpkg -i asterisk4ucs-umc-deploy_0.5.5_all.deb

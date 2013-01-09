@@ -121,7 +121,10 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 			this._serverdn = this._form.getWidget("server").get("value");
 			//console.debug(this._serverdn);
 
-			on(this._serverSelect, "onChange", lang.hitch(this, function () {
+			/*on(this._serverSelect, "onChange", lang.hitch(this, function () {
+				this._setServer(this._form.getWidget("server").get("value"));
+			}));*/
+			this._serverSelect.watch("value", lang.hitch(this, function () {
 				this._setServer(this._form.getWidget("server").get("value"));
 			}));
 		},

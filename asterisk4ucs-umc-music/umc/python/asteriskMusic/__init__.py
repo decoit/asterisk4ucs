@@ -139,7 +139,7 @@ class Instance(univention.management.console.modules.Base):
 			logging.debug('__init__.py: vor return');
 			return
 
-		logging.debug('__init__.py: Upload Server: %s, MOH: %s, stem: %s, filename: %s',server,moh,stem,filenane)
+		#logging.debug('__init__.py: Upload Server: %s, MOH: %s, stem: %s, filename: %s',server,moh,stem,filenane)
 		if uploadMusic(server, moh, data, stem, filename):
 			moh.info.setdefault("music", []).append(stem)
 			moh.modify()
