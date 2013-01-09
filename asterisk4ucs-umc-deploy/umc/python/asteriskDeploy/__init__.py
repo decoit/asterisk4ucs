@@ -65,6 +65,7 @@ class Instance(univention.management.console.modules.Base):
 		server = getServer(request.options["server"])
 		MODULE.error('### request: %s' % request)
 		MODULE.error('### self: %s' % self)
+		MODULE.error('### values: %s' % request.options.get('values', {}))
 		log = openLog(server["commonName"])
 		createConfigs(log, server)
 		closeLog(log)

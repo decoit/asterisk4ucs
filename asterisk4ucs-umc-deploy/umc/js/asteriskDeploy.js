@@ -74,7 +74,7 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 				label: "Konfiguration testen",
 				callback: lang.hitch(this, function () {
 					this._startAction("asteriskDeploy/create", {
-						server: this._serverdn
+						server: this._serverdn = this._form.getWidget("server").get("value")
 					});
 				})
 			}, {
@@ -83,7 +83,7 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 				label: "Konfiguration anwenden",
 				callback: lang.hitch(this, function () {
 					this._startAction("asteriskDeploy/deploy", {
-						server: this._serverdn
+						server: this._serverdn = this._form.getWidget("server").get("value")
 					});
 				})
 			}];
@@ -117,10 +117,12 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 			this.inherited(arguments);
 
 			this._serverSelect = this._form.getWidget("server");
-			this._serverdn = this._serverSelect.get("value");
+			//this._serverSelect.set("value","Testserver");
+			this._serverdn = this._form.getWidget("server").get("value");
+			//console.debug(this._serverdn);
 
 			on(this._serverSelect, "onChange", lang.hitch(this, function () {
-				this._setServer(this._serverSelect.get("value"));
+				this._setServer(this._form.getWidget("server").get("value"));
 			}));
 		},
 		_setServer: function (serverdn) {
@@ -133,8 +135,9 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 	//		this._form.getWidget("copyid")._setDisabledAttr(true);
 			this._form.getWidget("create")._setDisabledAttr(true);
 			this._form.getWidget("deploy")._setDisabledAttr(true);
-			
+			//console.debug(uneval(args));
 			var call = tools.umcpCommand(action, args);
+			this._serverdn = this._form.getWidget("server").get("value");
 			call.then(lang.hitch(this, function (data) {
 				this._stopAction();
 				dialog.notify("Befehl ausgeführt; Siehe Logdatei im unteren Teil des Fensters");
