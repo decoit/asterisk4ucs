@@ -29,3 +29,6 @@ phoneBook: http://findicons.com/icon/263500/address_book
 gifs wurden erzeugt mit:
 for file in * ; do convert $file -background white -flatten ${file%.png}.gif ; done
 
+
+
+http://www.iconfinder.com/search/?q=iconset%3Ade-munich-icon-pack
