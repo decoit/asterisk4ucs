@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.20) unstable; urgency=low
+
+  * Anpassungen der JavaSkript Dateien an den UCS3.1 Server
+
+ -- Marcelt <jahnke@decoit.de>  Wed, 09 Jan 2013 22:11:47 +0100
+
 asterisk4ucs-udm (0.6.19) unstable; urgency=low
 
   * API für Telefonbuch hinzugefügt (Bug 2919)

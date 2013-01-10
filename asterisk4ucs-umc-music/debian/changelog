@@ -1,3 +1,9 @@
+asterisk4ucs-umc-music (0.5.3) unstable; urgency=low
+
+  * Anpassungen der JavaScript Datein an den UCS3.1
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Wed, 09 Jan 2013 22:16:48 +0100
+
 asterisk4ucs-umc-music (0.5.2) unstable; urgency=low
 
   * Logdateinamen und Pfad für Musikupload

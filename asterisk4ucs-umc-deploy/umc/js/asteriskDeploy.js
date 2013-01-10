@@ -74,7 +74,7 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 				label: "Konfiguration testen",
 				callback: lang.hitch(this, function () {
 					this._startAction("asteriskDeploy/create", {
-						server: this._serverdn = this._form.getWidget("server").get("value")
+						server: this._form.getWidget("server").get("value")
 					});
 				})
 			}, {
@@ -83,7 +83,7 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 				label: "Konfiguration anwenden",
 				callback: lang.hitch(this, function () {
 					this._startAction("asteriskDeploy/deploy", {
-						server: this._serverdn = this._form.getWidget("server").get("value")
+						server: this._form.getWidget("server").get("value")
 					});
 				})
 			}];
