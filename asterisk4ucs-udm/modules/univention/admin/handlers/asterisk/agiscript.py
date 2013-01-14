@@ -23,7 +23,7 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/agiscript"
-short_description = u"Asterisk: AGI-Script"
+short_description = u"Asterisk4UCS-Management: AGI-Script"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 

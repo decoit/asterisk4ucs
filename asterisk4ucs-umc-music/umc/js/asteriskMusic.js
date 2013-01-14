@@ -126,8 +126,8 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 						this._upload._updateLabel();
 					}), 0);
 
-					console.debug("Test");
-					console.debug(data.filename);
+					//console.debug("Test");
+					//console.debug(data.filename);
 					//console.debug(this._form.getWidget("upload")._uploader);
 				
 
@@ -138,7 +138,7 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 					});
 					call.then(lang.hitch(this, function (res) {
 						if (res.result.error){
-							console.debug(res.result.error);
+							//console.debug(res.result.error);
 							this._buildErrorPopUp(res.result.error);
 						} else {
 							dialog.notify("Musikstück wurde hochgeladen.");
@@ -215,7 +215,7 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 			}));
 
 			on(this._upload._uploader, "change", lang.hitch(this, function (data) {
-				console.debug(this._form.getWidget("upload").get("value"));
+				//console.debug(this._form.getWidget("upload").get("value"));
 				if (data[0]){
 					this._filename = data[0].name;
 				}

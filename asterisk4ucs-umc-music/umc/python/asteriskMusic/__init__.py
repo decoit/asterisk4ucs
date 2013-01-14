@@ -39,12 +39,12 @@ logfile = "/var/log/univention/asteriskMusicPython.log"
 logFilename = "/var/log/univention/asteriskMusicUpload.log"
 
 class Instance(univention.management.console.modules.Base):
-	logging.basicConfig(filename=logfile,
+	#logging.basicConfig(filename=logfile,
 		#level=logging.INFO,
-          level=logging.DEBUG,
-		format = "%(asctime)s\t%(levelname)s\t%(message)s",
-		datefmt = "%d.%m.%Y %H:%M:%S"
-		)
+          #level=logging.DEBUG,
+		#format = "%(asctime)s\t%(levelname)s\t%(message)s",
+		#datefmt = "%d.%m.%Y %H:%M:%S"
+		#)
 	def queryServers(self, request):
 		servers = getServers()
 		result = []
@@ -96,7 +96,7 @@ class Instance(univention.management.console.modules.Base):
 	def create(self, request):
 		server = request.options['server']
 		name = request.options["name"]
-		logging.debug('__init__.py: server: %s , %s',request.options['server'],name)
+		#logging.debug('__init__.py: server: %s , %s',request.options['server'],name)
 		result = {
 			"newDn": create(server, name),
 		}
@@ -105,7 +105,7 @@ class Instance(univention.management.console.modules.Base):
 		self.finished(request.id, result)
 
 	def delete(self, request):
-		logging.debug('__init__.py: moh: %s' , request)
+		#logging.debug('__init__.py: moh: %s' , request)
 		moh = getMoh(request.options["mohdn"])
 		delete(moh)
 		moh.remove()
@@ -114,29 +114,29 @@ class Instance(univention.management.console.modules.Base):
 		self.finished(request.id, True)
 
 	def upload(self, request):
-		logging.debug('__init__.py: Upload requestMoh: %s',request.options["moh"])
+		#logging.debug('__init__.py: Upload requestMoh: %s',request.options["moh"])
 		moh = getMoh(request.options["moh"])
-		logging.debug('__init__.py: getMoh: %s', moh)
+		#logging.debug('__init__.py: getMoh: %s', moh)
 		server = getServer(re.sub(r"^[^,]+,", "", request.options["moh"]))
-		logging.debug('__init__.py: getServer: %s', server)
+		#logging.debug('__init__.py: getServer: %s', server)
 		data = base64.b64decode(request.options["data"])
 
 		filename = request.options["filename"]
-		logging.debug('__init__.py: Filename: %s', filename)
+		#logging.debug('__init__.py: Filename: %s', filename)
 		stem = re.sub(r"\.\w+$", "", filename)
 		stem = re.sub(r"[^a-zA-Z0-9-]+", "_", stem)
 		stem = re.sub(r"^_+", "", stem)
 		stem = re.sub(r"_+$", "", stem)
-		logging.debug('__init__.py: stem: %s', stem)
-		logging.debug('__init__.py: moh.info.get: %s',moh.info.get("music"));
+		#logging.debug('__init__.py: stem: %s', stem)
+		#logging.debug('__init__.py: moh.info.get: %s',moh.info.get("music"));
 
 		if stem in moh.info.get("music", []):
-			logging.debug('__init__.py: moh.info.get: %s',moh.info.get("music"));
+			#logging.debug('__init__.py: moh.info.get: %s',moh.info.get("music"));
 			self.finished(request.id, {
 				"success": False,
 				"details": "Ein Musikstueck mit diesem Namen wurde bereits hochgeladen!",
 			})
-			logging.debug('__init__.py: vor return');
+			#logging.debug('__init__.py: vor return');
 			return
 
 		#logging.debug('__init__.py: Upload Server: %s, MOH: %s, stem: %s, filename: %s',server,moh,stem,filenane)
@@ -236,8 +236,8 @@ def uploadMusic(server, moh, data, stem, filename):
 	tmpdir = tempfile.mkdtemp()
 	try:
 		inputfilename = "input_file"
-		logging.debug('__init__.py: filename: %s',filename);
-		logging.debug('__init__.py: inputfilename: %s',inputfilename);
+		#logging.debug('__init__.py: filename: %s',filename);
+		#logging.debug('__init__.py: inputfilename: %s',inputfilename);
 		if re.search("\.mp3$", filename):
 			inputfilename += ".mp3"
 

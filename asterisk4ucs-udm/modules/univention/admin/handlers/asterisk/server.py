@@ -28,7 +28,7 @@ import logging
 logfile = "/var/log/univention/asteriskMusicPython.log"
 
 module = "asterisk/server"
-short_description = u"Asterisk: Asterisk-Server"
+short_description = u"Asterisk4UCS-Management: Asterisk-Server"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 

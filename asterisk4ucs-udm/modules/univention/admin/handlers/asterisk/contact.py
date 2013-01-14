@@ -26,7 +26,7 @@ import univention.admin.uexceptions
 from univention.admin.layout import Tab
 
 module = "asterisk/contact"
-short_description = u"Asterisk: Kontakt"
+short_description = u"Asterisk4UCS-Management: Kontakt"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 

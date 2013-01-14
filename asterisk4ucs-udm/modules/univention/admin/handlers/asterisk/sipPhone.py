@@ -23,7 +23,7 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/sipPhone"
-short_description = u"Asterisk: IP-Telefon"
+short_description = u"Asterisk4UCS-Management: IP-Telefon"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
