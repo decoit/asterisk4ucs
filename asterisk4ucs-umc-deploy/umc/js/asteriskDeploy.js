@@ -169,6 +169,7 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 					this._log._setContentAttr(data.result);
 				}));
 			} else {
+				dialog.alert("Es wurde kein Asterisk-Server eingerichtet!");
 				this._log._setContentAttr("Es wurde kein Asterisk-Server eingerichtet!");
 				
 			}
