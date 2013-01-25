@@ -6,3 +6,5 @@ user-phone-extension/* usr/lib/asterisk4ucs/user-phone-extension/
 udm-asterisk.xml usr/share/univention-management-console/modules/
 devscripts/* usr/lib/asterisk4ucs/devscripts/
 number2name.agi usr/lib/asterisk4ucs/
+icons/16x16/*.png /var/www/icon/16x16/
+icons/50x50/*.png /var/www/icon/50x50/
