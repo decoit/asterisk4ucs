@@ -17,36 +17,43 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import univention.management.console.modules
 from univention.management.console.protocol.definitions import SUCCESS
+from univention.management.console.log import MODULE
 
 import univention.config_registry
 import univention.admin.uldap
 import univention.admin.config
 import univention.admin.modules
+univention.admin.modules.update()
+
 import univention.admin.handlers.users.user
 import univention.admin.handlers.asterisk.sipPhone
 import univention.admin.handlers.asterisk.mailbox
+import univention.admin.handlers.asterisk.server
 
 class Instance( univention.management.console.modules.Base ):
 	def load( self, request ):
 		user, mailbox = getUserAndMailbox(self._user_dn)
+		if mailbox == "KeinServer" :
+			result = "KeinServer"
+			self.finished( request.id, result )
+		else: 
+			result = {
+				"phones/interval": user["ringdelay"],
+				"forwarding/number": user.get("forwarding",""),
 
-		result = {
-			"phones/interval": user["ringdelay"],
-			"forwarding/number": user.get("forwarding",""),
+				"mailbox/timeout": user["timeout"],
+				"mailbox": False,
+			}
 
-			"mailbox/timeout": user["timeout"],
-			"mailbox": False,
-		}
+			if mailbox:
+				result.update({
+					"mailbox": True,
+					"mailbox/password": mailbox["password"],
+					"mailbox/email": mailbox["email"],
+				})
 
-		if mailbox:
-			result.update({
-				"mailbox": True,
-				"mailbox/password": mailbox["password"],
-				"mailbox/email": mailbox["email"],
-			})
-
-		request.status = SUCCESS
-		self.finished( request.id, result )
+			request.status = SUCCESS
+			self.finished( request.id, result )
 
 	def save( self, request ):
 		user, mailbox = getUserAndMailbox(self._user_dn)
@@ -144,15 +151,42 @@ def getPhones(userdn):
 	return phones
 
 def getUserAndMailbox(userdn):
-	co, lo = getCoLo()
+	co, lo, pos = getCoLoPos()
 
-	user = getUser(co, lo, userdn)
+	server = univention.admin.modules.get("asterisk/server")
+	univention.admin.modules.init(lo, pos, server)
+	objs = server.lookup(co, lo, None)
 
-	mailbox = user.get("mailbox")
-	if mailbox:
-		mailbox = getMailbox(co, lo, mailbox)
+	checkServers = []
+	for obj in objs:
+			checkServers.append({
+				"label": obj["commonName"],
+			})
+	
+	MODULE.error('User: server: %s' % len(checkServers))
+	if len(checkServers) >0 :
+		co, lo = getCoLo()
 
-	return user, mailbox
+		user = getUser(co, lo, userdn)
+
+		mailbox = user.get("mailbox")
+		if mailbox:
+			mailbox = getMailbox(co, lo, mailbox)
+
+		return user, mailbox
+	elif len(checkServers) == 0 :
+		MODULE.error('Fehler gefunden!')
+		mailbox = "KeinServer"
+		user = "KeinServer"
+		return user, mailbox
+		
+
+def getCoLoPos():
+	co = univention.admin.config.config()
+
+	lo, pos = univention.admin.uldap.getAdminConnection()
+
+	return co, lo, pos
 
 def changePhoneOrder(userdn, phonedn, change):
 	co, lo = getCoLo()

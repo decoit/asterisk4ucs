@@ -16,7 +16,6 @@ Depends:
  univention-directory-manager-tools,
  shell-univention-lib (>> 1.0.1-1),
  asterisk4ucs-udm-schema (= ${source:Version}),
- patch,
  ${misc:Depends},
  ${python:Depends}
 Description: Asterisk4UCS: UDM-Modul

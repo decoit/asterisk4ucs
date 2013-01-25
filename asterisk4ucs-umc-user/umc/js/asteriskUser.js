@@ -27,10 +27,11 @@ define([
    "umc/widgets/Grid",
    "umc/widgets/ExpandingTitlePane",
    "umc/widgets/Text",
+   "umc/dialog",
    "umc/store",
    "umc/i18n!umc/modules/asteriskUser"
 ],
-function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,Text,store,_){
+function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,Text,dialog,store,_){
    return declare("umc.modules.asteriskUser",[ TabbedModule ],{
       _buttons: null,
       _mailboxHint: null,
@@ -286,7 +287,12 @@ function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,Expandin
          this.umcpCommand('asteriskUser/load').then(
             lang.hitch(this, function (data) {
 			this.standby(false);
-               this.setValues(data.result);
+               if (data.result=="KeinServer") {
+                  dialog.alert("Es wurde kein Asterisk-Server angelegt!");
+                  this.standby(true);
+               }else {
+                  setValues(data.result);
+               }
             }),
             lang.hitch(this, function () {
                // hm...

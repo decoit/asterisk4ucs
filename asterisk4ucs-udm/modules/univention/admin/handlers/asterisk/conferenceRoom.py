@@ -24,7 +24,7 @@ from univention.admin.layout import Tab
 from univention.admin import uexceptions
 
 module = "asterisk/conferenceRoom"
-short_description = u"Asterisk: Konferenzraum"
+short_description = u"Asterisk4UCS-Management: Konferenzraum"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 

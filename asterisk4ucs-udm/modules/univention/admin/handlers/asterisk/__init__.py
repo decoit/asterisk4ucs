@@ -27,7 +27,7 @@ import time
 import zlib
 import logging
 
-logfile = "/var/log/univention/asteriskMusicPython.log"
+#logfile = "/var/log/univention/asteriskMusicPython.log"
 ucr = univention.config_registry.ConfigRegistry()
 
 def getNameFromUser(userinfo):

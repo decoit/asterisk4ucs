@@ -115,10 +115,10 @@ def getServers():
 
 def getServer(dn):
 	co, lo, pos = getCoLoPos()
-
 	server = univention.admin.modules.get("asterisk/server")
 	univention.admin.modules.init(lo, pos, server)
 	obj = server.object(co, lo, None, dn)
+	MODULE.error("server dn: %s" % dn)
 	obj.open()
 
 	return obj

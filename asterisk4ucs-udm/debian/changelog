@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.21) unstable; urgency=low
+
+  * Fehlermeldungen wurde angepasst!
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Fri, 25 Jan 2013 19:32:58 +0100
+
 asterisk4ucs-udm (0.6.20) unstable; urgency=low
 
   * Anpassungen der JavaSkript Dateien an den UCS3.1 Server

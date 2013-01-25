@@ -1,3 +1,9 @@
+asterisk4ucs-umc-deploy (0.5.7) unstable; urgency=low
+
+  * Angepasste Fehlermeldungen
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Fri, 25 Jan 2013 19:36:49 +0100
+
 asterisk4ucs-umc-deploy (0.5.6) unstable; urgency=low
 
   * Anpassungen der JavaScript Datein an den UCS3.1

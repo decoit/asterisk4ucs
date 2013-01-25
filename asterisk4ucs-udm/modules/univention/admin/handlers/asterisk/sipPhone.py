@@ -23,7 +23,7 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/sipPhone"
-short_description = u"Asterisk: IP-Telefon"
+short_description = u"Asterisk4UCS-Management: IP-Telefon"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
@@ -163,7 +163,7 @@ class object(univention.admin.handlers.simpleLdap):
 		self.openSuperordinate()
 		if not self.superordinate:
 			raise univention.admin.uexceptions.insufficientInformation, \
-					 'superordinate object not present'
+					 'superordinate object not present. The assigned phone for this user was deleted!'
 		if not dn and not position:
 			raise univention.admin.uexceptions.insufficientInformation, \
 					 'neither DN nor position present'
