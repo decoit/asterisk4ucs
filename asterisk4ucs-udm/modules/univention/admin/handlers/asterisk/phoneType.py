@@ -23,7 +23,7 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/phoneType"
-short_description = u"Asterisk4UCS-Management: Telefontyp"
+short_description = u"Asterisk: Telefontyp"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 

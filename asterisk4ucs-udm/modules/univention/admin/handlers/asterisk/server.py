@@ -25,22 +25,22 @@ from univention.admin.layout import Tab
 import time
 import logging
 
-#logfile = "/var/log/univention/asteriskMusicPython.log"
+logfile = "/var/log/univention/asteriskMusicPython.log"
 
 module = "asterisk/server"
-short_description = u"Asterisk4UCS-Management: Asterisk-Server"
+short_description = u"Asterisk: Asterisk-Server"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 childs = 1
 usewizard = 1
 
-#logging.basicConfig(filename=logfile,
+logging.basicConfig(filename=logfile,
 	#level=logging.INFO,
-#     level=logging.DEBUG,
-#	format = "%(asctime)s\t%(levelname)s\t%(message)s",
-#	datefmt = "%d.%m.%Y %H:%M:%S"
-#	)
+     level=logging.DEBUG,
+	format = "%(asctime)s\t%(levelname)s\t%(message)s",
+	datefmt = "%d.%m.%Y %H:%M:%S"
+	)
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
@@ -363,7 +363,7 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		univention.admin.filter.expression(
 			'objectClass', "ast4ucsServer")
 	])
- 	#logging.debug('server.py UDM 366: filter: %s', filter)
+ 	logging.debug('server.py UDM 366: filter: %s', filter)
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
 		univention.admin.filter.walk(filter_p, 
@@ -375,7 +375,7 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 			required, timeout, sizelimit):
 		res.append(object(co, lo, None, dn=dn,
 				superordinate=superordinate, attributes=attrs))
-	#logging.debug('server.py UDM 378: res: %s',res)
+	logging.debug('server.py UDM 378: res: %s',res)
 	return res
 
 def identify(dn, attr, canonical=0):

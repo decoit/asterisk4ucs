@@ -25,7 +25,7 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/phoneGroup"
-short_description = u"Asterisk4UCS-Management: Telefongruppe"
+short_description = u"Asterisk: Telefongruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 

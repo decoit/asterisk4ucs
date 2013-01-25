@@ -23,7 +23,7 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/faxGroup"
-short_description = u"Asterisk4UCS-Management: Faxgruppe"
+short_description = u"Asterisk: Faxgruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 

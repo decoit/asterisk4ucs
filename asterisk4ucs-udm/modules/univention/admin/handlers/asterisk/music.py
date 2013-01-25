@@ -23,7 +23,7 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/music"
-short_description = u"Asterisk4UCS-Management: Warteschlangenmusik"
+short_description = u"Asterisk: Warteschlangenmusik"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
