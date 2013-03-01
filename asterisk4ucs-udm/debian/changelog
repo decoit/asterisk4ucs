@@ -1,3 +1,9 @@
+asterisk4ucs-udm (0.6.22) unstable; urgency=low
+
+  * Bugfix 30583: Error in schema file on backup
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Sat, 26 Jan 2013 00:57:05 +0100
+
 asterisk4ucs-udm (0.6.21) unstable; urgency=low
 
   * Fehlermeldungen wurde angepasst!
