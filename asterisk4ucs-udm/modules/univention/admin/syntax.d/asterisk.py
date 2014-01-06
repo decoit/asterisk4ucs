@@ -25,6 +25,7 @@ class ast4ucsExtmodeSyntax(select):
 	]
 
 class ast4ucsDurationSyntax(integer):
+	size = 'One'
 	name = "ast4ucsDurationSyntax"
 
 	@classmethod
