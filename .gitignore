@@ -7,3 +7,6 @@
 *.deb
 *.changes
 
+*.mo
+*.po
+
