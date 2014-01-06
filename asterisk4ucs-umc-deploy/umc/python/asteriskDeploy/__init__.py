@@ -206,7 +206,7 @@ def deployConfigs(log, server, configs):
 	scptargetLdapconf = "%s:/etc/asterisk4ucs.ldapconfig" % (sshtarget)
 	scptargetConfig = "%s:%s/ucs_autogen" % (sshtarget, server["sshpath"])
 	scptargetAgi = "%s:%s/" % (sshtarget, server["sshagipath"])
-	sshcmd = "%s -rx 'core reload'" % server["sshcmd"]
+	sshcmd = "%s -rx 'reload'" % server["sshcmd"]
 
 	tmpdirConfig = tempfile.mkdtemp()
 	tmpdirAgi = tempfile.mkdtemp()
