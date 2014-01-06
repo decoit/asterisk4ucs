@@ -28,3 +28,5 @@ umc_policy_append "default-umc-all" "asteriskDeploy-all"
 
 joinscript_save_current_version
 
+exit 0
+
