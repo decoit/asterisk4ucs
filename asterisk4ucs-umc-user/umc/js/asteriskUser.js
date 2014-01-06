@@ -291,7 +291,7 @@ function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,Expandin
                   dialog.alert("Es wurde kein Asterisk-Server angelegt!");
                   this.standby(true);
                }else {
-                  setValues(data.result);
+                  this.setValues(data.result);
                }
             }),
             lang.hitch(this, function () {
