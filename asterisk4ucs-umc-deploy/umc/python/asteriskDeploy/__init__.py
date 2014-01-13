@@ -128,6 +128,8 @@ def getLog(servername):
 	filename = "/var/log/univention/asteriskDeploy-%s.log" % servername
 	try:
 		return open(filename).read()
+	except FileNotFoundError, e:
+		return "(Für diesen Server gibt es noch kein Deployment-Log)"
 	except IOError, e:
 		return "[Error: %s]" % str(e)
 
