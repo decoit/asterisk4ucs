@@ -320,11 +320,11 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 	for dn in phoneUser.get("phones", []):
 		phone = sipPhone.object(co, lo, extenPhone.position, dn,
 				extenPhone.superordinate)
+		hints.append("SIP/%s" % phone["extension"])
 		if phone.get("forwarding"):
 			channels.append("Local/%s" % phone["forwarding"])
 		else:
 			channels.append("SIP/%s" % phone["extension"])
-			hints.append("SIP/%s" % phone["extension"])
 
 	res = []
 
