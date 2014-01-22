@@ -84,11 +84,9 @@ def genSipconfEntry(co, lo, phone):
 		group = phoneGroup.object(co, lo, None, group).info
 		pickupgroups.append(group["id"])
 	
-	res  = "[%s]\n" % (phone["extension"])
-	res += "type=friend\n"
-	res += "host=dynamic\n"
-	res += "subscribecontext=default\n"
-	res += "call-limit=10\n"
+	res  = "[%s](template-%s)\n" % (
+			phone["extension"],
+			phone.get("profile", "default"))
 	res += "secret=%s\n" % (phone["password"])
 
 	if phoneUser.get("extmode") == "normal":
@@ -131,6 +129,12 @@ def genSipconf(co, lo, srv):
 	conf += "notifyhold = yes\n"
 	conf += "limitonpeers = yes\n"
 	conf += "\n"
+	conf += "[template-default](!)\n"
+	conf += "type=friend\n"
+	conf += "host=dynamic\n"
+	conf += "subscribecontext=default\n"
+	conf += "call-limit=10\n"
+	conf += "\n"
 
 	conf += "\n\n; ===== Phones =====\n\n"
 	for phone in sipPhone.lookup(co, lo, False):
@@ -142,7 +146,7 @@ def genSipconf(co, lo, srv):
 				traceback.format_exc()[:-1] )
 		conf += "\n"
 
-	conf += "\n\n; ===== Faxes =====\n\n"
+	conf += "\n\n; ===== Fax machines =====\n\n"
 	for phone in fax.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (phone.dn)
 		try:
