@@ -63,7 +63,7 @@ layout = [
 		[ "sshuser", "sshhost" ],
 		[ "sshpath", "sshmohpath" ],
 		[ "sshagipath", "sshcmd" ],
-	], advanced=True),
+	]),
 	Tab('Namensauflösung', 'Namensauflösung für Anrufer', layout = [
 		[ "agi-user", "agi-password" ],
 	], advanced=True),
