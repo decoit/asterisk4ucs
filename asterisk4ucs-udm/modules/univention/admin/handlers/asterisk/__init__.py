@@ -190,7 +190,7 @@ def genVoicemailconf(co, lo, srv):
 	conf += "[general]\n"
 	conf += "maxsecs=%s\n" % (srv.info["mailboxMaxlength"])
 	conf += "emailsubject=%s\n" % (srv.info["mailboxEmailsubject"])
-	conf += "emailbody=%s\n" % (srv.info["mailboxEmailbody"])
+	conf += "emailbody=%s\n" % (srv.info["mailboxEmailbody"].replace("\n","\\n"))
 	conf += "emaildateformat=%s\n" % (srv.info["mailboxEmaildateformat"])
 	conf += "mailcommand=%s\n" % (srv.info["mailboxMailcommand"])
 	if "1" in srv.info["mailboxAttach"]:
