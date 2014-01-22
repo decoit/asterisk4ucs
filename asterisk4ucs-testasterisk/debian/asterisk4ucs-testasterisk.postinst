@@ -1,0 +1,64 @@
+#!/bin/sh
+
+set -e
+
+#DEBHELPER#
+
+. /usr/share/univention-lib/all.sh
+
+mkdir -p /root/.ssh
+
+# create ssh-key
+echo create ssh-key...
+[ ! -e /root/.ssh/id_rsa ] && ssh-keygen -t rsa -f /root/.ssh/id_rsa </dev/null
+
+# copy ssh-key
+echo copy ssh-key...
+cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+
+# known hosts
+echo creating known_hosts entry...
+cut -d\  -f-2 /etc/ssh/ssh_host_*_key.pub | sed 's/^/localhost /' >> /root/.ssh/known_hosts
+
+# create udm-object for testserver
+echo create udm object for Testserver...
+udm asterisk/server create \
+	--ignore_exists \
+	--position "cn=asterisk,$ldap_base" \
+	--set commonName="Lokaler Testserver" \
+	--set sshuser="root" \
+	--set sshhost="localhost" \
+	--set sshpath="/etc/asterisk" \
+	--set sshmohpath="/var/lib/asterisk/moh/asterisk4ucs" \
+	--set sshagipath="/var/lib/asterisk/agi/asterisk4ucs" \
+	--set sshcmd="asterisk"
+
+# backup old asterisk config
+echo backup old asterisk config...
+if [ ! -e /etc/asterisk/oldconfig-asterisk4ucs ]; then
+	cd /etc
+	mv -n asterisk asterisk.tmp-ast4ucs
+	mkdir asterisk
+	mv asterisk.tmp-ast4ucs asterisk/oldconfig-asterisk4ucs
+fi
+
+# create asterisk config
+echo create new asterisk config...
+cd /etc/asterisk
+cp -n /usr/lib/asterisk4ucs/astconfigs/* .
+
+# create ucs_autogen directory and empty files
+echo create directory for generated configuration...
+cd /etc/asterisk
+[ ! -e ucs_autogen ] && mkdir ucs_autogen
+cd ucs_autogen
+touch sip.conf voicemail.conf extensions.conf musiconhold.conf queues.conf
+
+# create agi folder
+echo create folder for agi scripts...
+mkdir -p /var/lib/asterisk/agi/asterisk4ucs
+
+# create music folder
+echo create folder for music on hold...
+mkdir -p /var/lib/asterisk/moh/asterisk4ucs
+
