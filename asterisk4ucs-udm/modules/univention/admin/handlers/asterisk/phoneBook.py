@@ -39,7 +39,7 @@ layout = [
 property_descriptions = {
 	"commonName": univention.admin.property(
 		short_description="Name",
-		syntax=univention.admin.syntax.string,
+		syntax=univention.admin.syntax.string_numbers_letters_dots,
 		identifies=True,
 		required=True
 	),
