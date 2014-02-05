@@ -62,3 +62,6 @@ mkdir -p /var/lib/asterisk/agi/asterisk4ucs
 echo create folder for music on hold...
 mkdir -p /var/lib/asterisk/moh/asterisk4ucs
 
+echo restarting firewall...
+service univention-firewall restart
+
