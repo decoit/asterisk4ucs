@@ -19,6 +19,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import univention.admin.filter
 import univention.admin.handlers
+import univention.admin.uexceptions
 from univention.admin.handlers import asterisk
 import univention.admin.syntax
 from univention.admin.layout import Tab
@@ -41,6 +42,9 @@ usewizard = 1
 #	format = "%(asctime)s\t%(levelname)s\t%(message)s",
 #	datefmt = "%d.%m.%Y %H:%M:%S"
 #	)
+
+class upstreamBug34040Exception(univention.admin.uexceptions.base):
+	message = u'Leider kann zur Zeit nicht mehr als ein Asterisk-Server angelegt werden, da <a href="http://forge.univention.org/bugzilla/show_bug.cgi?id=34040">ein Univention-Bug</a> dies verhindert.'
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
@@ -321,6 +325,10 @@ class object(univention.admin.handlers.simpleLdap):
 		self.saveCheckboxes()
 
 	def _ldap_pre_create(self):
+		# check for more than one asterisk-server
+		if lookup(self.co, self.lo, None):
+			raise upstreamBug34040Exception
+
 		self.dn = '%s=%s,%s' % (
 			mapping.mapName('commonName'),
 			mapping.mapValue('commonName', self.info['commonName']),
