@@ -10,7 +10,7 @@ mkdir -p /root/.ssh
 
 # create ssh-key
 echo create ssh-key...
-[ ! -e /root/.ssh/id_rsa ] && ssh-keygen -t rsa -f /root/.ssh/id_rsa </dev/null
+[ ! -e /root/.ssh/id_rsa ] && ssh-keygen -t rsa -f /root/.ssh/id_rsa -N ''
 
 # copy ssh-key
 echo copy ssh-key...
