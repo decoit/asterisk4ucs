@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+set -u
+
+list="$1"
+
+if grep "'[^']*'[^']*'" "$list"; then
+	echo "list has unexpected format"
+	exit 1
+fi
+
+grep '/unmaintained/' "$list" > "${list}.filtered"
+
+mkdir -p "${list}_deps"
+
+script="${list}.bash"
+echo "#!/bin/bash" > "$script"
+echo "set -e" >> "$script"
+echo "set -u" >> "$script"
+sed "s/^\('[^']*'\) \([^ ]*\) .*/wget -cO ${list}_deps\/\2 \1/" "${list}.filtered" >> "$script"
+echo "md5sum -c ${list}.md5sums" >> "$script"
+
+sed "s/^'[^']*' \([^ ]*\) [0-9][0-9]* MD5Sum:\([a-f0-9]*\)$/\2 *${list}_deps\/\1/" "${list}.filtered" > "${list}.md5sums"
+
+bash "$script"
+
