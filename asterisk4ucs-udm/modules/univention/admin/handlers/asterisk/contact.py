@@ -161,14 +161,6 @@ class object(AsteriskBase):
 
 		self.info["commonName"] = cn
 
-	def _ldap_dn(self):
-		return '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			re.sub(r"[,;+\\]", "", mapping.mapValue('commonName',  # why do you have re.sub() here? it looks like to prevent DN syntax errors. if so, you can remove this method as they are correctly escaped now
-					self.info['commonName'])),
-			self.position.getDn()
-		)
-
 	def _ldap_addlist(self):
 		return [('objectClass', ['phonebookContact' ]),
 				('ast4ucsPbchildPhonebook', self.superordinate.dn)]
