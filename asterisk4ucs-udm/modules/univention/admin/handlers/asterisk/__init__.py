@@ -20,12 +20,9 @@ from univention.management.console.log import MODULE
 import univention.config_registry
 import univention.admin.filter
 import univention.admin.modules
+import univention.admin.handlers
 import traceback
 import re
-import shutil
-import time
-import zlib
-import logging
 
 #logfile = "/var/log/univention/asteriskMusicPython.log"
 ucr = univention.config_registry.ConfigRegistry()
@@ -575,3 +572,68 @@ def reverseFieldsSave(self):
 			obj.info.setdefault(foreignField, []).append(self.dn)
 			obj.modify()
 
+
+class AsteriskBase(univention.admin.handlers.simpleLdap):
+
+	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
+		self.co = co
+		self.lo = lo
+		self.dn = dn
+		self.position = position
+		self.superordinate = superordinate
+		self.oldattr = attributes or {}
+		self.openSuperordinate()
+		super(AsteriskBase, self).__init__(co, lo, position, dn, self.superordinate, attributes)
+		self.open()  # for backwards compatibility
+
+	def _validate_superordinate(self):
+		try:
+			super(AsteriskBase, self)._validate_superordinate()
+		except univention.admin.uexceptions.insufficientInformation:
+			pass
+
+	def ready(self):
+		try:
+			return super(AsteriskBase, self).ready()
+		except univention.admin.uexceptions.insufficientInformation as exc:
+			# FIXME: UDM requires objects to be underneath of its superordinate, this is not the case in these modules
+			if 'position' in str(exc) and 'subtree' in str(exc):
+				return True
+			raise
+
+	def openSuperordinate(self):
+		"""Wird von __init__ (siehe oben) aufgerufen.
+		Falls das Superordinate-Object dieses Objects nicht bereits
+		bekannt ist (weil es als Argument an __init__ übergeben wurde),
+		versucht diese Funktion das Superordinate aus dem LDAP
+		auszulesen, zu öffnen, und in self.superordinate zu
+		referenzieren.
+
+		Diese Funktionalität erleichtert es extrem, untergeordnete
+		Objekte zu modifizieren und wird von den UMC-Modulen
+		(insbesondere dem Musikupload) oft genutzt. Die von
+		Univention definierten Module haben diese Funktion nicht.
+		(Um diese modifizieren zu können muss man also von Hand erst
+		das übergeordnete Objekt öffnen, und dann dieses beim
+		Aufruf von __init__ übergeben)"""
+		if self.superordinate:
+			return
+
+		serverdn = self.oldattr.get("ast4ucsSrvchildServer") or self.lo.getAttr(self.dn, "ast4ucsSrvchildServer")
+
+		univention.admin.modules.update()
+		servermod = univention.admin.modules.get(univention.admin.modules.superordinate_names(self.module)[0])
+		if self.position:
+			# FIXME: init requires self.position to be set, otherwise it crashes. There are some calls (e.g. if this object doesn't exists yet?) where position is None.
+			univention.admin.modules.init(self.lo, self.position, servermod)
+		if serverdn:
+			serverdn = serverdn[0]
+			self.superordinate = servermod.object(self.co, self.lo, self.position, serverdn)
+			self.superordinate.open()
+		else:
+			# there must only be one asterisk/server object, so we can use lookup here
+			try:
+				self.superordinate = servermod.lookup(self.co, self.lo, '')[0]
+				self.superordinate.open()
+			except IndexError:
+				pass

@@ -20,7 +20,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import univention.admin.filter
 import univention.admin.handlers
 from univention.admin.handlers.asterisk import \
-	reverseFieldsLoad, reverseFieldsSave
+	reverseFieldsLoad, reverseFieldsSave, AsteriskBase
 import univention.admin.syntax
 from univention.admin.layout import Tab
 
@@ -78,7 +78,7 @@ mapping.register("commonName", "cn",
 mapping.register("id", "ast4ucsPhonegroupId",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap):
+class object(AsteriskBase):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
@@ -87,39 +87,10 @@ class object(univention.admin.handlers.simpleLdap):
 			("pickupphones", "asterisk/sipPhone", "pickupgroups"),
 			("callphones", "asterisk/sipPhone", "callgroups"),
 		]
-
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-		self.openSuperordinate()
-		if not self.superordinate:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'superordinate object not present'
-		if not dn and not position:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'neither DN nor position present'
-
-	def openSuperordinate(self):
-		if self.superordinate:
-			return
-
-		self.open()
-		serverdn = self.oldattr.get("ast4ucsSrvchildServer")
-		if not serverdn:
-			return
-
-		if serverdn.__iter__:
-			serverdn = serverdn[0]
-
-		univention.admin.modules.update()
-		servermod = univention.admin.modules.get("asterisk/server")
-		univention.admin.modules.init(self.lo, self.position, servermod)
-		self.superordinate = servermod.object(self.co, self.lo,
-				self.position, serverdn)
-		self.superordinate.open()
+		super(object, self).__init__(self, co, lo, position, dn, superordinate)
 
 	def open(self):
-		univention.admin.handlers.simpleLdap.open(self)
+		super(object, self).open(self)
 		reverseFieldsLoad(self)
 		self.save()
 
@@ -128,11 +99,11 @@ class object(univention.admin.handlers.simpleLdap):
 		reverseFieldsSave(self)
 	
 	def _ldap_pre_modify(self):
-		super(object, self)_ldap_pre_modify()
+		super(object, self)._ldap_pre_modify()
 		reverseFieldsSave(self)
 	
 	def _ldap_pre_remove(self):
-		super(object, self)_ldap_pre_remove()
+		super(object, self)._ldap_pre_remove()
 		self.open()
 		self.info = {}
 		reverseFieldsSave(self)

@@ -22,6 +22,8 @@ import univention.admin.handlers
 import univention.admin.syntax
 from univention.admin.layout import Tab
 
+from univention.admin.handlers.asterisk import AsteriskBase
+
 module = "asterisk/agiscript"
 short_description = u"Asterisk4UCS-Management: AGI-Script"
 operations = ['add', 'edit', 'remove', 'search', 'move']
@@ -66,40 +68,8 @@ mapping.register("priority", "ast4ucsAgiscriptPriority",
 mapping.register("content", "ast4ucsAgiscriptContent",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap):
+class object(AsteriskBase):
 	module=module
-
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-		self.openSuperordinate()
-		if not self.superordinate:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'superordinate object not present'
-		if not dn and not position:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'neither DN nor position present'
-
-	def openSuperordinate(self):
-		if self.superordinate:
-			return
-
-		self.open()
-		serverdn = self.oldattr.get("ast4ucsSrvchildServer")
-		if not serverdn:
-			return
-
-		if serverdn.__iter__:
-			serverdn = serverdn[0]
-
-		univention.admin.modules.update()
-		servermod = univention.admin.modules.get("asterisk/server")
-		univention.admin.modules.init(self.lo, self.position, servermod)
-		self.superordinate = servermod.object(self.co, self.lo,
-				self.position, serverdn)
-		self.superordinate.open()
 
 	def getContent(self):
 		return self.get("content", "").decode("base64")

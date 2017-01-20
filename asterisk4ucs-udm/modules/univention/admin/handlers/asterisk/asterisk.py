@@ -76,18 +76,15 @@ def superordinatecmp(x, y):
 		return 1
 	return cmp(x, y)
 
-wizardsuperordinates = sorted(modulesWithSuperordinates.keys(), cmp=superordinatecmp)
-wizardtypesforsuper = {}
-for key, value in modulesWithSuperordinates.items():
-	wizardtypesforsuper[key] = [x.module for x in value]
-
 options = {}
 layout = []
 property_descriptions = {}
 mapping = univention.admin.mapping.mapping()
 
+
 class object(univention.admin.handlers.simpleLdap):
 	module=module
+
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=0, required=0, timeout=-1, sizelimit=0):
@@ -100,8 +97,13 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 			continue
 		ret += module.lookup(co, lo, filter_s, base, superordinate,
 			scope, unique, required, timeout, sizelimit)
+	if not superordinate:
+		result = []
+		for superord in ret:
+			result.extend(lookup(co, lo, filter_s, base, superord, scope=scope, unique=unique, required=required, timeout=timeout, sizelimit=sizelimit))
+		ret.extend(result)
 	return ret
+
 
 def identify(dn, attr, canonical=0):
 	pass
-
