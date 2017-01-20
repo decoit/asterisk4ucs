@@ -28,7 +28,6 @@ operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 childs = 1
-usewizard = 1
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
@@ -51,34 +50,6 @@ mapping.register("commonName", "cn",
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
-
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-	def exists(self):
-		return self._exists
-
-	def open(self):
-		univention.admin.handlers.simpleLdap.open(self)
-		self.save()
-
-	def _ldap_pre_create(self):
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			mapping.mapValue('commonName', self.info['commonName']),
-			self.position.getDn()
-		)
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['ast4ucsPhonebook'])]
