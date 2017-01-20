@@ -15,13 +15,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import univention.management.console.modules
-from univention.management.console.protocol.definitions import SUCCESS
+from univention.management.console.base import Base
 from univention.management.console.log import MODULE
 
 import univention.config_registry
 import univention.admin.uldap
-import univention.admin.config
 import univention.admin.modules
 univention.admin.modules.update()
 
@@ -30,7 +28,8 @@ import univention.admin.handlers.asterisk.sipPhone
 import univention.admin.handlers.asterisk.mailbox
 import univention.admin.handlers.asterisk.server
 
-class Instance( univention.management.console.modules.Base ):
+class Instance(Base):
+
 	def load( self, request ):
 		user, mailbox = getUserAndMailbox(self._user_dn)
 		if mailbox == "KeinServer" :
@@ -52,7 +51,6 @@ class Instance( univention.management.console.modules.Base ):
 					"mailbox/email": mailbox["email"],
 				})
 
-			request.status = SUCCESS
 			self.finished( request.id, result )
 
 	def save( self, request ):
@@ -76,7 +74,6 @@ class Instance( univention.management.console.modules.Base ):
 			mailbox["email"] = request.options["mailbox/email"]
 			mailbox.modify()
 
-		request.status = SUCCESS
 		self.finished( request.id, "success",
 			"Speichern war erfolgreich!" )
 
@@ -99,21 +96,11 @@ class Instance( univention.management.console.modules.Base ):
 				"name": phone["extension"],
 			})
 
-		request.status = SUCCESS
 		self.finished(request.id, result)
 
 def getCoLo():
-	# create ldap connection
-	ucr = univention.config_registry.ConfigRegistry()
-	ucr.load()
-	ldap_master = ucr.get('ldap/master', '')
-	ldap_base = ucr.get('ldap/base', '')
-	binddn = ','.join(('cn=admin', ldap_base))
-	bindpw = open('/etc/ldap.secret','r').read().strip()
-	lo = univention.admin.uldap.access(host=ldap_master, base=ldap_base,
-		binddn=binddn, bindpw=bindpw, start_tls=2)
-
-	co = univention.admin.config.config()
+	lo = univention.admin.uldap.getAdminConnection()[0]
+	co = None
 	return co, lo
 
 def getUser(co, lo, dn):
@@ -162,7 +149,7 @@ def getUserAndMailbox(userdn):
 			checkServers.append({
 				"label": obj["commonName"],
 			})
-	
+
 	MODULE.error('User: server: %s' % len(checkServers))
 	if len(checkServers) >0 :
 		co, lo = getCoLo()
@@ -179,13 +166,11 @@ def getUserAndMailbox(userdn):
 		mailbox = "KeinServer"
 		user = "KeinServer"
 		return user, mailbox
-		
+
 
 def getCoLoPos():
-	co = univention.admin.config.config()
-
+	co = None
 	lo, pos = univention.admin.uldap.getAdminConnection()
-
 	return co, lo, pos
 
 def changePhoneOrder(userdn, phonedn, change):

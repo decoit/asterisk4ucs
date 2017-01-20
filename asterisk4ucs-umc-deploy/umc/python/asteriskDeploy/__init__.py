@@ -15,13 +15,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import univention.management.console.modules
-from univention.management.console.protocol.definitions import SUCCESS
+from univention.management.console.base import Base
 from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
 
-import univention.config_registry
 import univention.admin.uldap
-import univention.admin.config
 
 import univention.admin.modules
 univention.admin.modules.update()
@@ -38,10 +36,8 @@ import shutil
 import tempfile
 import subprocess
 
-ucr = univention.config_registry.ConfigRegistry()
-ucr.load()
+class Instance(Base):
 
-class Instance(univention.management.console.modules.Base):
 	def queryServers(self, request):
 		servers = getServers()
 		result = []
@@ -61,7 +57,6 @@ class Instance(univention.management.console.modules.Base):
 		self.finished(request.id, True)
 
 	def create(self, request):
-		
 		server = getServer(request.options["server"])
 		MODULE.error('### request: %s' % request)
 		MODULE.error('### self: %s' % self)
@@ -95,8 +90,7 @@ class Instance(univention.management.console.modules.Base):
 
 
 def getCoLoPos():
-	co = univention.admin.config.config()
-
+	co = None
 	lo, pos = univention.admin.uldap.getAdminConnection()
 
 	return co, lo, pos
