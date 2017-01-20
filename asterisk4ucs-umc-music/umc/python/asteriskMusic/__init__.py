@@ -26,6 +26,7 @@ import univention.admin.handlers.asterisk.server
 import univention.admin.handlers.asterisk.music
 
 import re
+import pipes
 import base64
 import shutil
 import tempfile
@@ -245,6 +246,9 @@ def uploadMusic(server, moh, data, stem, filename):
 
 	return True
 
+def escaped_command_string(x):
+	return ' '.join(map(pipes.quote, x))
+
 def delete(moh):
 	server = moh.superordinate
 	log = open(logFilename, "w", 0)
@@ -254,9 +258,7 @@ def delete(moh):
 	sshcmd = server.info["sshcmd"]
 	sshmohpath = server.info.get("sshmohpath", "/opt/asterisk4ucs/moh")
 	mohpath = "%s/%s" % (sshmohpath, mohname)
-	remotecmd = "rm -r '%s' ; %s -rx 'moh reload'" % (
-			mohpath.replace("'", r"'\''"), # escaping is fun!
-			sshcmd )
+	remotecmd = ';'.join([escaped_command_string(['rm', '-r', mohpath]), escaped_command_string([sshcmd, '-rx', 'moh reload'])])
 
 	subprocess.check_call(["ssh", "-oBatchMode=yes", sshtarget, remotecmd],
 			stdout=log, stderr=log)
@@ -269,10 +271,10 @@ def deleteSong(moh, song):
 	sshcmd = server.info["sshcmd"]
 	sshmohpath = server.info.get("sshmohpath", "/opt/asterisk4ucs/moh")
 	mohpath = "%s/%s/%s" % (sshmohpath, mohname, song)
-	bashcmd = "rm '%s'.*" % mohpath.replace("'", r"'\''") # escaping is fun!
-	remotecmd = "bash -c '%s' ; %s -rx 'moh reload'" % (
-			bashcmd.replace("'", r"'\''"), # nested escaping is even more fun!
-			sshcmd )
+	bashcmd = "rm %s.*" % pipes.quote(mohpath)
+	remotecmd = "bash -c %s; %s -rx 'moh reload'" % (
+			pipes.quote(bashcmd)
+			pipes.quote(sshcmd))
 
 	subprocess.check_call(["ssh", "-oBatchMode=yes", sshtarget, remotecmd],
 			stdout=log, stderr=log)
