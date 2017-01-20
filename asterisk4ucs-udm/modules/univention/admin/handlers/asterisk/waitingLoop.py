@@ -118,16 +118,6 @@ class object(univention.admin.handlers.simpleLdap):
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
 			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-
 		self.reverseFields = [
 			("members", "asterisk/sipPhone", "waitingloops"),
 		]
@@ -162,26 +152,21 @@ class object(univention.admin.handlers.simpleLdap):
 				self.position, serverdn)
 		self.superordinate.open()
 
-	def exists(self):
-		return self._exists
-
 	def open(self):
 		univention.admin.handlers.simpleLdap.open(self)
 		reverseFieldsLoad(self)
 		self.save()
 
 	def _ldap_pre_create(self):
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('extension'),
-			mapping.mapValue('extension', self.info['extension']),
-			self.position.getDn()
-		)
+		super(object, self)._ldap_pre_create()
 		reverseFieldsSave(self)
 	
 	def _ldap_pre_modify(self):
+		super(object, self)._ldap_pre_modify()
 		reverseFieldsSave(self)
 	
 	def _ldap_pre_remove(self):
+		super(object, self)._ldap_pre_remove()
 		self.open()
 		self.info = {}
 		reverseFieldsSave(self)

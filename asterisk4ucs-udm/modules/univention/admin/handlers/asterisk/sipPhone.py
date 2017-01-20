@@ -28,7 +28,6 @@ operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 childs = 0
-usewizard = 1
 superordinate = "asterisk/server"
 
 layout = [
@@ -147,16 +146,6 @@ class object(univention.admin.handlers.simpleLdap):
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
 			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
 			position, dn, superordinate)
 
@@ -186,20 +175,6 @@ class object(univention.admin.handlers.simpleLdap):
 		self.superordinate = servermod.object(self.co, self.lo,
 				self.position, serverdn)
 		self.superordinate.open()
-
-	def exists(self):
-		return self._exists
-
-	def open(self):
-		univention.admin.handlers.simpleLdap.open(self)
-		self.save()
-
-	def _ldap_pre_create(self):
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('extension'),
-			mapping.mapValue('extension', self.info['extension']),
-			self.position.getDn()
-		)
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['ast4ucsPhone']),
