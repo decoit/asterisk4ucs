@@ -34,7 +34,6 @@ operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 childs = 1
-usewizard = 1
 
 #logging.basicConfig(filename=logfile,
 	#level=logging.INFO,
@@ -284,26 +283,8 @@ mapping.register("agi-password", "ast4ucsServerAgipassword",
 class object(univention.admin.handlers.simpleLdap):
 	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-	def exists(self):
-		return self._exists
-
 	def open(self):
 		univention.admin.handlers.simpleLdap.open(self)
-		self.save()
 
 		for areaCode in ["+", "00"]:
 			if not areaCode in self.info.get("blockedAreaCodes", []):
@@ -312,6 +293,7 @@ class object(univention.admin.handlers.simpleLdap):
 			self.info["blockInternational"] = "1"
 			for areaCode in ["+", "00"]:
 				self.info["blockedAreaCodes"].remove(areaCode)
+		# it looks like self.save() is missing here because if self.info is modified and save is not called the difference is not detected!
 
 	def saveCheckboxes(self):
 		if "1" in self.info.get("blockInternational",[]):
@@ -322,21 +304,19 @@ class object(univention.admin.handlers.simpleLdap):
 				self.info["blockedAreaCodes"]))
 
 	def _ldap_pre_modify(self):
+		super(object, self)._ldap_pre_modify()
 		self.saveCheckboxes()
 
 	def _ldap_pre_create(self):
+		super(object, self)._ldap_pre_create()
 		# check for more than one asterisk-server
 		if lookup(self.co, self.lo, None):
-			raise upstreamBug34040Exception
+			raise upstreamBug34040Exception()
 
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			mapping.mapValue('commonName', self.info['commonName']),
-			self.position.getDn()
-		)
 		self.saveCheckboxes()
 
 	def _ldap_post_create(self):
+		super(object, self)._ldap_post_create()
 		# this mess just creates the "default" asterisk/music
 		# (dn: "cn=default," + self.dn)
 		music = univention.admin.modules.get("asterisk/music")

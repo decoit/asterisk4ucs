@@ -28,7 +28,6 @@ operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 childs = 0
-usewizard = 1
 superordinate = "asterisk/server"
 
 # Definiert das Layout der Eingabefelder in der Weboberfläche
@@ -83,16 +82,6 @@ class object(univention.admin.handlers.simpleLdap):
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
 			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
 			position, dn, superordinate)
 
@@ -138,17 +127,6 @@ class object(univention.admin.handlers.simpleLdap):
 				self.position, serverdn)
 		self.superordinate.open()
 
-	def exists(self):
-		"""Wurde aus dem Beispiel gecopypasted und funktioniert."""
-
-		return self._exists
-
-	def open(self):
-		"""Wurde aus dem Beispiel gecopypasted und funktioniert."""
-
-		univention.admin.handlers.simpleLdap.open(self)
-		self.save()
-
 	def _ldap_pre_ready(self):
 		"""Wird vor der Syntaxprüfung der Eingabefelder aufgerufen und
 		setzt das (auf der Weboberfläche nicht sichtbare) Feld
@@ -156,18 +134,9 @@ class object(univention.admin.handlers.simpleLdap):
 		Objekts. Dieser Hack ist notwendig, weil UMC/UDM grundsätzlich
 		das Attribut mit identifies=True als "Name" in der Tabelle
 		der Suchergebnisse verwendet."""
+		super(object, self)._ldap_pre_ready()
 
 		self['commonName'] = "mailbox " + self["id"]
-
-	def _ldap_pre_create(self):
-		"""Wird von der Methode create() aufgerufen und definiert
-		den Distinguished Name des LDAP-Objekts"""
-
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			mapping.mapValue('commonName', self.info['commonName']),
-			self.position.getDn()
-		)
 
 	def _ldap_addlist(self):
 		"""Wird kurz vor Schreiben des LDAP-Objects aufgerufen und
