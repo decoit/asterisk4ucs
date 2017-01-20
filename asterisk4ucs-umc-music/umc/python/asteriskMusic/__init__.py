@@ -14,13 +14,10 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
-import univention.management.console.modules
-from univention.management.console.protocol.definitions import SUCCESS
+from univention.management.console.base import Base
 from univention.management.console.log import MODULE
 
-import univention.config_registry
 import univention.admin.uldap
-import univention.admin.config
 
 import univention.admin.modules
 univention.admin.modules.update()
@@ -38,10 +35,10 @@ import logging
 logfile = "/var/log/univention/asteriskMusicPython.log"
 logFilename = "/var/log/univention/asteriskMusicUpload.log"
 
-class Instance(univention.management.console.modules.Base):
+class Instance(Base):
 	logging.basicConfig(filename=logfile,
 		#level=logging.INFO,
-          level=logging.DEBUG,
+		level=logging.DEBUG,
 		format = "%(asctime)s\t%(levelname)s\t%(message)s",
 		datefmt = "%d.%m.%Y %H:%M:%S"
 		)
@@ -54,7 +51,6 @@ class Instance(univention.management.console.modules.Base):
 				"label": server["commonName"],
 			})
 
-		request.status = SUCCESS
 		self.finished(request.id, result)
 
 	def queryMohs(self, request):
@@ -68,7 +64,6 @@ class Instance(univention.management.console.modules.Base):
 					"label": moh["name"],
 				})
 
-		request.status = SUCCESS
 		self.finished(request.id, result)
 
 	def querySongs(self, request):
@@ -90,7 +85,6 @@ class Instance(univention.management.console.modules.Base):
 				"name": song,
 			})
 
-		request.status = SUCCESS
 		self.finished(request.id, result)
 
 	def create(self, request):
@@ -101,7 +95,6 @@ class Instance(univention.management.console.modules.Base):
 			"newDn": create(server, name),
 		}
 
-		request.status = SUCCESS
 		self.finished(request.id, result)
 
 	def delete(self, request):
@@ -110,7 +103,6 @@ class Instance(univention.management.console.modules.Base):
 		delete(moh)
 		moh.remove()
 
-		request.status = SUCCESS
 		self.finished(request.id, True)
 
 	def upload(self, request):
@@ -143,15 +135,13 @@ class Instance(univention.management.console.modules.Base):
 		if uploadMusic(server, moh, data, stem, filename):
 			moh.info.setdefault("music", []).append(stem)
 			moh.modify()
-			request.status = SUCCESS
 			self.finished(request.id, {"foo":"bar"})
 		else:
 			log = open(logFilename).read()
-			request.status = SUCCESS
 			self.finished(request.id, {"error": log})
 
 def getCoLoPos():
-	co = univention.admin.config.config()
+	co = None
 	#logging.debug('__init__.py: co: %s',co)"""
 	lo, pos = univention.admin.uldap.getAdminConnection()
 	#logging.debug('__init__.py: lo: %s pos: %s',lo, pos)
