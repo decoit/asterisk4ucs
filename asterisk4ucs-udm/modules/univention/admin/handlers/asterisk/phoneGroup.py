@@ -128,11 +128,11 @@ class object(univention.admin.handlers.simpleLdap):
 		reverseFieldsSave(self)
 	
 	def _ldap_pre_modify(self):
-		super(object, self)_ldap_pre_modify()
+		super(object, self)._ldap_pre_modify()
 		reverseFieldsSave(self)
 	
 	def _ldap_pre_remove(self):
-		super(object, self)_ldap_pre_remove()
+		super(object, self)._ldap_pre_remove()
 		self.open()
 		self.info = {}
 		reverseFieldsSave(self)
