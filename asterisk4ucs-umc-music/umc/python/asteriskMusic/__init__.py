@@ -273,7 +273,7 @@ def deleteSong(moh, song):
 	mohpath = "%s/%s/%s" % (sshmohpath, mohname, song)
 	bashcmd = "rm %s.*" % pipes.quote(mohpath)
 	remotecmd = "bash -c %s; %s -rx 'moh reload'" % (
-			pipes.quote(bashcmd)
+			pipes.quote(bashcmd),
 			pipes.quote(sshcmd))
 
 	subprocess.check_call(["ssh", "-oBatchMode=yes", sshtarget, remotecmd],
