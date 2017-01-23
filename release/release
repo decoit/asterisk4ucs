@@ -13,7 +13,7 @@ fi
 ./download dependency-uris
 
 mv dependency-uris_deps/* asterisk4ucs-$version/
-rm -d dependency-uris_deps/
+rm -rf dependency-uris_deps/
 rm dependency-uris.{bash,md5sums,filtered}
 
 tar -cf asterisk4ucs-$version.tar asterisk4ucs-$version/
