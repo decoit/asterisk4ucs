@@ -30,7 +30,7 @@ Auf beiden Systemen ausführen:
 
 	ucr set repository/online/unmaintained=yes
 	apt-get update
-	apt-get --print-uris install asterisk asterisk-config sox libsox-fmt-mp3
+	apt-get --print-uris -y install asterisk asterisk-modules asterisk-config asterisk-voicemail-odbcstorage sox libsox-fmt-base libsox-fmt-mp3 > dependency-uris
 
 Die ausgegebenen URI-Listen werden dann auf der Entwicklungs-VM in beliebiger Reihenfolge nacheinander in die Datei `$repo/release/dependency-uris` kopiert (alten Inhalt löschen).
 
@@ -54,7 +54,7 @@ Nun muss man herausfinden, welche Architektur die VM hat (i386 oder x86_64). Das
 
 Oder auf einem `x86_64`:
 
-	dpkg -i *_amd64.deb *_all.deb
+	dpkg --force-depends -i *_amd64.deb *_all.deb
 
 Nun sollte die Installation ohne Fehler durchlaufen. Danach kann man die App dann testen.
 
