@@ -293,7 +293,8 @@ class object(univention.admin.handlers.simpleLdap):
 			self.info["blockInternational"] = "1"
 			for areaCode in ["+", "00"]:
 				self.info["blockedAreaCodes"].remove(areaCode)
-		# it looks like self.save() is missing here because if self.info is modified and save is not called the difference is not detected!
+
+		self.save()
 
 	def saveCheckboxes(self):
 		if "1" in self.info.get("blockInternational",[]):

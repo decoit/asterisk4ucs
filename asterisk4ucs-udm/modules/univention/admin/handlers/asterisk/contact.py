@@ -24,6 +24,7 @@ import univention.admin.handlers
 import univention.admin.syntax
 import univention.admin.uexceptions
 from univention.admin.layout import Tab
+from univention.admin.handlers.asterisk import AsteriskBase
 
 module = "asterisk/contact"
 short_description = u"Asterisk4UCS-Management: Kontakt"
@@ -103,33 +104,29 @@ class noNameError(univention.admin.uexceptions.insufficientInformation):
 	message = (u"Eines der Felder Vorname, Nachname und Organisation "
 			u"muss ausgefüllt sein.")
 
-class object(univention.admin.handlers.simpleLdap):
+class object(AsteriskBase):
 	module=module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None,
 			attributes=[]):
+		self.co = co
+		self.lo = lo
+		self.dn = dn
+		self.position = position
+		self.superordinate = superordinate
+		self.oldattr = attributes or {}
+		self.openSuperordinate()
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
 			position, dn, superordinate)
-
-		self.openSuperordinate()
-		if not self.superordinate:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'superordinate object not present'
-		if not dn and not position:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'neither DN nor position present'
 
 	def openSuperordinate(self):
 		if self.superordinate:
 			return
 
-		self.open()
-		pbdn = self.oldattr.get("ast4ucsPbchildPhonebook")
+		pbdn = self.oldattr.get("ast4ucsPbchildPhonebook") or self.lo.getAttr(self.dn, "ast4ucsPbchildPhonebook")
 		if not pbdn:
 			return
-
-		if pbdn.__iter__:
-			pbdn = pbdn[0]
+		pbdn = pbdn[0]
 
 		univention.admin.modules.update()
 		pbmod = univention.admin.modules.get("asterisk/phoneBook")
@@ -163,14 +160,6 @@ class object(univention.admin.handlers.simpleLdap):
 			raise noNameError
 
 		self.info["commonName"] = cn
-
-	def _ldap_dn(self):
-		return '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			re.sub(r"[,;+\\]", "", mapping.mapValue('commonName',  # why do you have re.sub() here? it looks like to prevent DN syntax errors. if so, you can remove this method as they are correctly escaped now
-					self.info['commonName'])),
-			self.position.getDn()
-		)
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['phonebookContact' ]),
