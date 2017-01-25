@@ -27,7 +27,9 @@ import univention.admin.config
 import univention.admin.uldap
 import univention.admin.modules
 
+
 class PhoneBookWrapper(object):
+
 	"""Erlaubt einfachen Schreibzugriff auf ein Asterisk4UCS-Telefonbuch"""
 
 	def __init__(self, pbdn):
@@ -114,4 +116,3 @@ class PhoneBookWrapper(object):
 
 		contact.create()
 		return contact.dn
-

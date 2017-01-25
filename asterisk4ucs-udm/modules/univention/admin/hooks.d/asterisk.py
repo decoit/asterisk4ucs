@@ -21,16 +21,19 @@ from univention.admin.handlers.users import user
 from univention.admin.filter import escapeForLdapFilter
 from univention.admin import uexceptions
 
+
 class AsteriskUsersUserHook(simpleHook):
-	type='AsteriskUsersUserHook'
+	type = 'AsteriskUsersUserHook'
 
 	class phoneError(uexceptions.valueError):
-		_message="The phone '%s' belongs to user '%s'."
+		_message = "The phone '%s' belongs to user '%s'."
+
 		def __init__(self, *args):
 			self.message = self._message % args
 
 	class mailboxError(uexceptions.valueError):
-		_message="The mailbox '%s' belongs to user '%s'."
+		_message = "The mailbox '%s' belongs to user '%s'."
+
 		def __init__(self, *args):
 			self.message = self._message % args
 
@@ -87,4 +90,3 @@ class AsteriskUsersUserHook(simpleHook):
 
 	def hook_ldap_post_remove(self, module):
 		pass
-

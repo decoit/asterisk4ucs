@@ -40,7 +40,7 @@ module = "asterisk/asterisk"
 short_description = "Asterisk4UCS-Management"
 long_description = ''
 operations = ['search']
-default_containers = [ "cn=asterisk" ]
+default_containers = ["cn=asterisk"]
 
 childs = 0
 virtual = 1
@@ -69,6 +69,7 @@ modulesWithSuperordinates = {
 childmodules = [x.module for x in
 	reduce(operator.add, modulesWithSuperordinates.values())]
 
+
 def superordinatecmp(x, y):
 	if x == "None":
 		return -1
@@ -83,7 +84,7 @@ mapping = univention.admin.mapping.mapping()
 
 
 class object(univention.admin.handlers.simpleLdap):
-	module=module
+	module = module
 
 
 def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',

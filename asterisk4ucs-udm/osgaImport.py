@@ -58,6 +58,7 @@ cur.execute("SELECT * FROM contacts "
 		"WHERE status != 'D' AND acc_read = 'group';")
 contacts = cur.fetchall()
 
+
 def formatNumber(number):
 	if not number:
 		return None
@@ -69,13 +70,13 @@ for contact in contacts:
 	sys.stdout.flush()
 	try:
 		dn = pb.addContact(
-			firstname = contact["vorname"],
-			lastname = contact["nachname"],
-			organisation = contact["firma"],
-			phones = [formatNumber(contact["tel1"]),
+			firstname=contact["vorname"],
+			lastname=contact["nachname"],
+			organisation=contact["firma"],
+			phones=[formatNumber(contact["tel1"]),
 					formatNumber(contact["tel2"])],
-			mobiles = formatNumber(contact["mobil"]),
-			faxes = formatNumber(contact["fax"]),
+			mobiles=formatNumber(contact["mobil"]),
+			faxes=formatNumber(contact["fax"]),
 		)
 		#print "Created %s" % dn
 	except univention.admin.uexceptions.valueInvalidSyntax:
@@ -86,4 +87,3 @@ for contact in contacts:
 				contact["nachname"], contact["id"])
 
 print "Done.          "
-
