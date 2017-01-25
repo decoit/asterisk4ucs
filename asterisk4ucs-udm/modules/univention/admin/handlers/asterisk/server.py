@@ -20,11 +20,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.uexceptions
-from univention.admin.handlers import asterisk
 import univention.admin.syntax
 from univention.admin.layout import Tab
-import time
-import logging
+#import logging
 
 #logfile = "/var/log/univention/asteriskMusicPython.log"
 
@@ -33,10 +31,22 @@ short_description = u"Asterisk4UCS-Management: Asterisk-Server"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
-childs = 1
+childs = False
 
+childmodules = [
+	'asterisk/phoneGroup',
+	'asterisk/waitingLoop',
+	'asterisk/sipPhone',
+	'asterisk/conferenceRoom',
+	'asterisk/phoneType',
+	'asterisk/mailbox',
+	'asterisk/faxGroup',
+	'asterisk/fax',
+	'asterisk/music',
+	'asterisk/agiscript',
+]
 #logging.basicConfig(filename=logfile,
-	#level=logging.INFO,
+#	#level=logging.INFO,
 #     level=logging.DEBUG,
 #	format = "%(asctime)s\t%(levelname)s\t%(message)s",
 #	datefmt = "%d.%m.%Y %H:%M:%S"

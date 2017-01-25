@@ -34,7 +34,6 @@ import univention.admin.handlers.asterisk.fax
 import univention.admin.handlers.asterisk.phoneBook
 import univention.admin.handlers.asterisk.music
 import univention.admin.handlers.asterisk.agiscript
-import operator
 
 module = "asterisk/asterisk"
 short_description = "Asterisk4UCS-Management"
@@ -66,16 +65,8 @@ modulesWithSuperordinates = {
 		univention.admin.handlers.asterisk.contact,
 	]
 }
-childmodules = [x.module for x in
-	reduce(operator.add, modulesWithSuperordinates.values())]
+childmodules = ["asterisk/server", "asterisk/phoneBook"]
 
-
-def superordinatecmp(x, y):
-	if x == "None":
-		return -1
-	elif y == "None":
-		return 1
-	return cmp(x, y)
 
 options = {}
 layout = []
@@ -87,8 +78,7 @@ class object(univention.admin.handlers.simpleLdap):
 	module = module
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=0, required=0, timeout=-1, sizelimit=0):
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=0, required=0, timeout=-1, sizelimit=0):
 	ret = []
 	supi = "None"
 	if superordinate:
@@ -96,13 +86,7 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	for module in modulesWithSuperordinates[supi]:
 		if module == univention.admin.handlers.asterisk.music:
 			continue
-		ret += module.lookup(co, lo, filter_s, base, superordinate,
-			scope, unique, required, timeout, sizelimit)
-	if not superordinate:
-		result = []
-		for superord in ret:
-			result.extend(lookup(co, lo, filter_s, base, superord, scope=scope, unique=unique, required=required, timeout=timeout, sizelimit=sizelimit))
-		ret.extend(result)
+		ret += module.lookup(co, lo, filter_s, base, superordinate, scope, unique, required, timeout, sizelimit)
 	return ret
 
 

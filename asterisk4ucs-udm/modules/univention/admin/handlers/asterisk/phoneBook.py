@@ -27,7 +27,8 @@ short_description = u"Asterisk4UCS-Management: Telefonbuch"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
-childs = 1
+childs = False
+childmodules = ["asterisk/contact"]
 
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[

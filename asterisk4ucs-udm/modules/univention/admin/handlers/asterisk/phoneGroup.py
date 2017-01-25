@@ -29,7 +29,7 @@ short_description = u"Asterisk4UCS-Management: Telefongruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
-childs = 0
+childs = False
 superordinate = "asterisk/server"
 
 layout = [
