@@ -54,7 +54,7 @@ def llist(thingie):
 
 def genSipconfEntry(co, lo, phone):
 	from univention.admin.handlers.users import user
-	import mailbox, phoneGroup
+	from univention.admin.handlers.asterisk import sipPhone, mailbox, phoneGroup
 
 	import univention.admin.modules
 	univention.admin.modules.init(lo, phone.position, user)
@@ -121,7 +121,7 @@ def genSipconfFaxEntry(co, lo, phone):
 
 
 def genSipconf(co, lo, srv):
-	import sipPhone, fax
+	from univention.admin.handlers.asterisk import sipPhone, fax
 
 	conf = "; Automatisch generiert von asterisk4UCS\n"
 	conf += "\n"
@@ -190,7 +190,7 @@ def genVoicemailconfEntry(co, lo, box):
 
 
 def genVoicemailconf(co, lo, srv):
-	import mailbox
+	from univention.admin.handlers.asterisk import mailbox
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
 
@@ -220,7 +220,7 @@ def genVoicemailconf(co, lo, srv):
 
 
 def genQueuesconfEntry(co, lo, queue):
-	import sipPhone
+	from univention.admin.handlers.asterisk import sipPhone
 	members = sipPhone.lookup(co, lo, "(%s=%s)" % (
 		sipPhone.mapping.mapName("waitingloops"), queue.dn))
 	queue = queue.info
@@ -238,7 +238,7 @@ def genQueuesconfEntry(co, lo, queue):
 
 
 def genQueuesconf(co, lo, srv):
-	import waitingLoop
+	from univention.admin.handlers.asterisk import waitingLoop
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
 
@@ -269,7 +269,7 @@ def genMusiconholdconfEntry(co, lo, srv, moh):
 
 
 def genMusiconholdconf(co, lo, srv):
-	import music
+	from univention.admin.handlers.asterisk import music
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
 
@@ -294,7 +294,7 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 				extenPhone["extension"])
 
 	from univention.admin.handlers.users import user
-	import mailbox
+	from univention.admin.handlers.asterisk import sipPhone, mailbox
 
 	import univention.admin.modules
 	univention.admin.modules.init(lo, extenPhone.position, user)
@@ -454,7 +454,7 @@ def genExtQueueEntry(co, lo, agis, queue):
 
 
 def genExtensionsconf(co, lo, srv):
-	import sipPhone, conferenceRoom, waitingLoop
+	from univention.admin.handlers.asterisk import sipPhone, conferenceRoom, waitingLoop, agiscript, fax
 
 	# AGI-Script lookup and sorting
 	agis = []
