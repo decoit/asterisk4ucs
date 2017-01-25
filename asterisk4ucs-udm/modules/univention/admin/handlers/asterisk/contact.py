@@ -17,8 +17,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import re
-
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
@@ -107,20 +105,14 @@ class noNameError(univention.admin.uexceptions.insufficientInformation):
 class object(AsteriskBase):
 	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self.superordinate = superordinate
-		self.oldattr = attributes or {}
-		self.openSuperordinate()
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
+	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
+		if not superordinate and (dn or position):
+			superordinate = univention.admin.objects.get_superordinate(self.module, co, lo, dn or position.getDn())
+		super(object, self).__init__(co, lo, position, dn, superordinate, attributes)
 
 	def openSuperordinate(self):
 		if self.superordinate:
+			self.superordinate.open()
 			return
 
 		pbdn = self.oldattr.get("ast4ucsPbchildPhonebook") or self.lo.getAttr(self.dn, "ast4ucsPbchildPhonebook")
@@ -131,8 +123,7 @@ class object(AsteriskBase):
 		univention.admin.modules.update()
 		pbmod = univention.admin.modules.get("asterisk/phoneBook")
 		univention.admin.modules.init(self.lo, self.position, pbmod)
-		self.superordinate = pbmod.object(self.co, self.lo,
-				self.position, pbdn)
+		self.superordinate = pbmod.object(self.co, self.lo, self.position, pbdn)
 		self.superordinate.open()
 
 	def _ldap_pre_ready(self):

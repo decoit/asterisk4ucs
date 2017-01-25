@@ -116,16 +116,15 @@ mapping.register("delayMusic", "ast4ucsWaitingloopDelaymusic",
 class object(AsteriskBase):
 	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
+	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
 		self.reverseFields = [
 			("members", "asterisk/sipPhone", "waitingloops"),
 		]
 
-		super(object, self).__init__(self, co, lo, position, dn, superordinate)
+		super(object, self).__init__(co, lo, position, dn, superordinate)
 
 	def open(self):
-		super(object, self).open(self)
+		super(object, self).open()
 		reverseFieldsLoad(self)
 		self.save()
 

@@ -81,16 +81,15 @@ mapping.register("id", "ast4ucsPhonegroupId",
 class object(AsteriskBase):
 	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
+	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
 		self.reverseFields = [
 			("pickupphones", "asterisk/sipPhone", "pickupgroups"),
 			("callphones", "asterisk/sipPhone", "callgroups"),
 		]
-		super(object, self).__init__(self, co, lo, position, dn, superordinate)
+		super(object, self).__init__(co, lo, position, dn, superordinate=superordinate, attributes=attributes)
 
 	def open(self):
-		super(object, self).open(self)
+		super(object, self).open()
 		reverseFieldsLoad(self)
 		self.save()
 
