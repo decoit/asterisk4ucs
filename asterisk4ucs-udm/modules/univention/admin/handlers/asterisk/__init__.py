@@ -23,6 +23,7 @@ import univention.admin.modules
 import univention.admin.handlers
 import traceback
 import re
+from ldap.filter import filter_format
 
 #logfile = "/var/log/univention/asteriskMusicPython.log"
 ucr = univention.config_registry.ConfigRegistry()
@@ -58,8 +59,7 @@ def genSipconfEntry(co, lo, phone):
 	import univention.admin.modules
 	univention.admin.modules.init(lo, phone.position, user)
 
-	phoneUser = user.lookup(co, lo, "(ast4ucsUserPhone=%s)" % (
-		univention.admin.filter.escapeForLdapFilter(phone.dn)))
+	phoneUser = user.lookup(co, lo, filter_format("(ast4ucsUserPhone=%s)", (phone.dn,)))
 	if len(phoneUser) == 0:
 		return ";; Phone %s has no user.\n" % phone["extension"]
 	if len(phoneUser) > 1:
@@ -163,8 +163,7 @@ def genSipconf(co, lo, srv):
 
 def genVoicemailconfEntry(co, lo, box):
 	from univention.admin.handlers.users import user
-	boxUser = user.lookup(co, lo, "(ast4ucsUserMailbox=%s)" %(
-		univention.admin.filter.escapeForLdapFilter(box.dn)))
+	boxUser = user.lookup(co, lo, filter_format("(ast4ucsUserMailbox=%s)", (box.dn,)))
 	if len(boxUser) == 0:
 		return ";; Mailbox %s has no user.\n" % box["id"]
 	if len(boxUser) > 1:
@@ -300,8 +299,7 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 	import univention.admin.modules
 	univention.admin.modules.init(lo, extenPhone.position, user)
 
-	phoneUser = user.lookup(co, lo, "(ast4ucsUserPhone=%s)" %(
-		univention.admin.filter.escapeForLdapFilter(extenPhone.dn)))
+	phoneUser = user.lookup(co, lo, filter_format("(ast4ucsUserPhone=%s)", (extenPhone.dn,)))
 	if len(phoneUser) == 0:
 		return ";; Phone %s has no user.\n" % extenPhone["extension"]
 	if len(phoneUser) > 1:
@@ -554,12 +552,8 @@ def reverseFieldsLoad(self):
 		return
 	for field, foreignModule, foreignField in self.reverseFields:
 		foreignModule = univention.admin.modules.get(foreignModule)
-		univention.admin.modules.init(self.lo, self.position,
-				foreignModule)
-		objects = foreignModule.lookup(self.co, self.lo, "%s=%s" % (
-			foreignModule.mapping.mapName(foreignField),
-			univention.admin.filter.escapeForLdapFilter(self.dn),
-		), superordinate=self.superordinate)
+		univention.admin.modules.init(self.lo, self.position, foreignModule)
+		objects = foreignModule.lookup(self.co, self.lo, filter_format("%s=%s", (foreignModule.mapping.mapName(foreignField), self.dn)), superordinate=self.superordinate)
 		self.info[field] = [obj.dn for obj in objects]
 
 
