@@ -29,14 +29,14 @@ short_description = u"Asterisk4UCS-Management: Telefongruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
-childs = 0
+childs = False
 superordinate = "asterisk/server"
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "commonName", "id" ],
-		[ "callphones" ],
-		[ "pickupphones" ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
+		["commonName", "id"],
+		["callphones"],
+		["pickupphones"],
 	])
 ]
 
@@ -78,30 +78,30 @@ mapping.register("commonName", "cn",
 mapping.register("id", "ast4ucsPhonegroupId",
 	None, univention.admin.mapping.ListToString)
 
-class object(AsteriskBase):
-	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
+class object(AsteriskBase):
+	module = module
+
+	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
 		self.reverseFields = [
 			("pickupphones", "asterisk/sipPhone", "pickupgroups"),
 			("callphones", "asterisk/sipPhone", "callgroups"),
 		]
-		super(object, self).__init__(self, co, lo, position, dn, superordinate)
+		super(object, self).__init__(co, lo, position, dn, superordinate=superordinate, attributes=attributes)
 
 	def open(self):
-		super(object, self).open(self)
+		super(object, self).open()
 		reverseFieldsLoad(self)
 		self.save()
 
 	def _ldap_pre_create(self):
 		super(object, self)._ldap_pre_create()
 		reverseFieldsSave(self)
-	
+
 	def _ldap_pre_modify(self):
 		super(object, self)._ldap_pre_modify()
 		reverseFieldsSave(self)
-	
+
 	def _ldap_pre_remove(self):
 		super(object, self)._ldap_pre_remove()
 		self.open()
@@ -113,7 +113,7 @@ class object(AsteriskBase):
 				('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
@@ -123,10 +123,10 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	if superordinate:
 		filter.expressions.append(univention.admin.filter.expression(
 				'ast4ucsSrvchildServer', superordinate.dn))
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
@@ -137,6 +137,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsPhonegroup' in attr.get('objectClass', [])
-

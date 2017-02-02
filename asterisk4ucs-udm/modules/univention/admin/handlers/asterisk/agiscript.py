@@ -33,10 +33,10 @@ childs = 0
 superordinate = "asterisk/server"
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "name" ],
-		[ "priority" ],
-		[ "content" ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
+		["name"],
+		["priority"],
+		["content"],
 	])
 ]
 
@@ -68,21 +68,22 @@ mapping.register("priority", "ast4ucsAgiscriptPriority",
 mapping.register("content", "ast4ucsAgiscriptContent",
 	None, univention.admin.mapping.ListToString)
 
+
 class object(AsteriskBase):
-	module=module
+	module = module
 
 	def getContent(self):
 		return self.get("content", "").decode("base64")
 
 	def setContent(self, content):
-		self["content"] = content.encode("base64").replace("\n","")
+		self["content"] = content.encode("base64").replace("\n", "")
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsAgiscript' ]),
+		return [('objectClass', ['ast4ucsAgiscript']),
 				('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
@@ -92,10 +93,10 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	if superordinate:
 		filter.expressions.append(univention.admin.filter.expression(
 				'ast4ucsSrvchildServer', superordinate.dn))
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
@@ -106,6 +107,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsAgiscript' in attr.get('objectClass', [])
-

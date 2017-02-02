@@ -40,10 +40,10 @@ ADMIN_PW = config[3]
 logging.basicConfig(
 	filename=LOG_FILENAME,
 	level=logging.ERROR,
-	#level=logging.INFO,                    
+	#level=logging.INFO,
 	#level=logging.DEBUG,
-	format = "%(asctime)s\t%(levelname)s\t%(message)s",
-	datefmt = "%d.%m.%Y %H:%M:%S"
+	format="%(asctime)s\t%(levelname)s\t%(message)s",
+	datefmt="%d.%m.%Y %H:%M:%S"
 )
 
 # Read and ignore AGI environment (read until blank line)
@@ -66,7 +66,7 @@ else:
 	# called with arguments: debug mode
 	env["agi_callerid"] = sys.argv[1]
 
-# Nummer normalisieren    
+# Nummer normalisieren
 search_num = env['agi_callerid']
 
 if search_num.startswith('00'):
@@ -74,17 +74,17 @@ if search_num.startswith('00'):
 elif search_num.startswith('0'):
 	search_num = "+49" + search_num[1:]
 
-logging.info("Normalisierte Nummer: " + search_num)    
+logging.info("Normalisierte Nummer: " + search_num)
 
-logging.debug("Verbinde mit LDAP-Server: " + LDAP_IP)    
+logging.debug("Verbinde mit LDAP-Server: " + LDAP_IP)
 l = ldap.initialize("ldap://" + LDAP_IP)
 l.simple_bind_s(ADMIN_DN, ADMIN_PW)
 
-query = ( "(|"
+query = ("(|"
 		"(ast4ucsContactFaxnumber=%s)"
 		"(telephoneNumber=%s)"
 		"(ast4ucsContactMobilenumber=%s)"
-	")" ) % (search_num, search_num, search_num)
+	")") % (search_num, search_num, search_num)
 logging.debug("Query: %s" % query)
 
 result = l.search_s(LDAP_SEARCH_BASE, ldap.SCOPE_SUBTREE, query)
@@ -135,11 +135,10 @@ rules = [
 for rule in rules:
 	cname = cname.replace(rule[0], rule[1])
 
-# Namen an Asterisk senden    
+# Namen an Asterisk senden
 logging.info("Setze Variable CALLERID auf " + cname)
 #cname = unicode(cname, 'utf-8').encode('iso-8859-1')
 sys.stdout.write('SET CALLERID "%s"\n' % (cname))
 sys.stdout.flush()
 
 logging.shutdown()
-

@@ -32,15 +32,15 @@ childs = 0
 superordinate = "asterisk/server"
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "extension", "ipaddress" ],
-		[ "macaddress", "hostname" ],
-		[ "phonetype", "profile" ],
-		[ "password" ],
-		[ "forwarding", "skipExtension" ],
-		[ "waitingloops" ],
-		[ "callgroups" ],
-		[ "pickupgroups" ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
+		["extension", "ipaddress"],
+		["macaddress", "hostname"],
+		["phonetype", "profile"],
+		["password"],
+		["forwarding", "skipExtension"],
+		["waitingloops"],
+		["callgroups"],
+		["pickupgroups"],
 	])
 ]
 
@@ -142,14 +142,16 @@ mapping.register("forwarding", "ast4ucsPhoneForwarding",
 mapping.register("skipExtension", "ast4ucsPhoneSkipextension",
 	None, univention.admin.mapping.ListToString)
 
+
 class object(AsteriskBase):
-	module=module
+	module = module
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['ast4ucsPhone']),
 				('ast4ucsSrvchildServer', self.superordinate.dn)]
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
@@ -159,13 +161,13 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	if superordinate:
 		filter.expressions.append(univention.admin.filter.expression(
 				'ast4ucsSrvchildServer', superordinate.dn))
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
- 
+
 	res = []
 	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
 			required, timeout, sizelimit):
@@ -173,6 +175,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsPhone' in attr.get('objectClass', [])
-

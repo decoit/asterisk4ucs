@@ -23,15 +23,18 @@ import univention.admin.modules
 import univention.admin.handlers
 import traceback
 import re
+from ldap.filter import filter_format
 
 #logfile = "/var/log/univention/asteriskMusicPython.log"
 ucr = univention.config_registry.ConfigRegistry()
+
 
 def getNameFromUser(userinfo):
 	if userinfo.get("firstname"):
 		return "%s %s" % (userinfo["firstname"], userinfo["lastname"])
 	else:
 		return userinfo["lastname"]
+
 
 def llist(thingie):
 	"""Forces thingie to be a list.
@@ -46,17 +49,17 @@ def llist(thingie):
 
 	if isinstance(thingie, list):
 		return thingie
-	return [ thingie ]
+	return [thingie]
+
 
 def genSipconfEntry(co, lo, phone):
 	from univention.admin.handlers.users import user
-	import mailbox, phoneGroup
+	from univention.admin.handlers.asterisk import sipPhone, mailbox, phoneGroup
 
 	import univention.admin.modules
 	univention.admin.modules.init(lo, phone.position, user)
 
-	phoneUser = user.lookup(co, lo, "(ast4ucsUserPhone=%s)" % (
-		univention.admin.filter.escapeForLdapFilter(phone.dn)))
+	phoneUser = user.lookup(co, lo, filter_format("(ast4ucsUserPhone=%s)", (phone.dn,)))
 	if len(phoneUser) == 0:
 		return ";; Phone %s has no user.\n" % phone["extension"]
 	if len(phoneUser) > 1:
@@ -66,22 +69,22 @@ def genSipconfEntry(co, lo, phone):
 	phoneUser = phoneUser[0].info
 
 	phone = phone.info
-	
+
 	if phoneUser.get("mailbox"):
 		phoneMailbox = mailbox.object(co, lo, None,
 			phoneUser["mailbox"]).info
-	
+
 	callgroups = []
 	for group in phone.get("callgroups", []):
 		group = phoneGroup.object(co, lo, None, group).info
 		callgroups.append(group["id"])
-	
+
 	pickupgroups = []
 	for group in phone.get("pickupgroups", []):
 		group = phoneGroup.object(co, lo, None, group).info
 		pickupgroups.append(group["id"])
-	
-	res  = "[%s](template-%s)\n" % (
+
+	res = "[%s](template-%s)\n" % (
 			phone["extension"],
 			phone.get("profile", "default"))
 	res += "secret=%s\n" % (phone["password"])
@@ -89,13 +92,13 @@ def genSipconfEntry(co, lo, phone):
 	if phoneUser.get("extmode") == "normal":
 		res += "callerid=\"%s\" <%s>\n" % (
 			getNameFromUser(phoneUser),
-			phone["extension"] )
+			phone["extension"])
 	elif phoneUser.get("extmode") == "first":
 		firstPhone = sipPhone.object(co, lo, None,
 			llist(phoneUser["phones"])[0]).info
 		res += "callerid=\"%s\" <%s>\n" % (
 			getNameFromUser(phoneUser),
-			firstPhone["extension"] )
+			firstPhone["extension"])
 
 	if phoneUser.get("mailbox"):
 		res += "mailbox=%s\n" % (phoneMailbox["id"])
@@ -108,17 +111,19 @@ def genSipconfEntry(co, lo, phone):
 
 	return res
 
+
 def genSipconfFaxEntry(co, lo, phone):
-	res  = "[%s]\n" % (phone["extension"])
+	res = "[%s]\n" % (phone["extension"])
 	res += "type=friend\n"
 	res += "host=dynamic\n"
 	res += "secret=%s\n" % (phone["password"])
 	return res
 
-def genSipconf(co, lo, srv):
-	import sipPhone, fax
 
-	conf  = "; Automatisch generiert von asterisk4UCS\n"
+def genSipconf(co, lo, srv):
+	from univention.admin.handlers.asterisk import sipPhone, fax
+
+	conf = "; Automatisch generiert von asterisk4UCS\n"
 	conf += "\n"
 	conf += "[general]\n"
 	conf += "allowsubscribe = yes\n"
@@ -140,7 +145,7 @@ def genSipconf(co, lo, srv):
 			conf += genSipconfEntry(co, lo, phone)
 		except:
 			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] )
+				traceback.format_exc()[:-1])
 		conf += "\n"
 
 	conf += "\n\n; ===== Fax machines =====\n\n"
@@ -150,15 +155,15 @@ def genSipconf(co, lo, srv):
 			conf += genSipconfFaxEntry(co, lo, phone)
 		except:
 			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] )
+				traceback.format_exc()[:-1])
 		conf += "\n"
 
 	return conf
 
+
 def genVoicemailconfEntry(co, lo, box):
 	from univention.admin.handlers.users import user
-	boxUser = user.lookup(co, lo, "(ast4ucsUserMailbox=%s)"%(
-		univention.admin.filter.escapeForLdapFilter(box.dn)))
+	boxUser = user.lookup(co, lo, filter_format("(ast4ucsUserMailbox=%s)", (box.dn,)))
 	if len(boxUser) == 0:
 		return ";; Mailbox %s has no user.\n" % box["id"]
 	if len(boxUser) > 1:
@@ -166,9 +171,9 @@ def genVoicemailconfEntry(co, lo, box):
 		for userObj in boxUser:
 			msg += ";;   * %s\n" % userObj["username"]
 	boxUser = boxUser[0].info
-	
+
 	box = box.info
-	
+
 	if box.get("email") == "1" and boxUser.get("mailPrimaryAddress"):
 		return "%s => %s,%s,%s\n" % (
 			box["id"],
@@ -183,15 +188,16 @@ def genVoicemailconfEntry(co, lo, box):
 			getNameFromUser(boxUser),
 		)
 
+
 def genVoicemailconf(co, lo, srv):
-	import mailbox
+	from univention.admin.handlers.asterisk import mailbox
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
 
 	conf += "[general]\n"
 	conf += "maxsecs=%s\n" % (srv.info["mailboxMaxlength"])
 	conf += "emailsubject=%s\n" % (srv.info["mailboxEmailsubject"])
-	conf += "emailbody=%s\n" % (srv.info["mailboxEmailbody"].replace("\n","\\n"))
+	conf += "emailbody=%s\n" % (srv.info["mailboxEmailbody"].replace("\n", "\\n"))
 	conf += "emaildateformat=%s\n" % (srv.info["mailboxEmaildateformat"])
 	conf += "mailcommand=%s\n" % (srv.info["mailboxMailcommand"])
 	if "1" in srv.info["mailboxAttach"]:
@@ -200,50 +206,53 @@ def genVoicemailconf(co, lo, srv):
 		conf += "attach=no\n"
 	conf += "\n"
 	conf += "[default]\n"
-	
+
 	for box in mailbox.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (box.dn)
 		try:
 			conf += genVoicemailconfEntry(co, lo, box)
 		except:
 			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] )
+				traceback.format_exc()[:-1])
 		conf += "\n"
 
 	return conf
 
+
 def genQueuesconfEntry(co, lo, queue):
-	import sipPhone
+	from univention.admin.handlers.asterisk import sipPhone
 	members = sipPhone.lookup(co, lo, "(%s=%s)" % (
 		sipPhone.mapping.mapName("waitingloops"), queue.dn))
 	queue = queue.info
 
-	res  = "[%s]\n" % ( queue["extension"] )
-	res += "strategy = %s\n" % ( queue["strategy"] )
-	res += "maxlen = %s\n" % ( queue["maxCalls"] )
-	res += "wrapuptime = %s\n" % ( queue["memberDelay"] )
-	res += "musiconhold = %s\n" % ( queue["delayMusic"] )
+	res = "[%s]\n" % (queue["extension"])
+	res += "strategy = %s\n" % (queue["strategy"])
+	res += "maxlen = %s\n" % (queue["maxCalls"])
+	res += "wrapuptime = %s\n" % (queue["memberDelay"])
+	res += "musiconhold = %s\n" % (queue["delayMusic"])
 
 	for member in members:
 		res += "member => SIP/%s\n" % (member.info["extension"])
-	
+
 	return res
 
+
 def genQueuesconf(co, lo, srv):
-	import waitingLoop
+	from univention.admin.handlers.asterisk import waitingLoop
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
-	
+
 	for queue in waitingLoop.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (queue.dn)
 		try:
 			conf += genQueuesconfEntry(co, lo, queue)
 		except:
 			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] )
+				traceback.format_exc()[:-1])
 		conf += "\n"
 
 	return conf
+
 
 def genMusiconholdconfEntry(co, lo, srv, moh):
 	moh = moh.info
@@ -251,28 +260,30 @@ def genMusiconholdconfEntry(co, lo, srv, moh):
 	if moh["name"] == "default":
 		return "; ignoring the 'default' class\n"
 
-	res  = "[%s]\n" % ( moh["name"] )
+	res = "[%s]\n" % (moh["name"])
 	res += "mode = files\n"
 	res += "random = yes\n"
-	res += "directory = %s/%s\n" % ( srv["sshmohpath"], moh["name"] )
-	
+	res += "directory = %s/%s\n" % (srv["sshmohpath"], moh["name"])
+
 	return res
 
+
 def genMusiconholdconf(co, lo, srv):
-	import music
+	from univention.admin.handlers.asterisk import music
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n\n"
-	
+
 	for moh in music.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (moh.dn)
 		try:
 			conf += genMusiconholdconfEntry(co, lo, srv, moh)
 		except:
 			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] )
+				traceback.format_exc()[:-1])
 		conf += "\n"
 
 	return conf
+
 
 def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 	extension = extenPhone.info["extension"]
@@ -283,13 +294,12 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 				extenPhone["extension"])
 
 	from univention.admin.handlers.users import user
-	import mailbox
+	from univention.admin.handlers.asterisk import sipPhone, mailbox
 
 	import univention.admin.modules
 	univention.admin.modules.init(lo, extenPhone.position, user)
 
-	phoneUser = user.lookup(co, lo, "(ast4ucsUserPhone=%s)"%(
-		univention.admin.filter.escapeForLdapFilter(extenPhone.dn)))
+	phoneUser = user.lookup(co, lo, filter_format("(ast4ucsUserPhone=%s)", (extenPhone.dn,)))
 	if len(phoneUser) == 0:
 		return ";; Phone %s has no user.\n" % extenPhone["extension"]
 	if len(phoneUser) > 1:
@@ -346,7 +356,7 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 		res.append("Voicemail(%s,u)" % phoneMailbox["id"])
 
 	if phoneUser.get("forwarding"):
-		res = [ "Dial(Local/%s,,tT)" % phoneUser["forwarding"] ]
+		res = ["Dial(Local/%s,,tT)" % phoneUser["forwarding"]]
 
 	resStr = ""
 	if hints:
@@ -356,6 +366,7 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 		resStr += "exten => %s,%i,%s\n" % (extension, i+1, data)
 
 	return resStr
+
 
 def genExtRoomEntry(co, lo, agis, room):
 	room = room.info
@@ -421,6 +432,7 @@ def genExtRoomEntry(co, lo, agis, room):
 
 	return res
 
+
 def genExtQueueEntry(co, lo, agis, queue):
 	queue = queue.info
 
@@ -437,11 +449,12 @@ def genExtQueueEntry(co, lo, agis, queue):
 		queue["extension"], queue["extension"])
 	res += "exten => %s,n,Hangup()\n" % (
 		queue["extension"])
-	
+
 	return res
 
+
 def genExtensionsconf(co, lo, srv):
-	import sipPhone, conferenceRoom, waitingLoop
+	from univention.admin.handlers.asterisk import sipPhone, conferenceRoom, waitingLoop, agiscript, fax
 
 	# AGI-Script lookup and sorting
 	agis = []
@@ -465,9 +478,9 @@ def genExtensionsconf(co, lo, srv):
 			conf += genExtSIPPhoneEntry(co, lo, agis, phone)
 		except:
 			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] )
+				traceback.format_exc()[:-1])
 		conf += "\n"
-	
+
 	conf += "\n\n; ===== Konferenzräume =====\n\n"
 	for room in conferenceRoom.lookup(co, lo, False):
 		conf += "; dn: %s\n" % (room.dn)
@@ -475,7 +488,7 @@ def genExtensionsconf(co, lo, srv):
 			conf += genExtRoomEntry(co, lo, agis, room)
 		except:
 			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] )
+				traceback.format_exc()[:-1])
 		conf += "\n"
 
 	conf += "\n\n; ===== Warteschleifen =====\n\n"
@@ -485,7 +498,7 @@ def genExtensionsconf(co, lo, srv):
 			conf += genExtQueueEntry(co, lo, agis, queue)
 		except:
 			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1] )
+				traceback.format_exc()[:-1])
 		conf += "\n"
 
 	conf += "\n\n; ===== Blockierte Vorwahlen =====\n\n"
@@ -516,6 +529,7 @@ def genExtensionsconf(co, lo, srv):
 
 	return conf
 
+
 def genConfigs(server):
 	ucr.load()
 	MODULE.error('### server: %s' % server)
@@ -529,45 +543,40 @@ def genConfigs(server):
 		'musiconhold.conf': genMusiconholdconf(co, lo, server),
 		'extensions.conf': genExtensionsconf(co, lo, server),
 	}
-	
+
 	return configs
+
 
 def reverseFieldsLoad(self):
 	if not self.dn:
 		return
 	for field, foreignModule, foreignField in self.reverseFields:
 		foreignModule = univention.admin.modules.get(foreignModule)
-		univention.admin.modules.init(self.lo, self.position,
-				foreignModule)
-		objects = foreignModule.lookup(self.co, self.lo, "%s=%s" % (
-			foreignModule.mapping.mapName(foreignField),
-			univention.admin.filter.escapeForLdapFilter(self.dn),
-		), superordinate=self.superordinate)
+		univention.admin.modules.init(self.lo, self.position, foreignModule)
+		objects = foreignModule.lookup(self.co, self.lo, filter_format("%s=%s", (foreignModule.mapping.mapName(foreignField), self.dn)), superordinate=self.superordinate)
 		self.info[field] = [obj.dn for obj in objects]
+
 
 def reverseFieldsSave(self):
 	if not self.dn:
 		return
 	for field, foreignModule, foreignField in self.reverseFields:
 		foreignModule = univention.admin.modules.get(foreignModule)
-		univention.admin.modules.init(self.lo, self.position,
-				foreignModule)
+		univention.admin.modules.init(self.lo, self.position, foreignModule)
 		oldset = set(self.oldinfo.get(field, []))
 		newset = set(self.info.get(field, []))
-		
+
 		for dn in (oldset - newset):
-			obj = foreignModule.object(self.co, self.lo, None, dn,
-					self.superordinate)
+			obj = foreignModule.object(self.co, self.lo, None, dn, self.superordinate)
 			obj.open()
 			try:
 				obj.info.get(foreignField, []).remove(self.dn)
 			except ValueError:
 				pass
 			obj.modify()
-		
+
 		for dn in (newset - oldset):
-			obj = foreignModule.object(self.co, self.lo, None, dn,
-					self.superordinate)
+			obj = foreignModule.object(self.co, self.lo, None, dn, self.superordinate)
 			obj.open()
 			obj.info.setdefault(foreignField, []).append(self.dn)
 			obj.modify()
@@ -576,64 +585,6 @@ def reverseFieldsSave(self):
 class AsteriskBase(univention.admin.handlers.simpleLdap):
 
 	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self.superordinate = superordinate
-		self.oldattr = attributes or {}
-		self.openSuperordinate()
+		if not superordinate and (dn or position):
+			superordinate = univention.admin.objects.get_superordinate(self.module, co, lo, dn or position.getDn())
 		super(AsteriskBase, self).__init__(co, lo, position, dn, self.superordinate, attributes)
-		self.open()  # for backwards compatibility
-
-	def _validate_superordinate(self):
-		try:
-			super(AsteriskBase, self)._validate_superordinate()
-		except univention.admin.uexceptions.insufficientInformation:
-			pass
-
-	def ready(self):
-		try:
-			return super(AsteriskBase, self).ready()
-		except univention.admin.uexceptions.insufficientInformation as exc:
-			# FIXME: UDM requires objects to be underneath of its superordinate, this is not the case in these modules
-			if 'position' in str(exc) and 'subtree' in str(exc):
-				return True
-			raise
-
-	def openSuperordinate(self):
-		"""Wird von __init__ (siehe oben) aufgerufen.
-		Falls das Superordinate-Object dieses Objects nicht bereits
-		bekannt ist (weil es als Argument an __init__ übergeben wurde),
-		versucht diese Funktion das Superordinate aus dem LDAP
-		auszulesen, zu öffnen, und in self.superordinate zu
-		referenzieren.
-
-		Diese Funktionalität erleichtert es extrem, untergeordnete
-		Objekte zu modifizieren und wird von den UMC-Modulen
-		(insbesondere dem Musikupload) oft genutzt. Die von
-		Univention definierten Module haben diese Funktion nicht.
-		(Um diese modifizieren zu können muss man also von Hand erst
-		das übergeordnete Objekt öffnen, und dann dieses beim
-		Aufruf von __init__ übergeben)"""
-		if self.superordinate:
-			return
-
-		serverdn = self.oldattr.get("ast4ucsSrvchildServer") or self.lo.getAttr(self.dn, "ast4ucsSrvchildServer")
-
-		univention.admin.modules.update()
-		servermod = univention.admin.modules.get(univention.admin.modules.superordinate_names(self.module)[0])
-		if self.position:
-			# FIXME: init requires self.position to be set, otherwise it crashes. There are some calls (e.g. if this object doesn't exists yet?) where position is None.
-			univention.admin.modules.init(self.lo, self.position, servermod)
-		if serverdn:
-			serverdn = serverdn[0]
-			self.superordinate = servermod.object(self.co, self.lo, self.position, serverdn)
-			self.superordinate.open()
-		else:
-			# there must only be one asterisk/server object, so we can use lookup here
-			try:
-				self.superordinate = servermod.lookup(self.co, self.lo, '')[0]
-				self.superordinate.open()
-			except IndexError:
-				pass

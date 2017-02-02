@@ -33,14 +33,14 @@ childs = 0
 superordinate = "asterisk/server"
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "extension" ],
-		[ "maxMembers" ],
-		[ "pin", "adminPin" ],
-		[ "announceCount" ],
-		[ "initiallyMuted" ],
-		[ "musicOnHold" ],
-		[ "quietMode" ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
+		["extension"],
+		["maxMembers"],
+		["pin", "adminPin"],
+		["announceCount"],
+		["initiallyMuted"],
+		["musicOnHold"],
+		["quietMode"],
 	])
 ]
 
@@ -105,15 +105,16 @@ mapping.register("musicOnHold", "ast4ucsConfroomMusiconhold",
 mapping.register("quietMode", "ast4ucsConfroomQuietmode",
 	None, univention.admin.mapping.ListToString)
 
+
 class object(AsteriskBase):
-	module=module
+	module = module
 
 	def _ldap_pre_ready(self):
 		super(object, self)._ldap_pre_ready()
 		if self.info.get("pin"):
 			if self.info.get("adminPin") == self.info["pin"]:
 				class pinError(uexceptions.base):
-					message="Pin und Admin-Pin dürfen "+\
+					message = "Pin und Admin-Pin dürfen " +\
 					"nicht übereinstimmen."
 				raise pinError
 
@@ -122,7 +123,7 @@ class object(AsteriskBase):
 				('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
@@ -132,13 +133,13 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	if superordinate:
 		filter.expressions.append(univention.admin.filter.expression(
 				'ast4ucsSrvchildServer', superordinate.dn))
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
- 
+
 	res = []
 	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
 			required, timeout, sizelimit):
@@ -146,6 +147,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsConfroom' in attr.get('objectClass', [])
-

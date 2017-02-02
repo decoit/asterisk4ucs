@@ -27,11 +27,12 @@ short_description = u"Asterisk4UCS-Management: Telefonbuch"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
-childs = 1
+childs = False
+childmodules = ["asterisk/contact"]
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ 'commonName' ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
+		['commonName'],
 	]),
 ]
 
@@ -48,23 +49,24 @@ mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
 
+
 class object(univention.admin.handlers.simpleLdap):
-	module=module
+	module = module
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['ast4ucsPhonebook'])]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
 			'objectClass', "ast4ucsPhonebook")
 	])
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
@@ -75,6 +77,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsPhonebook' in attr.get('objectClass', [])
-
