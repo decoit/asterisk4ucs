@@ -587,4 +587,4 @@ class AsteriskBase(univention.admin.handlers.simpleLdap):
 	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
 		if not superordinate and (dn or position):
 			superordinate = univention.admin.objects.get_superordinate(self.module, co, lo, dn or position.getDn())
-		super(AsteriskBase, self).__init__(co, lo, position, dn, self.superordinate, attributes)
+		super(AsteriskBase, self).__init__(co, lo, position, dn, superordinate, attributes)
