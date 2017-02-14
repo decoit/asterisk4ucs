@@ -15,7 +15,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from univention.management.console.base import Base
+from univention.management.console.base import Base, UMC_Error
 from univention.management.console.log import MODULE
 
 import univention.config_registry
@@ -32,26 +32,23 @@ class Instance(Base):
 
 	def load( self, request ):
 		user, mailbox = getUserAndMailbox(self._user_dn)
-		if mailbox == "KeinServer" :
-			result = "KeinServer"
-			self.finished( request.id, result )
-		else: 
-			result = {
-				"phones/interval": user["ringdelay"],
-				"forwarding/number": user.get("forwarding",""),
+		raise UMC_Error("Es wurde kein Asterisk-Server angelegt!")
+		result = {
+			"phones/interval": user["ringdelay"],
+			"forwarding/number": user.get("forwarding",""),
 
-				"mailbox/timeout": user["timeout"],
-				"mailbox": False,
-			}
+			"mailbox/timeout": user["timeout"],
+			"mailbox": False,
+		}
 
-			if mailbox:
-				result.update({
-					"mailbox": True,
-					"mailbox/password": mailbox["password"],
-					"mailbox/email": mailbox["email"],
-				})
+		if mailbox:
+			result.update({
+				"mailbox": True,
+				"mailbox/password": mailbox["password"],
+				"mailbox/email": mailbox["email"],
+			})
 
-			self.finished( request.id, result )
+		self.finished( request.id, result )
 
 	def save( self, request ):
 		user, mailbox = getUserAndMailbox(self._user_dn)
@@ -69,13 +66,11 @@ class Instance(Base):
 		user.modify()
 
 		if mailbox:
-			mailbox["password"] = request.options[
-							"mailbox/password"]
+			mailbox["password"] = request.options["mailbox/password"]
 			mailbox["email"] = request.options["mailbox/email"]
 			mailbox.modify()
 
-		self.finished( request.id, "success",
-			"Speichern war erfolgreich!" )
+		self.finished( request.id, None, "Speichern war erfolgreich!" )
 
 	def phonesQuery(self, request):
 		if (request.options.get("dn") and
@@ -188,4 +183,3 @@ def changePhoneOrder(userdn, phonedn, change):
 
 	user["phones"] = phones
 	user.modify()
-
