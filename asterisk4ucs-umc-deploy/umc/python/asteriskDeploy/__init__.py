@@ -236,4 +236,3 @@ def deployConfigs(log, server, configs):
 		shutil.rmtree(tmpdirConfig)
 		shutil.rmtree(tmpdirAgi)
 		os.remove(tmpfileLdapconf)
-

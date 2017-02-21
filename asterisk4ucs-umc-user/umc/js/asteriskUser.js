@@ -25,13 +25,12 @@ define([
    "umc/widgets/Page",
    "umc/widgets/Form",
    "umc/widgets/Grid",
-   "umc/widgets/ExpandingTitlePane",
    "umc/widgets/Text",
    "umc/dialog",
    "umc/store",
    "umc/i18n!umc/modules/asteriskUser"
 ],
-function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,Text,dialog,store,_){
+function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,Text,dialog,store,_){
    return declare("umc.modules.asteriskUser",[ TabbedModule ],{
       _buttons: null,
       _mailboxHint: null,
@@ -53,13 +52,9 @@ function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,Expandin
 
          this._forms = [];
 
-                  
-
-         this.addChild(this.renderPhones());
-
-         this.addChild(this.renderMailbox());
-
-         this.addChild(this.renderForwarding());
+         this.addTab(this.renderPhones());
+         this.addTab(this.renderMailbox());
+         this.addTab(this.renderForwarding());
 
          //this.startup();
          this.load();
@@ -72,8 +67,6 @@ function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,Expandin
             closable: false
          });
 
-         
-	    
          var widgets = [{
             type: 'TextBox',
             name: 'mailbox/password',
@@ -137,15 +130,10 @@ function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,Expandin
       renderPhones: function () {
          var page = new Page({
             title: "Telefone",
-            headerText: "Telefoneinstellungen",
+            headerText: "Telefoneinstellungen (Klingelreihenfolge)",
             footerButtons: this._buttons,
             closable: false
          });
-
-         var container = new ExpandingTitlePane({
-            title: "Klingelreihenfolge"
-         });
-         page.addChild(container);
 
          this._grid = new Grid({
             moduleStore: store("dn",
@@ -192,7 +180,7 @@ function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,Expandin
                })
             }]
          });
-         container.addChild(this._grid);
+         page.addChild(this._grid);
 
 
          this._grid._grid.canSort = function (index) {
@@ -278,38 +266,20 @@ function(declare,lang,array,TabbedModule,ContainerWidget,Page,Form,Grid,Expandin
       getValues: function () {
          var values = {};
          array.forEach(this._forms, function (form) {
-            lang.mixin(values, form.gatherFormValues());
+            lang.mixin(values, form.get('value'));
          }, this);
          return values;
       },
       load: function () {
-	    this.standby(true);
-         this.umcpCommand('asteriskUser/load').then(
-            lang.hitch(this, function (data) {
-			this.standby(false);
-               if (data.result=="KeinServer") {
-                  dialog.alert("Es wurde kein Asterisk-Server angelegt!");
-                  this.standby(true);
-               }else {
-                  this.setValues(data.result);
-               }
-            }),
-            lang.hitch(this, function () {
-               // hm...
-			this.standby(false);
-            })
-         );
+          this.standbyDuring(this.umcpCommand('asteriskUser/load')).then(lang.hitch(this, function(data) {
+              this.setValues(data.result);
+          }), lang.hitch(this, function() {
+              this.standby(true);
+          }));
       },
       save: function () {
-	    this.standby(true);
          var data = this.getValues();
-         this.umcpCommand('asteriskUser/save', data).then(
-		   lang.hitch(this, function() {
-			this.standby(false);
-	    }),
-		   lang.hitch(this, function() {
-			this.standby(false);
-	    }));
+         this.standbyDuring(this.umcpCommand('asteriskUser/save', data));
       }
    });
 });
