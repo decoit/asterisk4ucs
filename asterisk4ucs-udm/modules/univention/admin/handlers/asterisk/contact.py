@@ -17,30 +17,28 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import re
-
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
 import univention.admin.uexceptions
 from univention.admin.layout import Tab
+from univention.admin.handlers.asterisk import AsteriskBase
 
 module = "asterisk/contact"
-short_description = u"Asterisk: Kontakt"
+short_description = u"Asterisk4UCS-Management: Kontakt"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 childs = 0
-usewizard = 1
 superordinate = "asterisk/phoneBook"
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Kontaktdaten', layout = [
-		[ 'title', 'firstname', 'lastname' ],
-		[ 'organisation' ],
-		[ 'telephoneNumber' ],
-		[ 'mobileNumber' ],
-		[ 'faxNumber' ],
+	Tab('Allgemein', 'Allgemeine Kontaktdaten', layout=[
+		['title', 'firstname', 'lastname'],
+		['organisation'],
+		['telephoneNumber'],
+		['mobileNumber'],
+		['faxNumber'],
 	])
 ]
 
@@ -100,63 +98,17 @@ mapping.register("telephoneNumber", "telephoneNumber")
 mapping.register("mobileNumber", "ast4ucsContactMobilenumber")
 mapping.register("faxNumber", "ast4ucsContactFaxnumber")
 
+
 class noNameError(univention.admin.uexceptions.insufficientInformation):
 	message = (u"Eines der Felder Vorname, Nachname und Organisation "
 			u"muss ausgefüllt sein.")
 
-class object(univention.admin.handlers.simpleLdap):
-	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-		self.openSuperordinate()
-		if not self.superordinate:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'superordinate object not present'
-		if not dn and not position:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'neither DN nor position present'
-
-	def openSuperordinate(self):
-		if self.superordinate:
-			return
-
-		self.open()
-		pbdn = self.oldattr.get("ast4ucsPbchildPhonebook")
-		if not pbdn:
-			return
-
-		if pbdn.__iter__:
-			pbdn = pbdn[0]
-
-		univention.admin.modules.update()
-		pbmod = univention.admin.modules.get("asterisk/phoneBook")
-		univention.admin.modules.init(self.lo, self.position, pbmod)
-		self.superordinate = pbmod.object(self.co, self.lo,
-				self.position, pbdn)
-		self.superordinate.open()
-
-	def exists(self):
-		return self._exists
-
-	def open(self):
-		univention.admin.handlers.simpleLdap.open(self)
-		self.save()
+class object(AsteriskBase):
+	module = module
 
 	def _ldap_pre_ready(self):
+		super(object, self)._ldap_pre_ready()
 		orga = self.get("organisation")
 		first = self.get("firstname")
 		last = self.get("lastname")
@@ -181,20 +133,12 @@ class object(univention.admin.handlers.simpleLdap):
 
 		self.info["commonName"] = cn
 
-	def _ldap_pre_create(self):
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			re.sub(r"[,;+\\]", "", mapping.mapValue('commonName',
-					self.info['commonName'])),
-			self.position.getDn()
-		)
-
 	def _ldap_addlist(self):
-		return [('objectClass', ['phonebookContact' ]),
+		return [('objectClass', ['phonebookContact']),
 				('ast4ucsPbchildPhonebook', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
@@ -204,13 +148,13 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	if superordinate:
 		filter.expressions.append(univention.admin.filter.expression(
 				'ast4ucsPbchildPhonebook', superordinate.dn))
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
- 
+
 	res = []
 	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
 			required, timeout, sizelimit):
@@ -218,6 +162,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+
 def identify(dn, attr, canonical=0):
 	return 'phonebookContact' in attr.get('objectClass', [])
-

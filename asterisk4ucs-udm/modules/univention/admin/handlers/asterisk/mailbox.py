@@ -21,22 +21,22 @@ import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
 from univention.admin.layout import Tab
+from univention.admin.handlers.asterisk import AsteriskBase
 
 module = "asterisk/mailbox"
-short_description = u"Asterisk: Anrufbeantworter"
+short_description = u"Asterisk4UCS-Management: Anrufbeantworter"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 childs = 0
-usewizard = 1
 superordinate = "asterisk/server"
 
 # Definiert das Layout der Eingabefelder in der Weboberfläche
 layout = [
-	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "id" ],
-		[ "password" ],
-		[ "email" ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
+		["id"],
+		["password"],
+		["email"],
 	])
 ]
 
@@ -78,76 +78,9 @@ mapping.register("password", "ast4ucsMailboxPassword",
 mapping.register("email", "ast4ucsMailboxNotifybymail",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap):
-	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-		self.openSuperordinate()
-		if not self.superordinate:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'superordinate object not present'
-		if not dn and not position:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'neither DN nor position present'
-
-	def openSuperordinate(self):
-		"""Wird von __init__ (siehe oben) aufgerufen.
-		Falls das Superordinate-Object dieses Objects nicht bereits
-		bekannt ist (weil es als Argument an __init__ übergeben wurde),
-		versucht diese Funktion das Superordinate aus dem LDAP
-		auszulesen, zu öffnen, und in self.superordinate zu
-		referenzieren.
-
-		Diese Funktionalität erleichtert es extrem, untergeordnete
-		Objekte zu modifizieren und wird von den UMC-Modulen
-		(insbesondere dem Musikupload) oft genutzt. Die von
-		Univention definierten Module haben diese Funktion nicht.
-		(Um diese modifizieren zu können muss man also von Hand erst
-		das übergeordnete Objekt öffnen, und dann dieses beim
-		Aufruf von __init__ übergeben)"""
-
-		if self.superordinate:
-			return
-
-		self.open()
-		serverdn = self.oldattr.get("ast4ucsSrvchildServer")
-		if not serverdn:
-			return
-
-		if serverdn.__iter__:
-			serverdn = serverdn[0]
-
-		univention.admin.modules.update()
-		servermod = univention.admin.modules.get("asterisk/server")
-		univention.admin.modules.init(self.lo, self.position, servermod)
-		self.superordinate = servermod.object(self.co, self.lo,
-				self.position, serverdn)
-		self.superordinate.open()
-
-	def exists(self):
-		"""Wurde aus dem Beispiel gecopypasted und funktioniert."""
-
-		return self._exists
-
-	def open(self):
-		"""Wurde aus dem Beispiel gecopypasted und funktioniert."""
-
-		univention.admin.handlers.simpleLdap.open(self)
-		self.save()
+class object(AsteriskBase):
+	module = module
 
 	def _ldap_pre_ready(self):
 		"""Wird vor der Syntaxprüfung der Eingabefelder aufgerufen und
@@ -156,18 +89,9 @@ class object(univention.admin.handlers.simpleLdap):
 		Objekts. Dieser Hack ist notwendig, weil UMC/UDM grundsätzlich
 		das Attribut mit identifies=True als "Name" in der Tabelle
 		der Suchergebnisse verwendet."""
+		super(object, self)._ldap_pre_ready()
 
 		self['commonName'] = "mailbox " + self["id"]
-
-	def _ldap_pre_create(self):
-		"""Wird von der Methode create() aufgerufen und definiert
-		den Distinguished Name des LDAP-Objekts"""
-
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			mapping.mapValue('commonName', self.info['commonName']),
-			self.position.getDn()
-		)
 
 	def _ldap_addlist(self):
 		"""Wird kurz vor Schreiben des LDAP-Objects aufgerufen und
@@ -176,7 +100,7 @@ class object(univention.admin.handlers.simpleLdap):
 		Bei neuen Modulen müssen die objectClass und der Attributname
 		des Superordinate-Verweises angepasst werden"""
 
-		return [('objectClass', ['ast4ucsMailbox' ]),
+		return [('objectClass', ['ast4ucsMailbox']),
 			('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 # Sucht nach diesem Modul zugehörigen Objekten. Berücksichtigt dabei eventuell
@@ -185,7 +109,9 @@ class object(univention.admin.handlers.simpleLdap):
 # Für neue Module müssen in diesem Code nur die objectClass und das
 # LDAP-Attribut für die Superordinate-Zuordnung angepasst werden.
 # (in diesem Fall ast4ucsMailbox und ast4ucsSrvchildServer)
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+
+
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
@@ -195,10 +121,10 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	if superordinate:
 		filter.expressions.append(univention.admin.filter.expression(
 				'ast4ucsSrvchildServer', superordinate.dn))
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
@@ -211,6 +137,7 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 
 # Funktion, die True zurückliefert, wenn dieses Modul für das übergebene
 # Objekt zuständig ist. Prüft einfach nur die LDAP objectClass.
+
+
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsMailbox' in attr.get('objectClass', [])
-

@@ -1,0 +1,20 @@
+Source: asterisk4ucs-testasterisk
+Section: asterisk4ucs
+Priority: optional
+Maintainer: Bernd Ritter (Decoit GmbH) <ritter@decoit.de>
+Build-Depends:
+ debhelper (>= 7.0.50~),
+ univention-config-dev
+Standards-Version: 3.5.2
+
+Package: asterisk4ucs-testasterisk
+Architecture: all
+Depends:
+ asterisk4ucs-udm,
+ asterisk4ucs-umc-deploy,
+ asterisk (>= 1:1.6),
+ asterisk-config (>= 1:1.6),
+ ${misc:Depends}
+Description: Asterisk4UCS: Lokaler Asterisk zu Testzwecken
+ Dieses Paket erlaubt es, mit minimalem Aufwand einen Asterisk-Server
+ auf dem UCS-Master zu installieren, um Asterisk4UCS zu testen.

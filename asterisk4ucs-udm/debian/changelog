@@ -1,3 +1,27 @@
+asterisk4ucs-udm (1.0.0) unstable; urgency=low
+
+  * Einige Bugfixes, Vorbereitung auf Release
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 05 Feb 2014 16:03:32 +0100
+
+asterisk4ucs-udm (0.6.23) unstable; urgency=low
+
+  * Migration auf UCS 3.2
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 18 Dec 2013 14:04:59 +0100
+
+asterisk4ucs-udm (0.6.22) unstable; urgency=low
+
+  * Bugfix 30583: Error in schema file on backup
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Sat, 26 Jan 2013 00:57:05 +0100
+
+asterisk4ucs-udm (0.6.21) unstable; urgency=low
+
+  * Fehlermeldungen wurde angepasst!
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Fri, 25 Jan 2013 19:32:58 +0100
+
 asterisk4ucs-udm (0.6.20) unstable; urgency=low
 
   * Anpassungen der JavaSkript Dateien an den UCS3.1 Server

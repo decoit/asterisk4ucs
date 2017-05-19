@@ -1,3 +1,33 @@
+asterisk4ucs-umc-deploy (1.0.1) unstable; urgency=low
+
+  * Bugfix für 'FileNotFound'-Fehler
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 05 Feb 2014 18:52:40 +0100
+
+asterisk4ucs-umc-deploy (1.0.0) unstable; urgency=low
+
+  * Einige Bugfixes, Vorbereitung auf Release
+
+ -- Tristan Bruns <bruns@decoit.de>  Wed, 05 Feb 2014 16:06:48 +0100
+
+asterisk4ucs-umc-deploy (0.5.9) unstable; urgency=low
+
+  * Migrated to UCS 3.2
+
+ -- Tristan Bruns <bruns@decoit.de>  Mon, 06 Jan 2014 15:41:04 +0100
+
+asterisk4ucs-umc-deploy (0.5.8) unstable; urgency=low
+
+  * Some Changes
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Sat, 26 Jan 2013 00:58:10 +0100
+
+asterisk4ucs-umc-deploy (0.5.7) unstable; urgency=low
+
+  * Angepasste Fehlermeldungen
+
+ -- Marcel Jahnke <jahnke@decoit.de>  Fri, 25 Jan 2013 19:36:49 +0100
+
 asterisk4ucs-umc-deploy (0.5.6) unstable; urgency=low
 
   * Anpassungen der JavaScript Datein an den UCS3.1

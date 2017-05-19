@@ -15,21 +15,24 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import univention.management.console.modules
-from univention.management.console.protocol.definitions import SUCCESS
+from univention.management.console.base import Base, UMC_Error
+from univention.management.console.log import MODULE
 
 import univention.config_registry
 import univention.admin.uldap
-import univention.admin.config
 import univention.admin.modules
+univention.admin.modules.update()
+
 import univention.admin.handlers.users.user
 import univention.admin.handlers.asterisk.sipPhone
 import univention.admin.handlers.asterisk.mailbox
+import univention.admin.handlers.asterisk.server
 
-class Instance( univention.management.console.modules.Base ):
+class Instance(Base):
+
 	def load( self, request ):
 		user, mailbox = getUserAndMailbox(self._user_dn)
-
+		raise UMC_Error("Es wurde kein Asterisk-Server angelegt!")
 		result = {
 			"phones/interval": user["ringdelay"],
 			"forwarding/number": user.get("forwarding",""),
@@ -45,7 +48,6 @@ class Instance( univention.management.console.modules.Base ):
 				"mailbox/email": mailbox["email"],
 			})
 
-		request.status = SUCCESS
 		self.finished( request.id, result )
 
 	def save( self, request ):
@@ -64,14 +66,11 @@ class Instance( univention.management.console.modules.Base ):
 		user.modify()
 
 		if mailbox:
-			mailbox["password"] = request.options[
-							"mailbox/password"]
+			mailbox["password"] = request.options["mailbox/password"]
 			mailbox["email"] = request.options["mailbox/email"]
 			mailbox.modify()
 
-		request.status = SUCCESS
-		self.finished( request.id, "success",
-			"Speichern war erfolgreich!" )
+		self.finished( request.id, None, "Speichern war erfolgreich!" )
 
 	def phonesQuery(self, request):
 		if (request.options.get("dn") and
@@ -92,21 +91,11 @@ class Instance( univention.management.console.modules.Base ):
 				"name": phone["extension"],
 			})
 
-		request.status = SUCCESS
 		self.finished(request.id, result)
 
 def getCoLo():
-	# create ldap connection
-	ucr = univention.config_registry.ConfigRegistry()
-	ucr.load()
-	ldap_master = ucr.get('ldap/master', '')
-	ldap_base = ucr.get('ldap/base', '')
-	binddn = ','.join(('cn=admin', ldap_base))
-	bindpw = open('/etc/ldap.secret','r').read().strip()
-	lo = univention.admin.uldap.access(host=ldap_master, base=ldap_base,
-		binddn=binddn, bindpw=bindpw, start_tls=2)
-
-	co = univention.admin.config.config()
+	lo = univention.admin.uldap.getAdminConnection()[0]
+	co = None
 	return co, lo
 
 def getUser(co, lo, dn):
@@ -144,15 +133,40 @@ def getPhones(userdn):
 	return phones
 
 def getUserAndMailbox(userdn):
-	co, lo = getCoLo()
+	co, lo, pos = getCoLoPos()
 
-	user = getUser(co, lo, userdn)
+	server = univention.admin.modules.get("asterisk/server")
+	univention.admin.modules.init(lo, pos, server)
+	objs = server.lookup(co, lo, None)
 
-	mailbox = user.get("mailbox")
-	if mailbox:
-		mailbox = getMailbox(co, lo, mailbox)
+	checkServers = []
+	for obj in objs:
+			checkServers.append({
+				"label": obj["commonName"],
+			})
 
-	return user, mailbox
+	MODULE.error('User: server: %s' % len(checkServers))
+	if len(checkServers) >0 :
+		co, lo = getCoLo()
+
+		user = getUser(co, lo, userdn)
+
+		mailbox = user.get("mailbox")
+		if mailbox:
+			mailbox = getMailbox(co, lo, mailbox)
+
+		return user, mailbox
+	elif len(checkServers) == 0 :
+		MODULE.error('Fehler gefunden!')
+		mailbox = "KeinServer"
+		user = "KeinServer"
+		return user, mailbox
+
+
+def getCoLoPos():
+	co = None
+	lo, pos = univention.admin.uldap.getAdminConnection()
+	return co, lo, pos
 
 def changePhoneOrder(userdn, phonedn, change):
 	co, lo = getCoLo()
@@ -169,4 +183,3 @@ def changePhoneOrder(userdn, phonedn, change):
 
 	user["phones"] = phones
 	user.modify()
-

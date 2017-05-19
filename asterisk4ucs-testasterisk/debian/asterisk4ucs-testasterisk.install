@@ -1,0 +1,2 @@
+astconfigs/* usr/lib/asterisk4ucs/astconfigs/
+42_asterisk4ucs.sh etc/security/packetfilter.d/

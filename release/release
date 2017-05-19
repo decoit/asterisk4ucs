@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+set -u
+
+version=$1
+
+if [ ! -d asterisk4ucs-$version ]; then
+	echo ERROR: Directory asterisk4ucs-$version does not exist
+	exit 1
+fi
+
+./download dependency-uris
+
+mv dependency-uris_deps/* asterisk4ucs-$version/
+rm -rf dependency-uris_deps/
+rm dependency-uris.{bash,md5sums,filtered}
+
+tar -cf asterisk4ucs-$version.tar asterisk4ucs-$version/
+
+echo created asterisk4ucs-$version.tar
+

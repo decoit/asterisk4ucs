@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+set -u
+
+cd "`dirname "$0"`"
+
+for pkg in asterisk4ucs-{udm,testasterisk,umc-{deploy,music,user}}; do
+	echo 
+	echo ================== $pkg ======================
+	echo
+	./build $pkg
+done
+

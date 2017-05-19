@@ -23,23 +23,23 @@ import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/phoneBook"
-short_description = u"Asterisk: Telefonbuch"
+short_description = u"Asterisk4UCS-Management: Telefonbuch"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
-childs = 1
-usewizard = 1
+childs = False
+childmodules = ["asterisk/contact"]
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ 'commonName' ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
+		['commonName'],
 	]),
 ]
 
 property_descriptions = {
 	"commonName": univention.admin.property(
 		short_description="Name",
-		syntax=univention.admin.syntax.string,
+		syntax=univention.admin.syntax.string_numbers_letters_dots,
 		identifies=True,
 		required=True
 	),
@@ -49,51 +49,24 @@ mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn",
 	None, univention.admin.mapping.ListToString)
 
+
 class object(univention.admin.handlers.simpleLdap):
-	module=module
-
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-	def exists(self):
-		return self._exists
-
-	def open(self):
-		univention.admin.handlers.simpleLdap.open(self)
-		self.save()
-
-	def _ldap_pre_create(self):
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			mapping.mapValue('commonName', self.info['commonName']),
-			self.position.getDn()
-		)
+	module = module
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['ast4ucsPhonebook'])]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
 			'objectClass', "ast4ucsPhonebook")
 	])
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
@@ -104,6 +77,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsPhonebook' in attr.get('objectClass', [])
-

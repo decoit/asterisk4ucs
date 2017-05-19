@@ -21,21 +21,21 @@ import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
 from univention.admin.layout import Tab
+from univention.admin.handlers.asterisk import AsteriskBase
 
 module = "asterisk/phoneType"
-short_description = u"Asterisk: Telefontyp"
+short_description = u"Asterisk4UCS-Management: Telefontyp"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
 childs = 0
-usewizard = 1
 superordinate = "asterisk/server"
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Kenndaten', layout = [
-		[ "commonName" ],
-		[ "displaySize", "manufacturer" ],
-		[ "type" ],
+	Tab('Allgemein', 'Allgemeine Kenndaten', layout=[
+		["commonName"],
+		["displaySize", "manufacturer"],
+		["type"],
 	])
 ]
 
@@ -70,71 +70,16 @@ mapping.register("manufacturer", "ast4ucsPhonetypeManufacturer",
 mapping.register("type", "ast4ucsPhonetypeType",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap):
-	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-		self.openSuperordinate()
-		if not self.superordinate:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'superordinate object not present'
-		if not dn and not position:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'neither DN nor position present'
-
-	def openSuperordinate(self):
-		if self.superordinate:
-			return
-
-		self.open()
-		serverdn = self.oldattr.get("ast4ucsSrvchildServer")
-		if not serverdn:
-			return
-
-		if serverdn.__iter__:
-			serverdn = serverdn[0]
-
-		univention.admin.modules.update()
-		servermod = univention.admin.modules.get("asterisk/server")
-		univention.admin.modules.init(self.lo, self.position, servermod)
-		self.superordinate = servermod.object(self.co, self.lo,
-				self.position, serverdn)
-		self.superordinate.open()
-
-	def exists(self):
-		return self._exists
-
-	def open(self):
-		univention.admin.handlers.simpleLdap.open(self)
-		self.save()
-
-	def _ldap_pre_create(self):
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			mapping.mapValue('commonName', self.info['commonName']),
-			self.position.getDn()
-		)
+class object(AsteriskBase):
+	module = module
 
 	def _ldap_addlist(self):
 		return [('objectClass', ['ast4ucsPhonetype']),
 				('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
@@ -144,13 +89,13 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	if superordinate:
 		filter.expressions.append(univention.admin.filter.expression(
 				'ast4ucsSrvchildServer', superordinate.dn))
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
- 
+
 	res = []
 	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
 			required, timeout, sizelimit):
@@ -158,6 +103,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsPhonetype' in attr.get('objectClass', [])
-

@@ -16,15 +16,18 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+
 class ast4ucsExtmodeSyntax(select):
 	name = "ast4ucsExtmodeSyntax"
 	choices = [
-		('hide',   "Durchwahl verstecken"),
-		('first',  "Durchwahl des ersten Telefons"),
+		('hide', "Durchwahl verstecken"),
+		('first', "Durchwahl des ersten Telefons"),
 		('normal', "Durchwahl des jeweiligen Telefons"),
 	]
 
+
 class ast4ucsDurationSyntax(integer):
+	size = 'One'
 	name = "ast4ucsDurationSyntax"
 
 	@classmethod
@@ -38,6 +41,7 @@ class ast4ucsDurationSyntax(integer):
 				"Value must be a number between 1 and 120!"
 		return text
 
+
 class ast4ucsMusicNameSyntax(integer):
 	name = "ast4ucsMusicNameSyntax"
 
@@ -50,6 +54,7 @@ class ast4ucsMusicNameSyntax(integer):
 					+ "Zeichen '-' und '_' enthalten."
 		return text
 
+
 class ast4ucsPhoneNumberSyntax(string):
 	name = "ast4ucsPhoneNumberSyntax"
 
@@ -61,4 +66,3 @@ class ast4ucsPhoneNumberSyntax(string):
 				+ "Format angegeben werden, z.B. " \
 				+ "+494215960640 anstatt 0421 596064-0"
 		return text
-

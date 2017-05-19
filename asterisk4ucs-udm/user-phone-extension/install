@@ -57,7 +57,7 @@ function addUserAttribute {
 
 addUserAttribute phones \
 	--set shortDescription="Telefone" \
-	--set tabPosition=5 \
+	--set tabPosition=6 \
 	--set syntax=ast4ucsPhoneSyntax \
 	--set ldapMapping="ast4ucsUserPhone" \
 	--set multivalue=1 \
@@ -91,7 +91,7 @@ addUserAttribute timeout \
 
 addUserAttribute forwarding \
 	--set shortDescription="Weiterleitung" \
-	--set tabPosition=6 \
+	--set tabPosition=5 \
 	--set syntax=string \
 	--set ldapMapping="ast4ucsUserForwarding"
 

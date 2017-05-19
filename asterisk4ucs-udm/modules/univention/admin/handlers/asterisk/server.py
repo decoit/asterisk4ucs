@@ -19,53 +19,67 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import univention.admin.filter
 import univention.admin.handlers
-from univention.admin.handlers import asterisk
+import univention.admin.uexceptions
 import univention.admin.syntax
 from univention.admin.layout import Tab
-import time
-import logging
+#import logging
 
-logfile = "/var/log/univention/asteriskMusicPython.log"
+#logfile = "/var/log/univention/asteriskMusicPython.log"
 
 module = "asterisk/server"
-short_description = u"Asterisk: Asterisk-Server"
+short_description = u"Asterisk4UCS-Management: Asterisk-Server"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
-childs = 1
-usewizard = 1
+childs = False
 
-logging.basicConfig(filename=logfile,
-	#level=logging.INFO,
-     level=logging.DEBUG,
-	format = "%(asctime)s\t%(levelname)s\t%(message)s",
-	datefmt = "%d.%m.%Y %H:%M:%S"
-	)
+childmodules = [
+	'asterisk/phoneGroup',
+	'asterisk/waitingLoop',
+	'asterisk/sipPhone',
+	'asterisk/conferenceRoom',
+	'asterisk/phoneType',
+	'asterisk/mailbox',
+	'asterisk/faxGroup',
+	'asterisk/fax',
+	'asterisk/music',
+	'asterisk/agiscript',
+]
+#logging.basicConfig(filename=logfile,
+#	#level=logging.INFO,
+#     level=logging.DEBUG,
+#	format = "%(asctime)s\t%(levelname)s\t%(message)s",
+#	datefmt = "%d.%m.%Y %H:%M:%S"
+#	)
+
+
+class upstreamBug34040Exception(univention.admin.uexceptions.base):
+	message = u'Leider kann zur Zeit nicht mehr als ein Asterisk-Server angelegt werden, da <a href="http://forge.univention.org/bugzilla/show_bug.cgi?id=34040">ein Univention-Bug</a> dies verhindert.'
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "commonName" ],
-		[ "globalCallId" ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
+		["commonName"],
+		["globalCallId"],
 	]),
-	Tab('Vorwahlen', 'Gesperrte Vorwahlen', layout = [
-		[ "blockedAreaCodes", "blockInternational" ],
+	Tab('Vorwahlen', 'Gesperrte Vorwahlen', layout=[
+		["blockedAreaCodes", "blockInternational"],
 	]),
-	Tab('Anrufbeantworter', 'Anrufbeantworter', layout = [
-		[ "mailboxMaxlength" ],
-		[ "mailboxEmailsubject", "mailboxEmailbody" ],
-		[ "mailboxEmaildateformat", "mailboxAttach" ],
-		[ "mailboxMailcommand" ],
+	Tab('Anrufbeantworter', 'Anrufbeantworter', layout=[
+		["mailboxMaxlength"],
+		["mailboxEmailsubject", "mailboxEmailbody"],
+		["mailboxEmaildateformat", "mailboxAttach"],
+		["mailboxMailcommand"],
 	]),
-	Tab('Nummernkreise', 'Nummernkreise', layout = [
-		[ "extnums", "defaultext" ],
+	Tab('Nummernkreise', 'Nummernkreise', layout=[
+		["extnums", "defaultext"],
 	], advanced=True),
-	Tab('Asterisk-Host', 'Asterisk-Host', layout = [
-		[ "sshuser", "sshhost" ],
-		[ "sshpath", "sshmohpath" ],
-		[ "sshagipath", "sshcmd" ],
-	], advanced=True),
-	Tab('Namensauflösung', 'Namensauflösung für Anrufer', layout = [
-		[ "agi-user", "agi-password" ],
+	Tab('Asterisk-Host', 'Asterisk-Host', layout=[
+		["sshuser", "sshhost"],
+		["sshpath", "sshmohpath"],
+		["sshagipath", "sshcmd"],
+	]),
+	Tab('Namensauflösung', 'Namensauflösung für Anrufer', layout=[
+		["agi-user", "agi-password"],
 	], advanced=True),
 ]
 
@@ -111,7 +125,7 @@ property_descriptions = {
 		default="asterisk",
 		required=True,
 	),
-	"globalCallId" : univention.admin.property(
+	"globalCallId": univention.admin.property(
 		syntax=univention.admin.syntax.string,
 		short_description=u"Alle ausgehenden Anrufer übermitteln die folgende Nummer:",
 	),
@@ -154,7 +168,7 @@ property_descriptions = {
      ${VM_DATE}      Datum und Uhrzeit des Anrufs
      ${VM_MESSAGEFILE}
 		     Name der Sounddatei, in der die
-		     Nachricht abgespeichert ist""".replace("\n","<br>"),
+		     Nachricht abgespeichert ist""".replace("\n", "<br>"),
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="New message from ${VM_CALLERID}",
@@ -176,7 +190,7 @@ property_descriptions = {
 
 Weiterhin können die folgenden Escapesequenzen verwendet werden:
      \\n	     Neue Zeile
-     \\t	     Tabulator-Zeichen""".replace("\n","<br>"),
+     \\t	     Tabulator-Zeichen""".replace("\n", "<br>"),
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="Hello ${VM_NAME},\n\nThere is a new message " + \
@@ -205,7 +219,7 @@ Weiterhin können die folgenden Escapesequenzen verwendet werden:
 %y    Jahr ohne Jahrhundert (0-99)
 %Y    Jahr mit Jahrhundertangabe
 %Z    Name der Zeitzone (z.B. MEZ)
-%%    Das '%'-Zeichen""".replace("\n","<br>"),
+%%    Das '%'-Zeichen""".replace("\n", "<br>"),
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="%d.%m.%Y %H:%M",
@@ -277,29 +291,12 @@ mapping.register("agi-user", "ast4ucsServerAgiuser",
 mapping.register("agi-password", "ast4ucsServerAgipassword",
 	None, univention.admin.mapping.ListToString)
 
+
 class object(univention.admin.handlers.simpleLdap):
-	module=module
-
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-	def exists(self):
-		return self._exists
+	module = module
 
 	def open(self):
 		univention.admin.handlers.simpleLdap.open(self)
-		self.save()
 
 		for areaCode in ["+", "00"]:
 			if not areaCode in self.info.get("blockedAreaCodes", []):
@@ -309,8 +306,10 @@ class object(univention.admin.handlers.simpleLdap):
 			for areaCode in ["+", "00"]:
 				self.info["blockedAreaCodes"].remove(areaCode)
 
+		self.save()
+
 	def saveCheckboxes(self):
-		if "1" in self.info.get("blockInternational",[]):
+		if "1" in self.info.get("blockInternational", []):
 			self.info.setdefault("blockedAreaCodes", []).extend(["+", "00"])
 			if "" in self.info["blockedAreaCodes"]:
 				self.info["blockedAreaCodes"].remove("")
@@ -318,17 +317,19 @@ class object(univention.admin.handlers.simpleLdap):
 				self.info["blockedAreaCodes"]))
 
 	def _ldap_pre_modify(self):
+		super(object, self)._ldap_pre_modify()
 		self.saveCheckboxes()
 
 	def _ldap_pre_create(self):
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('commonName'),
-			mapping.mapValue('commonName', self.info['commonName']),
-			self.position.getDn()
-		)
+		super(object, self)._ldap_pre_create()
+		# check for more than one asterisk-server
+		if lookup(self.co, self.lo, None):
+			raise upstreamBug34040Exception()
+
 		self.saveCheckboxes()
 
 	def _ldap_post_create(self):
+		super(object, self)._ldap_post_create()
 		# this mess just creates the "default" asterisk/music
 		# (dn: "cn=default," + self.dn)
 		music = univention.admin.modules.get("asterisk/music")
@@ -357,27 +358,27 @@ class object(univention.admin.handlers.simpleLdap):
 		return [('objectClass', ['ast4ucsServer'])]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
 			'objectClass', "ast4ucsServer")
 	])
- 	logging.debug('server.py UDM 366: filter: %s', filter)
+ 	#logging.debug('server.py UDM 366: filter: %s', filter)
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
- 
+
 	res = []
 	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
 			required, timeout, sizelimit):
 		res.append(object(co, lo, None, dn=dn,
 				superordinate=superordinate, attributes=attrs))
-	logging.debug('server.py UDM 378: res: %s',res)
+	#logging.debug('server.py UDM 378: res: %s',res)
 	return res
+
 
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsServer' in attr.get('objectClass', [])
-

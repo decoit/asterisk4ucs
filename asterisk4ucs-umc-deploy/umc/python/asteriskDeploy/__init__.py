@@ -15,13 +15,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import univention.management.console.modules
-from univention.management.console.protocol.definitions import SUCCESS
+from univention.management.console.base import Base
 from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
 
-import univention.config_registry
 import univention.admin.uldap
-import univention.admin.config
 
 import univention.admin.modules
 univention.admin.modules.update()
@@ -38,10 +36,8 @@ import shutil
 import tempfile
 import subprocess
 
-ucr = univention.config_registry.ConfigRegistry()
-ucr.load()
+class Instance(Base):
 
-class Instance(univention.management.console.modules.Base):
 	def queryServers(self, request):
 		servers = getServers()
 		result = []
@@ -61,7 +57,6 @@ class Instance(univention.management.console.modules.Base):
 		self.finished(request.id, True)
 
 	def create(self, request):
-		
 		server = getServer(request.options["server"])
 		MODULE.error('### request: %s' % request)
 		MODULE.error('### self: %s' % self)
@@ -95,8 +90,7 @@ class Instance(univention.management.console.modules.Base):
 
 
 def getCoLoPos():
-	co = univention.admin.config.config()
-
+	co = None
 	lo, pos = univention.admin.uldap.getAdminConnection()
 
 	return co, lo, pos
@@ -115,10 +109,10 @@ def getServers():
 
 def getServer(dn):
 	co, lo, pos = getCoLoPos()
-
 	server = univention.admin.modules.get("asterisk/server")
 	univention.admin.modules.init(lo, pos, server)
 	obj = server.object(co, lo, None, dn)
+	MODULE.error("server dn: %s" % dn)
 	obj.open()
 
 	return obj
@@ -128,8 +122,8 @@ def getLog(servername):
 	filename = "/var/log/univention/asteriskDeploy-%s.log" % servername
 	try:
 		return open(filename).read()
-	except IOError, e:
-		return "[Error: %s]" % str(e)
+	except:
+		return "(Für diesen Server gibt es noch kein Deployment-Log)"
 
 def openLog(servername):
 	servername = re.sub(r"[^a-zA-Z0-9]+", "_", servername)
@@ -206,7 +200,7 @@ def deployConfigs(log, server, configs):
 	scptargetLdapconf = "%s:/etc/asterisk4ucs.ldapconfig" % (sshtarget)
 	scptargetConfig = "%s:%s/ucs_autogen" % (sshtarget, server["sshpath"])
 	scptargetAgi = "%s:%s/" % (sshtarget, server["sshagipath"])
-	sshcmd = "%s -rx 'core reload'" % server["sshcmd"]
+	sshcmd = "%s -rx 'module reload'" % server["sshcmd"]
 
 	tmpdirConfig = tempfile.mkdtemp()
 	tmpdirAgi = tempfile.mkdtemp()
@@ -242,4 +236,3 @@ def deployConfigs(log, server, configs):
 		shutil.rmtree(tmpdirConfig)
 		shutil.rmtree(tmpdirAgi)
 		os.remove(tmpfileLdapconf)
-

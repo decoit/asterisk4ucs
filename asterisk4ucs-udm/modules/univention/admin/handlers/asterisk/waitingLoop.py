@@ -20,12 +20,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import univention.admin.filter
 import univention.admin.handlers
 from univention.admin.handlers.asterisk import \
-	reverseFieldsLoad, reverseFieldsSave
+	reverseFieldsLoad, reverseFieldsSave, AsteriskBase
 import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/waitingLoop"
-short_description = u"Asterisk: Warteschlange"
+short_description = u"Asterisk4UCS-Management: Warteschlange"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
 
@@ -34,22 +34,23 @@ usewizard = 1
 superordinate = "asterisk/server"
 
 layout = [
-	Tab('Allgemein', 'Allgemeine Einstellungen', layout = [
-		[ "extension" ],
-		[ "strategy", "maxCalls" ],
-		[ "delayMusic", "memberDelay" ],
-		[ "members" ],
+	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
+		["extension"],
+		["strategy", "maxCalls"],
+		["delayMusic", "memberDelay"],
+		["members"],
 	])
 ]
 
+
 class SyntaxStrategy(univention.admin.syntax.select):
-	name="strategy"
+	name = "strategy"
 	choices = [
 		("ringall", u"Alle gleichzeitig anklingeln (ringall)"),
 		("roundrobin", u"Alle der Reihe nach anklingeln (roundrobin)"),
-		("leastrecent", u"Den am längsten inaktiven Anschluss " + 
+		("leastrecent", u"Den am längsten inaktiven Anschluss " +
 			u"anklingeln (leastrecent)"),
-		("fewestcalls", u"Den Anschluss mit den wenigsten "+
+		("fewestcalls", u"Den Anschluss mit den wenigsten " +
 			u"beantworteten Anrufen anklingeln (fewestcalls)"),
 		("random", u"Einen zufälligen Anschluss anklingeln"),
 	]
@@ -113,85 +114,42 @@ mapping.register("memberDelay", "ast4ucsWaitingloopMemberdelay",
 mapping.register("delayMusic", "ast4ucsWaitingloopDelaymusic",
 	None, univention.admin.mapping.ListToString)
 
-class object(univention.admin.handlers.simpleLdap):
-	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None,
-			attributes=[]):
-		global mapping
-		global property_descriptions
-		self.co = co
-		self.lo = lo
-		self.dn = dn
-		self.position = position
-		self._exists = 0
-		self.mapping = mapping
-		self.descriptions = property_descriptions
+class object(AsteriskBase):
+	module = module
 
+	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
 		self.reverseFields = [
 			("members", "asterisk/sipPhone", "waitingloops"),
 		]
 
-		univention.admin.handlers.simpleLdap.__init__(self, co, lo, 
-			position, dn, superordinate)
-
-		self.openSuperordinate()
-		if not self.superordinate:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'superordinate object not present'
-		if not dn and not position:
-			raise univention.admin.uexceptions.insufficientInformation, \
-					 'neither DN nor position present'
-
-	def openSuperordinate(self):
-		if self.superordinate:
-			return
-
-		self.open()
-		serverdn = self.oldattr.get("ast4ucsSrvchildServer")
-		if not serverdn:
-			return
-
-		if serverdn.__iter__:
-			serverdn = serverdn[0]
-
-		univention.admin.modules.update()
-		servermod = univention.admin.modules.get("asterisk/server")
-		univention.admin.modules.init(self.lo, self.position, servermod)
-		self.superordinate = servermod.object(self.co, self.lo,
-				self.position, serverdn)
-		self.superordinate.open()
-
-	def exists(self):
-		return self._exists
+		super(object, self).__init__(co, lo, position, dn, superordinate)
 
 	def open(self):
-		univention.admin.handlers.simpleLdap.open(self)
+		super(object, self).open()
 		reverseFieldsLoad(self)
 		self.save()
 
 	def _ldap_pre_create(self):
-		self.dn = '%s=%s,%s' % (
-			mapping.mapName('extension'),
-			mapping.mapValue('extension', self.info['extension']),
-			self.position.getDn()
-		)
+		super(object, self)._ldap_pre_create()
 		reverseFieldsSave(self)
-	
+
 	def _ldap_pre_modify(self):
+		super(object, self)._ldap_pre_modify()
 		reverseFieldsSave(self)
-	
+
 	def _ldap_pre_remove(self):
+		super(object, self)._ldap_pre_remove()
 		self.open()
 		self.info = {}
 		reverseFieldsSave(self)
-	
+
 	def _ldap_addlist(self):
 		return [('objectClass', ['ast4ucsWaitingloop']),
 				('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', 
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 		unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
@@ -201,13 +159,13 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 	if superordinate:
 		filter.expressions.append(univention.admin.filter.expression(
 				'ast4ucsSrvchildServer', superordinate.dn))
- 
+
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, 
+		univention.admin.filter.walk(filter_p,
 			univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
- 
+
 	res = []
 	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
 			required, timeout, sizelimit):
@@ -215,6 +173,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
 				superordinate=superordinate, attributes=attrs))
 	return res
 
+
 def identify(dn, attr, canonical=0):
 	return 'ast4ucsWaitingloop' in attr.get('objectClass', [])
-

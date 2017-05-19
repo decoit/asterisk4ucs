@@ -20,13 +20,13 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"umc/widgets/TabbedModule",
 	"umc/widgets/Module",
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/Page",
 	"umc/widgets/Form",
 	"umc/widgets/Grid",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/store",	
 	"umc/widgets/Text",
 	"umc/dialog",
@@ -34,7 +34,7 @@ define([
 	"umc/tools",
 	"umc/i18n!umc/modules/asteriskMusic"
 ],
-function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,ExpandingTitlePane,store,Text,dialog,on,tools,_){
+function(declare,lang,array,entities,TabbedModule,Module,ContainerWidget,Page,Form,Grid,store,Text,dialog,on,tools,_){
 	return declare("umc.modules.asteriskMusic",[Module],{
 		_page: null,
 		_form: null,
@@ -47,8 +47,6 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 		umcpCommand: tools.umcpCommand,
 
 		i18nClass: "umc.modules.asteriskMusic",
-
-
 
 		buildRendering: function () {
 			this.inherited(arguments);
@@ -242,7 +240,7 @@ function(declare,lang,array,TabbedModule,Module,ContainerWidget,Page,Form,Grid,E
 		_buildErrorPopUp: function(errorMsg) {
 			var container = new ContainerWidget({});
 			container.addChild(new Text({
-				content: '<pre>'+errorMsg+'</pre>'
+				content: '<pre>' + entities.encode(errorMsg) + '</pre>'
 			}));
 
 			dialog.alert( container );

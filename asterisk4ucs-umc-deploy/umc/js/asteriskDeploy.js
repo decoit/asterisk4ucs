@@ -23,14 +23,13 @@ define([
 	"umc/widgets/Page",
 	"umc/widgets/Form",
 	"umc/widgets/Text",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/dialog",
 	"dojo/_base/array",
 	"dojo/on",
 	"umc/tools",
 	"umc/i18n!umc/modules/asteriskDeploy"
 ],
-function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,tools,asteriskDeploy,_){
+function(Module,declare,lang,Page,Form,Text,dialog,array,on,tools,asteriskDeploy,_){
 	return declare("umc.modules.asteriskDeploy",[Module], {
 		_page: null,
 		_form: null,
@@ -105,11 +104,7 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 				style: "font-family: monospace; overflow: scroll; white-space: pre;"
 			});
 
-			var container = new ExpandingTitlePane({
-				title: "Letzte Logdatei"
-			});
-			this._page.addChild(container);
-			container.addChild(this._log);
+			this._page.addChild(this._log);
 
 			asteriskDeploy = this;
 		},
@@ -160,13 +155,19 @@ function(Module,declare,lang,Page,Form,Text,ExpandingTitlePane,dialog,array,on,t
 		},
 		_refreshLog: function () {
 			this._log._setContentAttr("[Logdatei lädt...]");
-
-			var call = tools.umcpCommand("asteriskDeploy/getLog", {
-				server: this._serverdn
-			});
-			call.then(lang.hitch(this, function (data) {
-				this._log._setContentAttr(data.result);
-			}));
+			var servername = this._form.getWidget("server").get("value");
+			if(servername!=""){
+				var call = tools.umcpCommand("asteriskDeploy/getLog", {
+					server: this._serverdn
+				});
+				call.then(lang.hitch(this, function (data) {
+					this._log._setContentAttr(data.result);
+				}));
+			} else {
+				this._log._setContentAttr("Es wurde kein Asterisk-Server eingerichtet!");
+				dialog.alert("Es wurde kein Asterisk-Server eingerichtet!");
+				
+			}
 		}
 	});
 });
