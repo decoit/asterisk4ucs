@@ -25,8 +25,8 @@ udm container/cn create \
 /usr/lib/asterisk4ucs/user-phone-extension/install
 
 # this is madness! - no, this is pkiiiiiiiiilllll!!!!
-pkill -f '/usr/bin/python2.6 /usr/sbin/univention-management-console-module -m udm .*'
-pkill -f '/usr/bin/python2.6 /usr/share/univention-directory-manager-tools/univention-cli-server'
+pkill -f '/usr/bin/python /usr/sbin/univention-management-console-module -m udm .*'
+pkill -f '/usr/bin/python /usr/share/univention-directory-manager-tools/univention-cli-server'
 /etc/init.d/univention-management-console-web-server stop
 /etc/init.d/univention-management-console-server restart
 /etc/init.d/univention-management-console-web-server start
