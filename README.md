@@ -5,8 +5,6 @@ Asterisk4UCS ermöglicht zentrale Administration der gesamten Asterisk-Konfigura
 
 Ab UCS Version 4.3 wird Asterisk4UCS nicht mehr von uns gepflegt (end-of-life) und wird im Univention App Katalog deaktiviert. Als Hersteller der Lösung stehen wir Ihnen bei Fragen gerne zur Seite. Asterisk4UCS wurde zu unserer IP-Telefonanlage KITOMA weiterentwickelt. KITOMA ist statt reinen Administrationsmanagements nunmehr eine komplette IP-Telefonanlage, auf die durch die KITOMA-Oberfläche direkt zugegriffen werden kann. 
 
-Zwar ist KITOMA nicht direkt über den App-Katalog herunterladbar, aber trotzdem kompatibel zu UCS, so dass wir als Univention Premium Partner gerne Ihre UCS-Infrastruktur durch unsere IP-Telefonanlage erweitern. Weitere Informationen finden Sie unter www.kito.ma oder unter www.decoit.de/voip.html
+Zwar ist KITOMA nicht direkt über den App-Katalog herunterladbar, aber trotzdem kompatibel zu UCS, so dass wir als Univention Partner gerne Ihre UCS-Infrastruktur durch unsere IP-Telefonanlage erweitern. Weitere Informationen finden Sie unter www.kito.ma oder unter www.decoit.de/voip.html
 
 Viele Grüße vom DECOIT®-Team
-
-[1] https://www.univention.de
