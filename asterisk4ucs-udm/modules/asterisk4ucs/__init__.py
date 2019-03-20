@@ -20,10 +20,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import re
-import sys
-
-import univention.admin.config
 import univention.admin.uldap
 import univention.admin.modules
 
@@ -38,7 +34,7 @@ class PhoneBookWrapper(object):
 		pbdn ist der DN des Telefonbuches im LDAP. (Kann z.B. per
 		"udm asterisk/phoneBook list" ermittelt werden)"""
 
-		self.co = univention.admin.config.config()
+		self.co = None
 		self.lo, self.pos = univention.admin.uldap.getAdminConnection()
 
 		univention.admin.modules.update()
@@ -100,11 +96,11 @@ class PhoneBookWrapper(object):
 		if organisation:
 			contact["organisation"] = organisation
 
-		if isinstance(phones, str):
+		if isinstance(phones, basestring):
 			phones = [phones]
-		if isinstance(mobiles, str):
+		if isinstance(mobiles, basestring):
 			mobiles = [mobiles]
-		if isinstance(faxes, str):
+		if isinstance(faxes, basestring):
 			faxes = [faxes]
 
 		if phones:
