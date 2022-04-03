@@ -2,7 +2,7 @@
 
 #DEBHELPER#
 
-PID=$(echo `pgrep -f '^/usr/bin/python /usr/sbin/univention-management-console-module.* -m asteriskDeploy' || true`)
+PID=$(echo `pgrep -f '^/usr/bin/python3 /usr/sbin/univention-management-console-module.* -m asteriskDeploy' || true`)
 if [ -n "$PID" ]; then
 	echo "Killing old module process(es): $PID"
 	kill $PID

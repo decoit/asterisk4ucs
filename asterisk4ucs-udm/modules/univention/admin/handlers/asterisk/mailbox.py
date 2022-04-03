@@ -37,7 +37,6 @@ options = {
 childs = False
 superordinate = "asterisk/server"
 
-# Definiert das Layout der Eingabefelder in der Weboberfläche
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
 		["id"],
@@ -46,8 +45,6 @@ layout = [
 	])
 ]
 
-# Definiert die verschiedenen UDM-Attribute
-# http://wiki.univention.de/index.php?title=Entwicklung_und_Integration_eigener_Module_in_Univention_Directory_Manager#property-descriptions
 property_descriptions = {
 	"commonName": univention.admin.property(
 		short_description="Name",
@@ -72,8 +69,6 @@ property_descriptions = {
 	),
 }
 
-# Definiert die Zuordnung von UDM-Attributen zu LDAP-Attributen.
-# http://wiki.univention.de/index.php?title=Entwicklung_und_Integration_eigener_Module_in_Univention_Directory_Manager#mapping
 mapping = univention.admin.mapping.mapping()
 mapping.register("commonName", "cn", None, univention.admin.mapping.ListToString)
 mapping.register("id", "ast4ucsMailboxId", None, univention.admin.mapping.ListToString)

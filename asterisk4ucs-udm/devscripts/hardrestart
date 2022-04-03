@@ -15,4 +15,4 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-kill -9 `ps aux | grep management-console | cut -d\  -f 7` ; /etc/init.d/univention-management-console-server start && /etc/init.d/univention-management-console-web-server start
+systemctl restart univention-management-console-server

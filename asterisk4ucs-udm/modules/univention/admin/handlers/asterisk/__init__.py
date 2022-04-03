@@ -110,10 +110,10 @@ def genSipconfEntry(co, lo, phone):
 
 
 def genSipconfFaxEntry(co, lo, phone):
-	res = "[%s]\n" % (phone["extension"])
+	res = "[%s]\n" % (phone["extension"],)
 	res += "type=friend\n"
 	res += "host=dynamic\n"
-	res += "secret=%s\n" % (phone["password"])
+	res += "secret=%s\n" % (phone["password"],)
 	return res
 
 
@@ -159,7 +159,7 @@ def genSipconf(co, lo, srv):
 def genVoicemailconfEntry(co, lo, box):
 	from univention.admin.handlers.users import user
 	boxUser = user.lookup(co, lo, filter_format("(ast4ucsUserMailbox=%s)", (box.dn,)))
-	if len(boxUser) == 0:
+	if not boxUser:
 		return ";; Mailbox %s has no user.\n" % box["id"]
 	if len(boxUser) > 1:
 		msg = ";; Mailbox %s has multiple users:\n" % box["id"]

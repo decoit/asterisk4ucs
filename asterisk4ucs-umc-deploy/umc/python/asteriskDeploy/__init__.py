@@ -220,15 +220,13 @@ def deployConfigs(log, server, configs):
 		f.close()
 
 		for name, data in configs.items():
-			f = open("%s/%s" % (tmpdirConfig, name), "w")
-			f.write(data)
-			f.close()
+			with open("%s/%s" % (tmpdirConfig, name), "w") as fd:
+				fd.write(data)
 
 		for name, data in agis.items():
-			f = open("%s/%s" % (tmpdirAgi, name), "w")
-			f.write(data)
-			os.fchmod(f.fileno(), 0o755)
-			f.close()
+			with open("%s/%s" % (tmpdirAgi, name), "w") as fd:
+				fd.write(data)
+				os.fchmod(fd.fileno(), 0o755)
 
 		logCall(log, ["scp", "-Bq", tmpfileLdapconf, scptargetLdapconf], tmpdirConfig)
 		logCall(log, ["scp", "-Bq"] + configs.keys() + [scptargetConfig], tmpdirConfig)

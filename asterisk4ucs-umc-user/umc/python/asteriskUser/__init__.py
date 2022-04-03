@@ -21,12 +21,13 @@ from univention.management.console.log import MODULE
 import univention.config_registry
 import univention.admin.uldap
 import univention.admin.modules
-univention.admin.modules.update()
 
 import univention.admin.handlers.users.user
 import univention.admin.handlers.asterisk.sipPhone
 import univention.admin.handlers.asterisk.mailbox
 import univention.admin.handlers.asterisk.server
+
+univention.admin.modules.update()
 
 
 class Instance(Base):
@@ -143,7 +144,7 @@ def getUserAndMailbox(userdn):
 		})
 
 	MODULE.error('User: server: %s' % len(checkServers))
-	if len(checkServers) > 0:
+	if checkServers:
 		co, lo = getCoLo()
 
 		user = getUser(co, lo, userdn)
@@ -153,7 +154,7 @@ def getUserAndMailbox(userdn):
 			mailbox = getMailbox(co, lo, mailbox)
 
 		return user, mailbox
-	elif len(checkServers) == 0:
+	else:
 		MODULE.error('Fehler gefunden!')
 		mailbox = "KeinServer"
 		user = "KeinServer"

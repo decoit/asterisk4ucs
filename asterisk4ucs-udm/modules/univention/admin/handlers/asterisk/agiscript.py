@@ -17,6 +17,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+import base64
+
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
@@ -76,10 +78,10 @@ class object(simpleLdap):
 	module = module
 
 	def getContent(self):
-		return self.get("content", "").decode("base64")
+		return base64.b64decode(self.get("content", "").encode('UTF-8')).decode("ascii")
 
 	def setContent(self, content):
-		self["content"] = content.encode("base64").replace("\n", "")
+		self["content"] = base64.b64encode(content.encode("utf-8")).decode('ascii')
 
 	def _ldap_addlist(self):
 		return [('ast4ucsSrvchildServer', self.superordinate.dn)]

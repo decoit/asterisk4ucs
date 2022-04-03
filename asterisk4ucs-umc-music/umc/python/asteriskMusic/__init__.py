@@ -15,12 +15,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA."""
 
 from univention.management.console.base import Base
-from univention.management.console.log import MODULE
 
 import univention.admin.uldap
 
 import univention.admin.modules
-univention.admin.modules.update()
 
 import univention.admin.handlers.asterisk.server
 import univention.admin.handlers.asterisk.music
@@ -32,6 +30,8 @@ import shutil
 import tempfile
 import subprocess
 import logging
+
+univention.admin.modules.update()
 
 logfile = "/var/log/univention/asteriskMusicPython.log"
 logFilename = "/var/log/univention/asteriskMusicUpload.log"
@@ -256,7 +256,7 @@ def uploadMusic(server, moh, data, stem, filename):
 
 
 def escaped_command_string(x):
-	return ' '.join(map(pipes.quote, x))
+	return ' '.join(pipes.quote(s) for s in x)
 
 
 def delete(moh):

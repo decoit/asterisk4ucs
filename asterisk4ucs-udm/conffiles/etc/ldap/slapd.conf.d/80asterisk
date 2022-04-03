@@ -1,7 +1,5 @@
 @%@UCRWARNING=# @%@
 @!@
-if baseConfig['server/role'] == "domaincontroller_master":
-        print "include /usr/share/univention-ldap/schema/asterisk4ucs.schema"
+if configRegistry['server/role'] == "domaincontroller_master":
+	print("include /usr/share/univention-ldap/schema/asterisk4ucs.schema")
 @!@
-
-

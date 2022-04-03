@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-	<module id="asteriskDeploy" icon="asteriskDeploy" version="1.0">
+	<module id="asteriskDeploy" icon="asteriskDeploy" python="3" version="1.0">
 		<name>Asterisk4UCS Deployment</name>
 		<description>Deploys Asterisk4UCS configuration files</description>
 		<categories>
