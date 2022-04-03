@@ -66,10 +66,10 @@ property_descriptions = {
 	"phonetype": univention.admin.property(
 		short_description="Telefontyp",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhonetype",
-                        attribute=['asterisk/phoneType: commonName'],
-                        value='asterisk/phoneType: dn'
-                ),
+			filter="objectClass=ast4ucsPhonetype",
+			attribute=['asterisk/phoneType: commonName'],
+			value='asterisk/phoneType: dn'
+		),
 	),
 	"profile": univention.admin.property(
 		short_description="Profil",
@@ -83,28 +83,28 @@ property_descriptions = {
 	"callgroups": univention.admin.property(
 		short_description="Callgroups",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhonegroup",
-                        attribute=['asterisk/phoneGroup: commonName'],
-                        value='asterisk/phoneGroup: dn'
-                ),
+			filter="objectClass=ast4ucsPhonegroup",
+			attribute=['asterisk/phoneGroup: commonName'],
+			value='asterisk/phoneGroup: dn'
+		),
 		multivalue=True,
 	),
 	"pickupgroups": univention.admin.property(
 		short_description="Pickupgroups",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhonegroup",
-                        attribute=['asterisk/phoneGroup: commonName'],
-                        value='asterisk/phoneGroup: dn'
-                ),
+			filter="objectClass=ast4ucsPhonegroup",
+			attribute=['asterisk/phoneGroup: commonName'],
+			value='asterisk/phoneGroup: dn'
+		),
 		multivalue=True,
 	),
 	"waitingloops": univention.admin.property(
 		short_description="Warteschleifen",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsWaitingloop",
-                        attribute=['asterisk/waitingLoop: extension'],
-                        value='asterisk/waitingLoop: dn'
-                ),
+			filter="objectClass=ast4ucsWaitingloop",
+			attribute=['asterisk/waitingLoop: extension'],
+			value='asterisk/waitingLoop: dn'
+		),
 		multivalue=True,
 	),
 	"forwarding": univention.admin.property(
@@ -118,61 +118,44 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("extension", "ast4ucsExtensionExtension",
-	None, univention.admin.mapping.ListToString)
-
-mapping.register("ipaddress", "ast4ucsSipclientIp",
-	None, univention.admin.mapping.ListToString)
-mapping.register("macaddress", "ast4ucsSipclientMacaddr",
-	None, univention.admin.mapping.ListToString)
-mapping.register("hostname", "ast4ucsSipclientHostname",
-	None, univention.admin.mapping.ListToString)
-mapping.register("password", "ast4ucsSipclientSecret",
-	None, univention.admin.mapping.ListToString)
-
-mapping.register("phonetype", "ast4ucsPhonePhonetype",
-	None, univention.admin.mapping.ListToString)
-mapping.register("profile", "ast4ucsPhoneProfile",
-	None, univention.admin.mapping.ListToString)
+mapping.register("extension", "ast4ucsExtensionExtension", None, univention.admin.mapping.ListToString)
+mapping.register("ipaddress", "ast4ucsSipclientIp", None, univention.admin.mapping.ListToString)
+mapping.register("macaddress", "ast4ucsSipclientMacaddr", None, univention.admin.mapping.ListToString)
+mapping.register("hostname", "ast4ucsSipclientHostname", None, univention.admin.mapping.ListToString)
+mapping.register("password", "ast4ucsSipclientSecret", None, univention.admin.mapping.ListToString)
+mapping.register("phonetype", "ast4ucsPhonePhonetype", None, univention.admin.mapping.ListToString)
+mapping.register("profile", "ast4ucsPhoneProfile", None, univention.admin.mapping.ListToString)
 mapping.register("callgroups", "ast4ucsPhoneCallgroup")
 mapping.register("pickupgroups", "ast4ucsPhonePickupgroup")
 mapping.register("waitingloops", "ast4ucsPhoneWaitingloop")
-mapping.register("forwarding", "ast4ucsPhoneForwarding",
-	None, univention.admin.mapping.ListToString)
-mapping.register("skipExtension", "ast4ucsPhoneSkipextension",
-	None, univention.admin.mapping.ListToString)
+mapping.register("forwarding", "ast4ucsPhoneForwarding", None, univention.admin.mapping.ListToString)
+mapping.register("skipExtension", "ast4ucsPhoneSkipextension", None, univention.admin.mapping.ListToString)
 
 
 class object(AsteriskBase):
 	module = module
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsPhone']),
-				('ast4ucsSrvchildServer', self.superordinate.dn)]
+		return [('objectClass', ['ast4ucsPhone']), ('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
 			'objectClass', "ast4ucsPhone")
 	])
 
 	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression(
-				'ast4ucsSrvchildServer', superordinate.dn))
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsSrvchildServer', superordinate.dn))
 
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
+		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
 	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
+	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique, required, timeout, sizelimit):
+		res.append(object(co, lo, None, dn=dn, superordinate=superordinate, attributes=attrs))
 	return res
 
 

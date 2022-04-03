@@ -20,9 +20,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import re
-import sys
-
 import univention.admin.config
 import univention.admin.uldap
 import univention.admin.modules
@@ -42,20 +39,15 @@ class PhoneBookWrapper(object):
 		self.lo, self.pos = univention.admin.uldap.getAdminConnection()
 
 		univention.admin.modules.update()
-		self.udmPhonebook = univention.admin.modules.get(
-				"asterisk/phoneBook")
-		self.udmContact = univention.admin.modules.get(
-				"asterisk/contact")
-		univention.admin.modules.init(self.lo, self.pos,
-				self.udmPhonebook)
-		univention.admin.modules.init(self.lo, self.pos,
-				self.udmContact)
+		self.udmPhonebook = univention.admin.modules.get("asterisk/phoneBook")
+		self.udmContact = univention.admin.modules.get("asterisk/contact")
+		univention.admin.modules.init(self.lo, self.pos, self.udmPhonebook)
+		univention.admin.modules.init(self.lo, self.pos, self.udmContact)
 
-		self.pb = self.udmPhonebook.object(self.co, self.lo,
-				None, pbdn)
+		self.pb = self.udmPhonebook.object(self.co, self.lo, None, pbdn)
 		self.pb.open()
 		if not self.pb.exists():
-			raise Exception, "DN does not exist."
+			raise Exception("DN does not exist.")
 
 	def getName(self):
 		"""Gibt den Namen des Telefonbuchs zurück"""
@@ -65,17 +57,14 @@ class PhoneBookWrapper(object):
 	def empty(self):
 		"""Löscht alle Kontakte im Telefonbuch"""
 
-		contacts = self.udmContact.lookup(self.co, self.lo, None,
-				superordinate=self.pb)
+		contacts = self.udmContact.lookup(self.co, self.lo, None, superordinate=self.pb)
 
 		for contact in contacts:
 			contact.remove()
 
 		return len(contacts)
 
-	def addContact(self, title=None, firstname=None, lastname=None,
-			organisation=None,
-			phones=None, mobiles=None, faxes=None):
+	def addContact(self, title=None, firstname=None, lastname=None, organisation=None, phones=None, mobiles=None, faxes=None):
 		"""Fügt einen Kontakt hinzu
 
 		Die Argumente sollten unbedingt als Keyword-Argumente
@@ -87,8 +76,7 @@ class PhoneBookWrapper(object):
 		Strings.
 		Der Rückgabewert ist der DN des neuen Kontakts."""
 
-		contact = self.udmContact.object(self.co, self.lo,
-				self.pb.position, None, self.pb)
+		contact = self.udmContact.object(self.co, self.lo, self.pb.position, None, self.pb)
 		contact.open()
 
 		if title:

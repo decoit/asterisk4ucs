@@ -37,8 +37,7 @@ class ast4ucsDurationSyntax(integer):
 			if number > 300 or number < 1:
 				raise ValueError
 		except ValueError:
-			raise univention.admin.uexceptions.valueError, \
-				"Value must be a number between 1 and 120!"
+			raise univention.admin.uexceptions.valueError("Value must be a number between 1 and 120!")
 		return text
 
 
@@ -48,10 +47,7 @@ class ast4ucsMusicNameSyntax(integer):
 	@classmethod
 	def parse(self, text):
 		if not bool(re.match(r"^[a-zA-Z0-9_-]+$", text)):
-			raise univention.admin.uexceptions.valueError, \
-				"Der Name einer Musikklasse darf nur " \
-					+ "Buchstaben, Zahlen und die " \
-					+ "Zeichen '-' und '_' enthalten."
+			raise univention.admin.uexceptions.valueError("Der Name einer Musikklasse darf nur Buchstaben, Zahlen und die Zeichen '-' und '_' enthalten.")
 		return text
 
 
@@ -61,8 +57,9 @@ class ast4ucsPhoneNumberSyntax(string):
 	@classmethod
 	def parse(self, text):
 		if not bool(re.match(r"^\+[0-9]{2,30}$", text)):
-			raise univention.admin.uexceptions.valueError, \
-				"Eine Telefonnummer muss im internationalen " \
-				+ "Format angegeben werden, z.B. " \
-				+ "+494215960640 anstatt 0421 596064-0"
+			raise univention.admin.uexceptions.valueError(
+				"Eine Telefonnummer muss im internationalen "
+				"Format angegeben werden, z.B. "
+				"+494215960640 anstatt 0421 596064-0"
+			)
 		return text

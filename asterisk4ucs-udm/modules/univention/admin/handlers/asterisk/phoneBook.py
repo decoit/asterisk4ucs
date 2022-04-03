@@ -46,8 +46,7 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("commonName", "cn",
-	None, univention.admin.mapping.ListToString)
+mapping.register("commonName", "cn", None, univention.admin.mapping.ListToString)
 
 
 class object(univention.admin.handlers.simpleLdap):
@@ -57,24 +56,19 @@ class object(univention.admin.handlers.simpleLdap):
 		return [('objectClass', ['ast4ucsPhonebook'])]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "ast4ucsPhonebook")
+		univention.admin.filter.expression('objectClass', "ast4ucsPhonebook")
 	])
 
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
+		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
 	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
+	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique, required, timeout, sizelimit):
+		res.append(object(co, lo, None, dn=dn, superordinate=superordinate, attributes=attrs))
 	return res
 
 

@@ -44,25 +44,15 @@ class AsteriskUsersUserHook(simpleHook):
 		for phonedn in module.info.get("phones", []):
 			if not phonedn:
 				continue
-			phoneUsers = user.lookup(module.co, module.lo,
-				"(&(ast4ucsUserPhone=%s)(!(uid=%s)))" % (
-				escapeForLdapFilter(phonedn),
-				escapeForLdapFilter(module.info["username"])))
+			phoneUsers = user.lookup(module.co, module.lo, "(&(ast4ucsUserPhone=%s)(!(uid=%s)))" % (escapeForLdapFilter(phonedn), escapeForLdapFilter(module.info["username"])))
 			if phoneUsers:
-				raise self.phoneError(
-						nameFromDn(phonedn),
-						nameFromDn(phoneUsers[0].dn))
+				raise self.phoneError(nameFromDn(phonedn), nameFromDn(phoneUsers[0].dn))
 
 		mailboxdn = module.info.get("mailbox")
 		if mailboxdn:
-			mailboxUsers = user.lookup(module.co, module.lo,
-				"(&(ast4ucsUserMailbox=%s)(!(uid=%s)))" % (
-				escapeForLdapFilter(mailboxdn),
-				escapeForLdapFilter(module.info["username"])))
+			mailboxUsers = user.lookup(module.co, module.lo, "(&(ast4ucsUserMailbox=%s)(!(uid=%s)))" % (escapeForLdapFilter(mailboxdn), escapeForLdapFilter(module.info["username"])))
 			if mailboxUsers:
-				raise self.mailboxError(
-						nameFromDn(mailboxdn),
-						nameFromDn(mailboxUsers[0].dn))
+				raise self.mailboxError(nameFromDn(mailboxdn), nameFromDn(mailboxUsers[0].dn))
 
 	def hook_open(self, module):
 		pass

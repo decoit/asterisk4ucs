@@ -14,6 +14,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+from __future__ import print_function
 
 from univention.management.console.base import Base
 from univention.management.console.log import MODULE
@@ -22,7 +23,6 @@ from univention.management.console.config import ucr
 import univention.admin.uldap
 
 import univention.admin.modules
-univention.admin.modules.update()
 
 import univention.admin.handlers.asterisk
 import univention.admin.handlers.asterisk.server
@@ -35,6 +35,9 @@ from time import strftime, localtime, sleep
 import shutil
 import tempfile
 import subprocess
+
+univention.admin.modules.update()
+
 
 class Instance(Base):
 
@@ -51,8 +54,7 @@ class Instance(Base):
 	def copyid(self, request):
 		server = getServer(request.options["server"])
 		log = openLog(server["commonName"])
-		print >>log, "Die Funktion zum Kopieren des SSH-Schlüssels ist noch " \
-				"nicht implementiert."
+		print("Die Funktion zum Kopieren des SSH-Schlüssels ist noch nicht implementiert.", file=log)
 		closeLog(log)
 		self.finished(request.id, True)
 
@@ -71,14 +73,14 @@ class Instance(Base):
 		log = openLog(server["commonName"])
 
 		configs = createConfigs(log, server)
-		print >>log, "\n\n"
+		print("\n\n", file=log)
 		try:
 			deployConfigs(log, server, configs)
 		except subprocess.CalledProcessError:
-			print >>log, "\n\nERROR: Aborted deployment because of an error.\n"
+			print("\n\nERROR: Aborted deployment because of an error.\n", file=log)
 		else:
-			print >>log, "\n\nDie neue Konfiguration ist jetzt aktiv."
-			print >>log, "Viel Spaß beim Telefonieren!\n"
+			print("\n\nDie neue Konfiguration ist jetzt aktiv.", file=log)
+			print("Viel Spaß beim Telefonieren!\n", file=log)
 
 		closeLog(log)
 		self.finished(request.id, True)
@@ -95,6 +97,7 @@ def getCoLoPos():
 
 	return co, lo, pos
 
+
 def getServers():
 	co, lo, pos = getCoLoPos()
 
@@ -107,6 +110,7 @@ def getServers():
 
 	return servers
 
+
 def getServer(dn):
 	co, lo, pos = getCoLoPos()
 	server = univention.admin.modules.get("asterisk/server")
@@ -117,24 +121,27 @@ def getServer(dn):
 
 	return obj
 
+
 def getLog(servername):
 	servername = re.sub(r"[^a-zA-Z0-9]+", "_", servername)
 	filename = "/var/log/univention/asteriskDeploy-%s.log" % servername
 	try:
 		return open(filename).read()
-	except:
+	except IOError:
 		return "(Für diesen Server gibt es noch kein Deployment-Log)"
+
 
 def openLog(servername):
 	servername = re.sub(r"[^a-zA-Z0-9]+", "_", servername)
 	filename = "/var/log/univention/asteriskDeploy-%s.log" % servername
 	time = strftime("%a, %d %b %Y %H:%M:%S", localtime())
-	
+
 	log = open(filename, "w", False)
 	log.write("Log opened %s\n" % time)
 	log.write("===========%s\n" % ("=" * len(time)))
 	log.write("\n")
 	return log
+
 
 def closeLog(log):
 	time = strftime("%a, %d %b %Y %H:%M:%S", localtime())
@@ -142,55 +149,54 @@ def closeLog(log):
 	log.write("Log closed %s\n" % time)
 	log.close()
 
+
 def createConfigs(log, server):
-	print >>log, "Creating config files for server %s" % server["commonName"]
-	print >>log, "=================================%s" % (
-			"=" * len(server["commonName"]))
-	
+	print("Creating config files for server %s" % server["commonName"], file=log)
+	print("=================================%s" % ("=" * len(server["commonName"])), file=log)
+
 	configs = univention.admin.handlers.asterisk.genConfigs(server)
 	for name, data in configs.items():
-		print >>log
-		print >>log
-		print >>log, "Creating %s:" % name
-		print >>log, "---------%s-" % ("-" * len(name))
-		print >>log
+		print(file=log)
+		print(file=log)
+		print("Creating %s:" % name, file=log)
+		print("---------%s-" % ("-" * len(name)), file=log)
+		print(file=log)
 		errors = re.findall(r"^;; .*", data, re.MULTILINE)
 		for error in errors:
-			print >>log, error[3:]
+			print(error[3:], file=log)
 		if not errors:
-			print >>log, "(no error)"
+			print("(no error)", file=log)
 
 	return configs
 
+
 def logCall(log, args, cwd):
-	print >>log, "Creating child process: %s" % str(args)
-	proc = subprocess.Popen(args, stdout=log, stderr=log,
-			stdin=open("/dev/zero"), cwd=cwd)
-	print >>log, "Child process has pid %i" % proc.pid
+	print("Creating child process: %s" % str(args), file=log)
+	proc = subprocess.Popen(args, stdout=log, stderr=log, stdin=open("/dev/zero"), cwd=cwd)
+	print("Child process has pid %i" % proc.pid, file=log)
 
 	sleeptime = 0.1
 	timeleft = 30
 	while timeleft > 0:
-		if proc.poll() != None:
+		if proc.poll() is not None:
 			break
 		sleep(sleeptime)
 		timeleft -= sleeptime
 	else:
-		print >>log, "Child process did not terminate in time, killing it..."
+		print("Child process did not terminate in time, killing it...", file=log)
 		proc.kill()
 		raise subprocess.CalledProcessError(proc.returncode, args[0])
 
-	print >>log, "Child returned code %i" % proc.returncode
+	print("Child returned code %i" % proc.returncode, file=log)
 
 	if proc.returncode != 0:
 		raise subprocess.CalledProcessError(proc.returncode, args[0])
 
+
 def deployConfigs(log, server, configs):
-	print >>log, "Deploying config files to server %s" % (
-			server["commonName"])
-	print >>log, "=================================%s" % (
-			"=" * len(server["commonName"]))
-	print >>log
+	print("Deploying config files to server %s" % (server["commonName"]), file=log)
+	print("=================================%s" % ("=" * len(server["commonName"])), file=log)
+	print(file=log)
 
 	agis = {}
 	for agi in agiscript.lookup(server.co, server.lo, False):
@@ -221,17 +227,13 @@ def deployConfigs(log, server, configs):
 		for name, data in agis.items():
 			f = open("%s/%s" % (tmpdirAgi, name), "w")
 			f.write(data)
-			os.fchmod(f.fileno(), 0755)
+			os.fchmod(f.fileno(), 0o755)
 			f.close()
 
-		logCall(log, ["scp", "-Bq", tmpfileLdapconf,
-				scptargetLdapconf], tmpdirConfig)
-		logCall(log, ["scp", "-Bq"] + configs.keys()
-				+ [scptargetConfig], tmpdirConfig)
-		logCall(log, ["scp", "-Bq"] + agis.keys()
-				+ [scptargetAgi], tmpdirAgi)
-		logCall(log, ["ssh", "-oBatchMode=yes", sshtarget, sshcmd],
-				tmpdirConfig)
+		logCall(log, ["scp", "-Bq", tmpfileLdapconf, scptargetLdapconf], tmpdirConfig)
+		logCall(log, ["scp", "-Bq"] + configs.keys() + [scptargetConfig], tmpdirConfig)
+		logCall(log, ["scp", "-Bq"] + agis.keys() + [scptargetAgi], tmpdirAgi)
+		logCall(log, ["ssh", "-oBatchMode=yes", sshtarget, sshcmd], tmpdirConfig)
 	finally:
 		shutil.rmtree(tmpdirConfig)
 		shutil.rmtree(tmpdirAgi)

@@ -56,6 +56,7 @@ childmodules = [
 class upstreamBug34040Exception(univention.admin.uexceptions.base):
 	message = u'Leider kann zur Zeit nicht mehr als ein Asterisk-Server angelegt werden, da <a href="http://forge.univention.org/bugzilla/show_bug.cgi?id=34040">ein Univention-Bug</a> dies verhindert.'
 
+
 layout = [
 	Tab('Allgemein', 'Allgemeine Einstellungen', layout=[
 		["commonName"],
@@ -158,17 +159,17 @@ property_descriptions = {
 	"mailboxEmailsubject": univention.admin.property(
 		short_description="Betreff der eMails",
 		long_description=u"""Die folgenden Platzhalter können verwendet werden:
-     ${VM_NAME}      Name des Mailbox-Inhabers
-     ${VM_DUR}       Länge der Nachricht
-     ${VM_MSGNUM}    Nummer der Nachricht
-     ${VM_MAILBOX}   Name der Mailbox
-     ${VM_CALLERID}  Telefonnummer und Name des Anrufers
-     ${VM_CIDNUM}    Telefonnummer des Anrufers
-     ${VM_CIDNAME}   Name des Anrufers
-     ${VM_DATE}      Datum und Uhrzeit des Anrufs
-     ${VM_MESSAGEFILE}
-		     Name der Sounddatei, in der die
-		     Nachricht abgespeichert ist""".replace("\n", "<br>"),
+	${VM_NAME}      Name des Mailbox-Inhabers
+	${VM_DUR}       Länge der Nachricht
+	${VM_MSGNUM}    Nummer der Nachricht
+	${VM_MAILBOX}   Name der Mailbox
+	${VM_CALLERID}  Telefonnummer und Name des Anrufers
+	${VM_CIDNUM}    Telefonnummer des Anrufers
+	${VM_CIDNAME}   Name des Anrufers
+	${VM_DATE}      Datum und Uhrzeit des Anrufs
+	${VM_MESSAGEFILE}
+			Name der Sounddatei, in der die
+			Nachricht abgespeichert ist""".replace("\n", "<br>").replace("\t", "    "),
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="New message from ${VM_CALLERID}",
@@ -176,25 +177,24 @@ property_descriptions = {
 	"mailboxEmailbody": univention.admin.property(
 		short_description="Textkörper der eMails",
 		long_description=u"""Die folgenden Platzhalter können verwendet werden:
-     ${VM_NAME}      Name des Mailbox-Inhabers
-     ${VM_DUR}       Länge der Nachricht
-     ${VM_MSGNUM}    Nummer der Nachricht
-     ${VM_MAILBOX}   Name der Mailbox
-     ${VM_CALLERID}  Telefonnummer und Name des Anrufers
-     ${VM_CIDNUM}    Telefonnummer des Anrufers
-     ${VM_CIDNAME}   Name des Anrufers
-     ${VM_DATE}      Datum und Uhrzeit des Anrufs
-     ${VM_MESSAGEFILE}
-		     Name der Sounddatei, in der die
-		     Nachricht abgespeichert ist
+	${VM_NAME}      Name des Mailbox-Inhabers
+	${VM_DUR}       Länge der Nachricht
+	${VM_MSGNUM}    Nummer der Nachricht
+	${VM_MAILBOX}   Name der Mailbox
+	${VM_CALLERID}  Telefonnummer und Name des Anrufers
+	${VM_CIDNUM}    Telefonnummer des Anrufers
+	${VM_CIDNAME}   Name des Anrufers
+	${VM_DATE}      Datum und Uhrzeit des Anrufs
+	${VM_MESSAGEFILE}
+			Name der Sounddatei, in der die
+			Nachricht abgespeichert ist
 
 Weiterhin können die folgenden Escapesequenzen verwendet werden:
-     \\n	     Neue Zeile
-     \\t	     Tabulator-Zeichen""".replace("\n", "<br>"),
+	\\n	     Neue Zeile
+	\\t	     Tabulator-Zeichen""".replace("\n", "<br>").replace("\t", "    "),
 		syntax=univention.admin.syntax.string,
 		required=True,
-		default="Hello ${VM_NAME},\n\nThere is a new message " + \
-			"in mailbox ${VM_MAILBOX}.",
+		default="Hello ${VM_NAME},\n\nThere is a new message in mailbox ${VM_MAILBOX}.",
 	),
 	"mailboxEmaildateformat": univention.admin.property(
 		short_description="Datumsformat in eMails",
@@ -232,8 +232,7 @@ Weiterhin können die folgenden Escapesequenzen verwendet werden:
 	),
 	"mailboxMailcommand": univention.admin.property(
 		short_description="Befehl zum Versenden der eMails",
-		long_description=u"Programm zum Versenden von E-Mails " + \
-			"(unbedingt den absoluten Pfad angeben!)",
+		long_description=u"Programm zum Versenden von E-Mails (unbedingt den absoluten Pfad angeben!)",
 		syntax=univention.admin.syntax.string,
 		required=True,
 		default="/usr/sbin/sendmail -t",
@@ -251,45 +250,28 @@ Weiterhin können die folgenden Escapesequenzen verwendet werden:
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("commonName", "cn",
-	None, univention.admin.mapping.ListToString)
+mapping.register("commonName", "cn", None, univention.admin.mapping.ListToString)
 mapping.register("blockedAreaCodes", "ast4ucsServerBlockedareacode")
 mapping.register("extnums", "ast4ucsServerExtnum")
-mapping.register("defaultext", "ast4ucsServerDefaultext",
-	None, univention.admin.mapping.ListToString)
+mapping.register("defaultext", "ast4ucsServerDefaultext", None, univention.admin.mapping.ListToString)
 
-mapping.register("sshuser", "ast4ucsServerSshuser",
-	None, univention.admin.mapping.ListToString)
-mapping.register("sshhost", "ast4ucsServerSshhost",
-	None, univention.admin.mapping.ListToString)
-mapping.register("sshpath", "ast4ucsServerSshpath",
-	None, univention.admin.mapping.ListToString)
-mapping.register("sshmohpath", "ast4ucsServerSshmohpath",
-	None, univention.admin.mapping.ListToString)
-mapping.register("sshagipath", "ast4ucsServerSshagipath",
-	None, univention.admin.mapping.ListToString)
-mapping.register("sshcmd", "ast4ucsServerSshcmd",
-	None, univention.admin.mapping.ListToString)
+mapping.register("sshuser", "ast4ucsServerSshuser", None, univention.admin.mapping.ListToString)
+mapping.register("sshhost", "ast4ucsServerSshhost", None, univention.admin.mapping.ListToString)
+mapping.register("sshpath", "ast4ucsServerSshpath", None, univention.admin.mapping.ListToString)
+mapping.register("sshmohpath", "ast4ucsServerSshmohpath", None, univention.admin.mapping.ListToString)
+mapping.register("sshagipath", "ast4ucsServerSshagipath", None, univention.admin.mapping.ListToString)
+mapping.register("sshcmd", "ast4ucsServerSshcmd", None, univention.admin.mapping.ListToString)
 
-mapping.register("mailboxMaxlength", "ast4ucsServerMailboxmaxlen",
-	None, univention.admin.mapping.ListToString)
-mapping.register("mailboxEmailsubject", "ast4ucsServerMailboxemailsubject",
-	None, univention.admin.mapping.ListToString)
-mapping.register("mailboxEmailbody", "ast4ucsServerMailboxemailbody",
-	None, univention.admin.mapping.ListToString)
-mapping.register("mailboxEmaildateformat", "ast4ucsServerMailboxemaildateformat",
-	None, univention.admin.mapping.ListToString)
-mapping.register("mailboxAttach", "ast4ucsServerMailboxattach",
-	None, univention.admin.mapping.ListToString)
-mapping.register("mailboxMailcommand", "ast4ucsServerMailboxemailcommand",
-	None, univention.admin.mapping.ListToString)
-mapping.register("globalCallId", "ast4ucsServerGlobalCallId",
-	None, univention.admin.mapping.ListToString)
+mapping.register("mailboxMaxlength", "ast4ucsServerMailboxmaxlen", None, univention.admin.mapping.ListToString)
+mapping.register("mailboxEmailsubject", "ast4ucsServerMailboxemailsubject", None, univention.admin.mapping.ListToString)
+mapping.register("mailboxEmailbody", "ast4ucsServerMailboxemailbody", None, univention.admin.mapping.ListToString)
+mapping.register("mailboxEmaildateformat", "ast4ucsServerMailboxemaildateformat", None, univention.admin.mapping.ListToString)
+mapping.register("mailboxAttach", "ast4ucsServerMailboxattach", None, univention.admin.mapping.ListToString)
+mapping.register("mailboxMailcommand", "ast4ucsServerMailboxemailcommand", None, univention.admin.mapping.ListToString)
+mapping.register("globalCallId", "ast4ucsServerGlobalCallId", None, univention.admin.mapping.ListToString)
 
-mapping.register("agi-user", "ast4ucsServerAgiuser",
-	None, univention.admin.mapping.ListToString)
-mapping.register("agi-password", "ast4ucsServerAgipassword",
-	None, univention.admin.mapping.ListToString)
+mapping.register("agi-user", "ast4ucsServerAgiuser", None, univention.admin.mapping.ListToString)
+mapping.register("agi-password", "ast4ucsServerAgipassword", None, univention.admin.mapping.ListToString)
 
 
 class object(univention.admin.handlers.simpleLdap):
@@ -299,7 +281,7 @@ class object(univention.admin.handlers.simpleLdap):
 		univention.admin.handlers.simpleLdap.open(self)
 
 		for areaCode in ["+", "00"]:
-			if not areaCode in self.info.get("blockedAreaCodes", []):
+			if areaCode not in self.info.get("blockedAreaCodes", []):
 				break
 		else:
 			self.info["blockInternational"] = "1"
@@ -358,24 +340,20 @@ class object(univention.admin.handlers.simpleLdap):
 		return [('objectClass', ['ast4ucsServer'])]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
 		univention.admin.filter.expression(
 			'objectClass', "ast4ucsServer")
 	])
- 	#logging.debug('server.py UDM 366: filter: %s', filter)
+	# logging.debug('server.py UDM 366: filter: %s', filter)
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
+		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
 	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
+	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique, required, timeout, sizelimit):
+		res.append(object(co, lo, None, dn=dn, superordinate=superordinate, attributes=attrs))
 	#logging.debug('server.py UDM 378: res: %s',res)
 	return res
 

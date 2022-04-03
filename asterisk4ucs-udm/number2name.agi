@@ -18,14 +18,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import re
 import sys
-import time
 import ldap
-import random
 import logging
 import psycopg2
-import psycopg2.extras
+import psycopg2.extras  # noqa: F401
 
 LOG_FILENAME = '/tmp/ast4ucs-number2name.log'
 
@@ -77,24 +74,25 @@ elif search_num.startswith('0'):
 logging.info("Normalisierte Nummer: " + search_num)
 
 logging.debug("Verbinde mit LDAP-Server: " + LDAP_IP)
-l = ldap.initialize("ldap://" + LDAP_IP)
-l.simple_bind_s(ADMIN_DN, ADMIN_PW)
+lo = ldap.initialize("ldap://" + LDAP_IP)
+lo.simple_bind_s(ADMIN_DN, ADMIN_PW)
 
-query = ("(|"
-		"(ast4ucsContactFaxnumber=%s)"
-		"(telephoneNumber=%s)"
-		"(ast4ucsContactMobilenumber=%s)"
+query = (
+	"(|"
+	"(ast4ucsContactFaxnumber=%s)"
+	"(telephoneNumber=%s)"
+	"(ast4ucsContactMobilenumber=%s)"
 	")") % (search_num, search_num, search_num)
 logging.debug("Query: %s" % query)
 
-result = l.search_s(LDAP_SEARCH_BASE, ldap.SCOPE_SUBTREE, query)
+result = lo.search_s(LDAP_SEARCH_BASE, ldap.SCOPE_SUBTREE, query)
 
 if not result:
 	logging.info("Keinen Namen gefunden, exit")
 	sys.exit(0)
 
 result = result[0][1]
-unwrap = lambda x: x[0] if x else None
+unwrap = lambda x: x[0] if x else None  # noqa: E731
 
 orga = unwrap(result.get('o'))
 last = unwrap(result.get('ast4ucsContactLastname'))
@@ -122,7 +120,7 @@ cname = "%s <%s>" % (cn, env["agi_callerid"])
 
 # Sonderzeichen ersetzen
 rules = [
-#	(" ", "_"),
+	# (" ", "_"),
 	("ä", "ae"),
 	("ö", "oe"),
 	("ü", "ue"),

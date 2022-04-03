@@ -61,12 +61,9 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("name", "cn",
-	None, univention.admin.mapping.ListToString)
-mapping.register("priority", "ast4ucsAgiscriptPriority",
-	None, univention.admin.mapping.ListToString)
-mapping.register("content", "ast4ucsAgiscriptContent",
-	None, univention.admin.mapping.ListToString)
+mapping.register("name", "cn", None, univention.admin.mapping.ListToString)
+mapping.register("priority", "ast4ucsAgiscriptPriority", None, univention.admin.mapping.ListToString)
+mapping.register("content", "ast4ucsAgiscriptContent", None, univention.admin.mapping.ListToString)
 
 
 class object(AsteriskBase):
@@ -79,32 +76,25 @@ class object(AsteriskBase):
 		self["content"] = content.encode("base64").replace("\n", "")
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsAgiscript']),
-				('ast4ucsSrvchildServer', self.superordinate.dn)]
+		return [('objectClass', ['ast4ucsAgiscript']), ('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "ast4ucsAgiscript")
+		univention.admin.filter.expression('objectClass', "ast4ucsAgiscript")
 	])
 
 	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression(
-				'ast4ucsSrvchildServer', superordinate.dn))
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsSrvchildServer', superordinate.dn))
 
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
+		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
 	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
+	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique, required, timeout, sizelimit):
+		res.append(object(co, lo, None, dn=dn, superordinate=superordinate, attributes=attrs))
 	return res
 
 

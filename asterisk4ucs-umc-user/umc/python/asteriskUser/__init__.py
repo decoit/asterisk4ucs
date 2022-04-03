@@ -28,14 +28,15 @@ import univention.admin.handlers.asterisk.sipPhone
 import univention.admin.handlers.asterisk.mailbox
 import univention.admin.handlers.asterisk.server
 
+
 class Instance(Base):
 
-	def load( self, request ):
+	def load(self, request):
 		user, mailbox = getUserAndMailbox(self._user_dn)
 		raise UMC_Error("Es wurde kein Asterisk-Server angelegt!")
 		result = {
 			"phones/interval": user["ringdelay"],
-			"forwarding/number": user.get("forwarding",""),
+			"forwarding/number": user.get("forwarding", ""),
 
 			"mailbox/timeout": user["timeout"],
 			"mailbox": False,
@@ -48,16 +49,15 @@ class Instance(Base):
 				"mailbox/email": mailbox["email"],
 			})
 
-		self.finished( request.id, result )
+		self.finished(request.id, result)
 
-	def save( self, request ):
+	def save(self, request):
 		user, mailbox = getUserAndMailbox(self._user_dn)
 
 		user["ringdelay"] = request.options["phones/interval"]
 		user["timeout"] = request.options["mailbox/timeout"]
 		if request.options["forwarding/number"]:
-			user["forwarding"] = request.options[
-					"forwarding/number"]
+			user["forwarding"] = request.options["forwarding/number"]
 		else:
 			try:
 				del user.info["forwarding"]
@@ -70,21 +70,16 @@ class Instance(Base):
 			mailbox["email"] = request.options["mailbox/email"]
 			mailbox.modify()
 
-		self.finished( request.id, None, "Speichern war erfolgreich!" )
+		self.finished(request.id, None, "Speichern war erfolgreich!")
 
 	def phonesQuery(self, request):
-		if (request.options.get("dn") and
-				request.options.get("position")
-					in ["-1", "1"]):
-			changePhoneOrder(
-					self._user_dn,
-					request.options["dn"],
-					int(request.options["position"]))
+		if (request.options.get("dn") and request.options.get("position") in ["-1", "1"]):
+			changePhoneOrder(self._user_dn, request.options["dn"], int(request.options["position"]))
 
 		phones = getPhones(self._user_dn)
 
 		result = []
-		for i,phone in enumerate(phones):
+		for i, phone in enumerate(phones):
 			result.append({
 				"position": i,
 				"dn": phone.dn,
@@ -93,33 +88,34 @@ class Instance(Base):
 
 		self.finished(request.id, result)
 
+
 def getCoLo():
 	lo = univention.admin.uldap.getAdminConnection()[0]
 	co = None
 	return co, lo
 
+
 def getUser(co, lo, dn):
 	position = univention.admin.uldap.position(lo.base)
 
-	univention.admin.modules.init(lo, position,
-		univention.admin.handlers.users.user)
+	univention.admin.modules.init(lo, position, univention.admin.handlers.users.user)
 
-	obj = univention.admin.handlers.users.user.object(co, lo,
-		None, dn)
+	obj = univention.admin.handlers.users.user.object(co, lo, None, dn)
 	obj.open()
 	return obj
+
 
 def getPhone(co, lo, dn):
-	obj = univention.admin.handlers.asterisk.sipPhone.object(co, lo,
-		None, dn)
+	obj = univention.admin.handlers.asterisk.sipPhone.object(co, lo, None, dn)
 	obj.open()
 	return obj
 
+
 def getMailbox(co, lo, dn):
-	obj = univention.admin.handlers.asterisk.mailbox.object(co, lo,
-		None, dn)
+	obj = univention.admin.handlers.asterisk.mailbox.object(co, lo, None, dn)
 	obj.open()
 	return obj
+
 
 def getPhones(userdn):
 	co, lo = getCoLo()
@@ -132,6 +128,7 @@ def getPhones(userdn):
 
 	return phones
 
+
 def getUserAndMailbox(userdn):
 	co, lo, pos = getCoLoPos()
 
@@ -141,12 +138,12 @@ def getUserAndMailbox(userdn):
 
 	checkServers = []
 	for obj in objs:
-			checkServers.append({
-				"label": obj["commonName"],
-			})
+		checkServers.append({
+			"label": obj["commonName"],
+		})
 
 	MODULE.error('User: server: %s' % len(checkServers))
-	if len(checkServers) >0 :
+	if len(checkServers) > 0:
 		co, lo = getCoLo()
 
 		user = getUser(co, lo, userdn)
@@ -156,7 +153,7 @@ def getUserAndMailbox(userdn):
 			mailbox = getMailbox(co, lo, mailbox)
 
 		return user, mailbox
-	elif len(checkServers) == 0 :
+	elif len(checkServers) == 0:
 		MODULE.error('Fehler gefunden!')
 		mailbox = "KeinServer"
 		user = "KeinServer"
@@ -168,6 +165,7 @@ def getCoLoPos():
 	lo, pos = univention.admin.uldap.getAdminConnection()
 	return co, lo, pos
 
+
 def changePhoneOrder(userdn, phonedn, change):
 	co, lo = getCoLo()
 
@@ -177,9 +175,9 @@ def changePhoneOrder(userdn, phonedn, change):
 	i = phones.index(phonedn)
 	phones.pop(i)
 	if change == -1 and i > 0:
-		phones.insert(i-1, phonedn)
+		phones.insert(i - 1, phonedn)
 	elif change == 1:
-		phones.insert(i+1, phonedn)
+		phones.insert(i + 1, phonedn)
 
 	user["phones"] = phones
 	user.modify()

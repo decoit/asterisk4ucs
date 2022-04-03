@@ -84,24 +84,18 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("commonName", "cn",
-	None, univention.admin.mapping.ListToString)
-mapping.register("firstname", "ast4ucsContactFirstname",
-	None, univention.admin.mapping.ListToString)
-mapping.register("lastname", "ast4ucsContactLastname",
-	None, univention.admin.mapping.ListToString)
-mapping.register("title", "title",
-	None, univention.admin.mapping.ListToString)
-mapping.register("organisation", "o",
-	None, univention.admin.mapping.ListToString)
+mapping.register("commonName", "cn", None, univention.admin.mapping.ListToString)
+mapping.register("firstname", "ast4ucsContactFirstname", None, univention.admin.mapping.ListToString)
+mapping.register("lastname", "ast4ucsContactLastname", None, univention.admin.mapping.ListToString)
+mapping.register("title", "title", None, univention.admin.mapping.ListToString)
+mapping.register("organisation", "o", None, univention.admin.mapping.ListToString)
 mapping.register("telephoneNumber", "telephoneNumber")
 mapping.register("mobileNumber", "ast4ucsContactMobilenumber")
 mapping.register("faxNumber", "ast4ucsContactFaxnumber")
 
 
 class noNameError(univention.admin.uexceptions.insufficientInformation):
-	message = (u"Eines der Felder Vorname, Nachname und Organisation "
-			u"muss ausgefüllt sein.")
+	message = (u"Eines der Felder Vorname, Nachname und Organisation muss ausgefüllt sein.")
 
 
 class object(AsteriskBase):
@@ -134,32 +128,25 @@ class object(AsteriskBase):
 		self.info["commonName"] = cn
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['phonebookContact']),
-				('ast4ucsPbchildPhonebook', self.superordinate.dn)]
+		return [('objectClass', ['phonebookContact']), ('ast4ucsPbchildPhonebook', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "phonebookContact")
+		univention.admin.filter.expression('objectClass', "phonebookContact")
 	])
 
 	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression(
-				'ast4ucsPbchildPhonebook', superordinate.dn))
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsPbchildPhonebook', superordinate.dn))
 
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
+		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
 	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
+	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique, required, timeout, sizelimit):
+		res.append(object(co, lo, None, dn=dn, superordinate=superordinate, attributes=attrs))
 	return res
 
 

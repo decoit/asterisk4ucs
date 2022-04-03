@@ -55,6 +55,7 @@ class SyntaxStrategy(univention.admin.syntax.select):
 		("random", u"Einen zufälligen Anschluss anklingeln"),
 	]
 
+
 property_descriptions = {
 	"extension": univention.admin.property(
 		short_description="Durchwahl",
@@ -83,8 +84,7 @@ property_descriptions = {
 	"delayMusic": univention.admin.property(
 		short_description="Warteschlangenmusik",
 		syntax=univention.admin.syntax.LDAP_Search(
-			filter="(&(objectClass=ast4ucsMusic)"
-				+ "(ast4ucsMusicMusic=*))",
+			filter="(&(objectClass=ast4ucsMusic)(ast4ucsMusicMusic=*))",
 			attribute=["asterisk/music: name"],
 			value="asterisk/music: name",
 		),
@@ -103,16 +103,11 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("extension", "ast4ucsExtensionExtension",
-	None, univention.admin.mapping.ListToString)
-mapping.register("strategy", "ast4ucsWaitingloopStrategy",
-	None, univention.admin.mapping.ListToString)
-mapping.register("maxCalls", "ast4ucsWaitingloopMaxcalls",
-	None, univention.admin.mapping.ListToString)
-mapping.register("memberDelay", "ast4ucsWaitingloopMemberdelay",
-	None, univention.admin.mapping.ListToString)
-mapping.register("delayMusic", "ast4ucsWaitingloopDelaymusic",
-	None, univention.admin.mapping.ListToString)
+mapping.register("extension", "ast4ucsExtensionExtension", None, univention.admin.mapping.ListToString)
+mapping.register("strategy", "ast4ucsWaitingloopStrategy", None, univention.admin.mapping.ListToString)
+mapping.register("maxCalls", "ast4ucsWaitingloopMaxcalls", None, univention.admin.mapping.ListToString)
+mapping.register("memberDelay", "ast4ucsWaitingloopMemberdelay", None, univention.admin.mapping.ListToString)
+mapping.register("delayMusic", "ast4ucsWaitingloopDelaymusic", None, univention.admin.mapping.ListToString)
 
 
 class object(AsteriskBase):
@@ -145,32 +140,25 @@ class object(AsteriskBase):
 		reverseFieldsSave(self)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsWaitingloop']),
-				('ast4ucsSrvchildServer', self.superordinate.dn)]
+		return [('objectClass', ['ast4ucsWaitingloop']), ('ast4ucsSrvchildServer', self.superordinate.dn)]
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
+def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
 	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "ast4ucsWaitingloop")
+		univention.admin.filter.expression('objectClass', "ast4ucsWaitingloop")
 	])
 
 	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression(
-				'ast4ucsSrvchildServer', superordinate.dn))
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsSrvchildServer', superordinate.dn))
 
 	if filter_s:
 		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
+		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
 		filter.expressions.append(filter_p)
 
 	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
+	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique, required, timeout, sizelimit):
+		res.append(object(co, lo, None, dn=dn, superordinate=superordinate, attributes=attrs))
 	return res
 
 
