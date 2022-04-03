@@ -1,3 +1,9 @@
+asterisk4ucs-umc-user (2.0.1) unstable; urgency=medium
+
+  * Add UCS 5.0 support. Migrate to Python 3
+
+ -- Florian Best <best@univention.de>  Sun, 03 Apr 2022 20:52:20 +0200
+
 asterisk4ucs-umc-user (1.0.0) unstable; urgency=low
 
   * Einige Bugfixes, Vorbereitung auf Release

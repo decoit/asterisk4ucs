@@ -16,9 +16,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+import ldap.dn
+from ldap.filter import filter_format
+
 from univention.admin.hook import simpleHook
 from univention.admin.handlers.users import user
-from univention.admin.filter import escapeForLdapFilter
 from univention.admin import uexceptions
 
 
@@ -38,55 +40,24 @@ class AsteriskUsersUserHook(simpleHook):
 			self.message = self._message % args
 
 	def checkFields(self, module):
-		def nameFromDn(dn):
-			return dn.split(",")[0].split("=", 1)[1]
+		def dn_to_name(dn):
+			return ldap.dn.explode_rdn(dn, True)[0]
 
 		for phonedn in module.info.get("phones", []):
 			if not phonedn:
 				continue
-			phoneUsers = user.lookup(module.co, module.lo,
-				"(&(ast4ucsUserPhone=%s)(!(uid=%s)))" % (
-				escapeForLdapFilter(phonedn),
-				escapeForLdapFilter(module.info["username"])))
+			phoneUsers = user.lookup(module.co, module.lo, filter_format("(&(ast4ucsUserPhone=%s)(!(uid=%s)))", (phonedn, module.info["username"])))
 			if phoneUsers:
-				raise self.phoneError(
-						nameFromDn(phonedn),
-						nameFromDn(phoneUsers[0].dn))
+				raise self.phoneError(dn_to_name(phonedn), dn_to_name(phoneUsers[0].dn))
 
 		mailboxdn = module.info.get("mailbox")
 		if mailboxdn:
-			mailboxUsers = user.lookup(module.co, module.lo,
-				"(&(ast4ucsUserMailbox=%s)(!(uid=%s)))" % (
-				escapeForLdapFilter(mailboxdn),
-				escapeForLdapFilter(module.info["username"])))
+			mailboxUsers = user.lookup(module.co, module.lo, filter_format("(&(ast4ucsUserMailbox=%s)(!(uid=%s)))", (mailboxdn, module.info["username"])))
 			if mailboxUsers:
-				raise self.mailboxError(
-						nameFromDn(mailboxdn),
-						nameFromDn(mailboxUsers[0].dn))
-
-	def hook_open(self, module):
-		pass
+				raise self.mailboxError(dn_to_name(mailboxdn), dn_to_name(mailboxUsers[0].dn))
 
 	def hook_ldap_pre_create(self, module):
 		self.checkFields(module)
 
 	def hook_ldap_pre_modify(self, module):
 		self.checkFields(module)
-
-	def hook_ldap_pre_remove(self, module):
-		pass
-
-	def hook_ldap_addlist(self, module, al=[]):
-		return al
-
-	def hook_ldap_modlist(self, module, ml=[]):
-		return ml
-
-	def hook_ldap_post_create(self, module):
-		pass
-
-	def hook_ldap_post_modify(self, module):
-		pass
-
-	def hook_ldap_post_remove(self, module):
-		pass

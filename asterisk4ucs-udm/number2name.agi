@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -18,19 +18,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import re
 import sys
-import time
 import ldap
-import random
 import logging
-import psycopg2
-import psycopg2.extras
 
 LOG_FILENAME = '/tmp/ast4ucs-number2name.log'
 
 # read options from config file
-config = open("/etc/asterisk4ucs.ldapconfig").read().split("\n")
+config = open("/etc/asterisk4ucs.ldapconfig").read().splitlines()
 LDAP_IP = config[0]
 LDAP_SEARCH_BASE = config[1]
 ADMIN_DN = config[2]
@@ -47,7 +42,7 @@ logging.basicConfig(
 )
 
 # Read and ignore AGI environment (read until blank line)
-env = dict()
+env = {}
 while len(sys.argv) < 2:
 	line = sys.stdin.readline().strip()
 	if not line:
@@ -77,42 +72,42 @@ elif search_num.startswith('0'):
 logging.info("Normalisierte Nummer: " + search_num)
 
 logging.debug("Verbinde mit LDAP-Server: " + LDAP_IP)
-l = ldap.initialize("ldap://" + LDAP_IP)
-l.simple_bind_s(ADMIN_DN, ADMIN_PW)
+lo = ldap.initialize("ldap://" + LDAP_IP)
+lo.simple_bind_s(ADMIN_DN, ADMIN_PW)
 
-query = ("(|"
-		"(ast4ucsContactFaxnumber=%s)"
-		"(telephoneNumber=%s)"
-		"(ast4ucsContactMobilenumber=%s)"
+query = (
+	"(|"
+	"(ast4ucsContactFaxnumber=%s)"
+	"(telephoneNumber=%s)"
+	"(ast4ucsContactMobilenumber=%s)"
 	")") % (search_num, search_num, search_num)
 logging.debug("Query: %s" % query)
 
-result = l.search_s(LDAP_SEARCH_BASE, ldap.SCOPE_SUBTREE, query)
+result = lo.search_s(LDAP_SEARCH_BASE, ldap.SCOPE_SUBTREE, query)
 
 if not result:
 	logging.info("Keinen Namen gefunden, exit")
 	sys.exit(0)
 
 result = result[0][1]
-unwrap = lambda x: x[0] if x else None
 
-orga = unwrap(result.get('o'))
-last = unwrap(result.get('ast4ucsContactLastname'))
-first = unwrap(result.get('ast4ucsContactFirstname'))
+orga = result.get('o', [b''])[0].decode('UTF-8')
+last = result.get('ast4ucsContactLastname', [b''])[0].decode('UTF-8')
+first = result.get('ast4ucsContactFirstname', [b''])[0].decode('UTF-8')
 
 if first and last:
 	name = "%s %s" % (first, last)
 elif last:
 	name = last
 else:
-	name = first  # could be string or None
+	name = first
 
 if orga and name:
 	cn = "%s (%s)" % (name, orga)
 elif orga:
 	cn = orga
 else:
-	cn = name  # could be string or None
+	cn = name
 
 if not cn:
 	logging.info("Kontakt hat weder Name noch Organisation, exit")
@@ -122,7 +117,7 @@ cname = "%s <%s>" % (cn, env["agi_callerid"])
 
 # Sonderzeichen ersetzen
 rules = [
-#	(" ", "_"),
+	# (" ", "_"),
 	("ä", "ae"),
 	("ö", "oe"),
 	("ü", "ue"),
@@ -137,7 +132,7 @@ for rule in rules:
 
 # Namen an Asterisk senden
 logging.info("Setze Variable CALLERID auf " + cname)
-#cname = unicode(cname, 'utf-8').encode('iso-8859-1')
+#cname = cname.encode('iso-8859-1')
 sys.stdout.write('SET CALLERID "%s"\n' % (cname))
 sys.stdout.flush()
 

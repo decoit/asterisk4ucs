@@ -20,14 +20,20 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import univention.admin.filter
 import univention.admin.handlers
 from univention.admin.handlers.asterisk import \
-	reverseFieldsLoad, reverseFieldsSave, AsteriskBase
+	reverseFieldsLoad, reverseFieldsSave, simpleLdap
 import univention.admin.syntax
 from univention.admin.layout import Tab
 
 module = "asterisk/phoneGroup"
 short_description = u"Asterisk4UCS-Management: Telefongruppe"
 operations = ['add', 'edit', 'remove', 'search', 'move']
-options = {}
+options = {
+	'default': univention.admin.option(
+		short_description=short_description,
+		default=True,
+		objectClasses=['ast4ucsPhonegroup'],
+	),
+}
 
 childs = False
 superordinate = "asterisk/server"
@@ -55,31 +61,29 @@ property_descriptions = {
 	"callphones": univention.admin.property(
 		short_description="Callgroup-Teilnehmer",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhone",
-                        attribute=['asterisk/sipPhone: extension'],
-                        value='asterisk/sipPhone: dn',
-                ),
+			filter="objectClass=ast4ucsPhone",
+			attribute=['asterisk/sipPhone: extension'],
+			value='asterisk/sipPhone: dn',
+		),
 		multivalue=True,
 	),
 	"pickupphones": univention.admin.property(
 		short_description="Pickupgroup-Teilnehmer",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhone",
-                        attribute=['asterisk/sipPhone: extension'],
-                        value='asterisk/sipPhone: dn',
-                ),
+			filter="objectClass=ast4ucsPhone",
+			attribute=['asterisk/sipPhone: extension'],
+			value='asterisk/sipPhone: dn',
+		),
 		multivalue=True,
 	),
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("commonName", "cn",
-	None, univention.admin.mapping.ListToString)
-mapping.register("id", "ast4ucsPhonegroupId",
-	None, univention.admin.mapping.ListToString)
+mapping.register("commonName", "cn", None, univention.admin.mapping.ListToString)
+mapping.register("id", "ast4ucsPhonegroupId", None, univention.admin.mapping.ListToString)
 
 
-class object(AsteriskBase):
+class object(simpleLdap):
 	module = module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
@@ -109,34 +113,14 @@ class object(AsteriskBase):
 		reverseFieldsSave(self)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsPhonegroup']),
-				('ast4ucsSrvchildServer', self.superordinate.dn)]
+		return [('ast4ucsSrvchildServer', self.superordinate.dn)]
+
+	@classmethod
+	def lookup_filter_superordinate(cls, filter, superordinate):
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsSrvchildServer', superordinate.dn, escape=True))
+		return filter
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
-	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "ast4ucsPhonegroup")
-	])
-
-	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression(
-				'ast4ucsSrvchildServer', superordinate.dn))
-
-	if filter_s:
-		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
-		filter.expressions.append(filter_p)
-
-	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
-	return res
-
-
-def identify(dn, attr, canonical=0):
-	return 'ast4ucsPhonegroup' in attr.get('objectClass', [])
+lookup = object.lookup
+lookup_filter = object.lookup_filter
+identify = object.identify

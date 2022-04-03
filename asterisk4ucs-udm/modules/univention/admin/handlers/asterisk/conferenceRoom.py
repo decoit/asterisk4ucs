@@ -22,14 +22,19 @@ import univention.admin.handlers
 import univention.admin.syntax
 from univention.admin.layout import Tab
 from univention.admin import uexceptions
-from univention.admin.handlers.asterisk import AsteriskBase
+from univention.admin.handlers import simpleLdap
 
 module = "asterisk/conferenceRoom"
 short_description = u"Asterisk4UCS-Management: Konferenzraum"
 operations = ['add', 'edit', 'remove', 'search', 'move']
-options = {}
-
-childs = 0
+options = {
+	'default': univention.admin.option(
+		short_description=short_description,
+		default=True,
+		objectClasses=['ast4ucsConfroom'],
+	),
+}
+childs = False
 superordinate = "asterisk/server"
 
 layout = [
@@ -87,26 +92,18 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("extension", "ast4ucsExtensionExtension",
-	None, univention.admin.mapping.ListToString)
-mapping.register("maxMembers", "ast4ucsConfroomMaxmembers",
-	None, univention.admin.mapping.ListToString)
-mapping.register("pin", "ast4ucsConfroomPin",
-	None, univention.admin.mapping.ListToString)
-mapping.register("adminPin", "ast4ucsConfroomAdminpin",
-	None, univention.admin.mapping.ListToString)
+mapping.register("extension", "ast4ucsExtensionExtension", None, univention.admin.mapping.ListToString)
+mapping.register("maxMembers", "ast4ucsConfroomMaxmembers", None, univention.admin.mapping.ListToString)
+mapping.register("pin", "ast4ucsConfroomPin", None, univention.admin.mapping.ListToString)
+mapping.register("adminPin", "ast4ucsConfroomAdminpin", None, univention.admin.mapping.ListToString)
 
-mapping.register("announceCount", "ast4ucsConfroomAnnouncecount",
-	None, univention.admin.mapping.ListToString)
-mapping.register("initiallyMuted", "ast4ucsConfroomInitiallymuted",
-	None, univention.admin.mapping.ListToString)
-mapping.register("musicOnHold", "ast4ucsConfroomMusiconhold",
-	None, univention.admin.mapping.ListToString)
-mapping.register("quietMode", "ast4ucsConfroomQuietmode",
-	None, univention.admin.mapping.ListToString)
+mapping.register("announceCount", "ast4ucsConfroomAnnouncecount", None, univention.admin.mapping.ListToString)
+mapping.register("initiallyMuted", "ast4ucsConfroomInitiallymuted", None, univention.admin.mapping.ListToString)
+mapping.register("musicOnHold", "ast4ucsConfroomMusiconhold", None, univention.admin.mapping.ListToString)
+mapping.register("quietMode", "ast4ucsConfroomQuietmode", None, univention.admin.mapping.ListToString)
 
 
-class object(AsteriskBase):
+class object(simpleLdap):
 	module = module
 
 	def _ldap_pre_ready(self):
@@ -114,39 +111,18 @@ class object(AsteriskBase):
 		if self.info.get("pin"):
 			if self.info.get("adminPin") == self.info["pin"]:
 				class pinError(uexceptions.base):
-					message = "Pin und Admin-Pin dürfen " +\
-					"nicht übereinstimmen."
+					message = "Pin und Admin-Pin dürfen nicht übereinstimmen."
 				raise pinError
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsConfroom']),
-				('ast4ucsSrvchildServer', self.superordinate.dn)]
+		return [('ast4ucsSrvchildServer', self.superordinate.dn)]
+
+	@classmethod
+	def lookup_filter_superordinate(cls, filter, superordinate):
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsSrvchildServer', superordinate.dn, escape=True))
+		return filter
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
-	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "ast4ucsConfroom")
-	])
-
-	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression(
-				'ast4ucsSrvchildServer', superordinate.dn))
-
-	if filter_s:
-		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
-		filter.expressions.append(filter_p)
-
-	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
-	return res
-
-
-def identify(dn, attr, canonical=0):
-	return 'ast4ucsConfroom' in attr.get('objectClass', [])
+lookup = object.lookup
+lookup_filter = object.lookup_filter
+identify = object.identify

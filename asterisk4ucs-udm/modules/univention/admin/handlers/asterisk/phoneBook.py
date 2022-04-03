@@ -25,7 +25,13 @@ from univention.admin.layout import Tab
 module = "asterisk/phoneBook"
 short_description = u"Asterisk4UCS-Management: Telefonbuch"
 operations = ['add', 'edit', 'remove', 'search', 'move']
-options = {}
+options = {
+	'default': univention.admin.option(
+		short_description=short_description,
+		default=True,
+		objectClasses=['ast4ucsPhonebook'],
+	),
+}
 
 childs = False
 childmodules = ["asterisk/contact"]
@@ -46,37 +52,13 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("commonName", "cn",
-	None, univention.admin.mapping.ListToString)
+mapping.register("commonName", "cn", None, univention.admin.mapping.ListToString)
 
 
 class object(univention.admin.handlers.simpleLdap):
 	module = module
 
-	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsPhonebook'])]
 
-
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
-	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "ast4ucsPhonebook")
-	])
-
-	if filter_s:
-		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
-		filter.expressions.append(filter_p)
-
-	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
-	return res
-
-
-def identify(dn, attr, canonical=0):
-	return 'ast4ucsPhonebook' in attr.get('objectClass', [])
+lookup = object.lookup
+lookup_filter = object.lookup_filter
+identify = object.identify

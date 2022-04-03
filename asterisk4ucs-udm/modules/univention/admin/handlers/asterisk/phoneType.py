@@ -21,14 +21,21 @@ import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
 from univention.admin.layout import Tab
-from univention.admin.handlers.asterisk import AsteriskBase
+from univention.admin.handlers import simpleLdap
 
 module = "asterisk/phoneType"
 short_description = u"Asterisk4UCS-Management: Telefontyp"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
+options = {
+	'default': univention.admin.option(
+		short_description=short_description,
+		default=True,
+		objectClasses=['ast4ucsPhonetype'],
+	),
+}
 
-childs = 0
+childs = False
 superordinate = "asterisk/server"
 
 layout = [
@@ -61,48 +68,24 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("commonName", "cn",
-	None, univention.admin.mapping.ListToString)
-mapping.register("displaySize", "ast4ucsPhonetypeDisplaysize",
-	None, univention.admin.mapping.ListToString)
-mapping.register("manufacturer", "ast4ucsPhonetypeManufacturer",
-	None, univention.admin.mapping.ListToString)
-mapping.register("type", "ast4ucsPhonetypeType",
-	None, univention.admin.mapping.ListToString)
+mapping.register("commonName", "cn", None, univention.admin.mapping.ListToString)
+mapping.register("displaySize", "ast4ucsPhonetypeDisplaysize", None, univention.admin.mapping.ListToString)
+mapping.register("manufacturer", "ast4ucsPhonetypeManufacturer", None, univention.admin.mapping.ListToString)
+mapping.register("type", "ast4ucsPhonetypeType", None, univention.admin.mapping.ListToString)
 
 
-class object(AsteriskBase):
+class object(simpleLdap):
 	module = module
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsPhonetype']),
-				('ast4ucsSrvchildServer', self.superordinate.dn)]
+		return [('ast4ucsSrvchildServer', self.superordinate.dn)]
+
+	@classmethod
+	def lookup_filter_superordinate(cls, filter, superordinate):
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsSrvchildServer', superordinate.dn, escape=True))
+		return filter
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
-	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "ast4ucsPhonetype")
-	])
-
-	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression(
-				'ast4ucsSrvchildServer', superordinate.dn))
-
-	if filter_s:
-		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
-		filter.expressions.append(filter_p)
-
-	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
-	return res
-
-
-def identify(dn, attr, canonical=0):
-	return 'ast4ucsPhonetype' in attr.get('objectClass', [])
+lookup = object.lookup
+lookup_filter = object.lookup_filter
+identify = object.identify

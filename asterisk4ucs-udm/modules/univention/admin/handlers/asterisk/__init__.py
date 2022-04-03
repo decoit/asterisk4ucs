@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+
 from univention.management.console.log import MODULE
 import univention.config_registry
 import univention.admin.filter
@@ -71,8 +72,7 @@ def genSipconfEntry(co, lo, phone):
 	phone = phone.info
 
 	if phoneUser.get("mailbox"):
-		phoneMailbox = mailbox.object(co, lo, None,
-			phoneUser["mailbox"]).info
+		phoneMailbox = mailbox.object(co, lo, None, phoneUser["mailbox"]).info
 
 	callgroups = []
 	for group in phone.get("callgroups", []):
@@ -84,9 +84,7 @@ def genSipconfEntry(co, lo, phone):
 		group = phoneGroup.object(co, lo, None, group).info
 		pickupgroups.append(group["id"])
 
-	res = "[%s](template-%s)\n" % (
-			phone["extension"],
-			phone.get("profile", "default"))
+	res = "[%s](template-%s)\n" % (phone["extension"], phone.get("profile", "default"))
 	res += "secret=%s\n" % (phone["password"])
 
 	if phoneUser.get("extmode") == "normal":
@@ -94,8 +92,7 @@ def genSipconfEntry(co, lo, phone):
 			getNameFromUser(phoneUser),
 			phone["extension"])
 	elif phoneUser.get("extmode") == "first":
-		firstPhone = sipPhone.object(co, lo, None,
-			llist(phoneUser["phones"])[0]).info
+		firstPhone = sipPhone.object(co, lo, None, llist(phoneUser["phones"])[0]).info
 		res += "callerid=\"%s\" <%s>\n" % (
 			getNameFromUser(phoneUser),
 			firstPhone["extension"])
@@ -113,10 +110,10 @@ def genSipconfEntry(co, lo, phone):
 
 
 def genSipconfFaxEntry(co, lo, phone):
-	res = "[%s]\n" % (phone["extension"])
+	res = "[%s]\n" % (phone["extension"],)
 	res += "type=friend\n"
 	res += "host=dynamic\n"
-	res += "secret=%s\n" % (phone["password"])
+	res += "secret=%s\n" % (phone["password"],)
 	return res
 
 
@@ -143,9 +140,8 @@ def genSipconf(co, lo, srv):
 		conf += "; dn: %s\n" % (phone.dn)
 		try:
 			conf += genSipconfEntry(co, lo, phone)
-		except:
-			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1])
+		except Exception:
+			conf += re.sub("(?m)^", ";", traceback.format_exc()[:-1])
 		conf += "\n"
 
 	conf += "\n\n; ===== Fax machines =====\n\n"
@@ -153,9 +149,8 @@ def genSipconf(co, lo, srv):
 		conf += "; dn: %s\n" % (phone.dn)
 		try:
 			conf += genSipconfFaxEntry(co, lo, phone)
-		except:
-			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1])
+		except Exception:
+			conf += re.sub("(?m)^", ";", traceback.format_exc()[:-1])
 		conf += "\n"
 
 	return conf
@@ -164,7 +159,7 @@ def genSipconf(co, lo, srv):
 def genVoicemailconfEntry(co, lo, box):
 	from univention.admin.handlers.users import user
 	boxUser = user.lookup(co, lo, filter_format("(ast4ucsUserMailbox=%s)", (box.dn,)))
-	if len(boxUser) == 0:
+	if not boxUser:
 		return ";; Mailbox %s has no user.\n" % box["id"]
 	if len(boxUser) > 1:
 		msg = ";; Mailbox %s has multiple users:\n" % box["id"]
@@ -211,9 +206,8 @@ def genVoicemailconf(co, lo, srv):
 		conf += "; dn: %s\n" % (box.dn)
 		try:
 			conf += genVoicemailconfEntry(co, lo, box)
-		except:
-			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1])
+		except Exception:
+			conf += re.sub("(?m)^", ";", traceback.format_exc()[:-1])
 		conf += "\n"
 
 	return conf
@@ -246,9 +240,8 @@ def genQueuesconf(co, lo, srv):
 		conf += "; dn: %s\n" % (queue.dn)
 		try:
 			conf += genQueuesconfEntry(co, lo, queue)
-		except:
-			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1])
+		except Exception:
+			conf += re.sub("(?m)^", ";", traceback.format_exc()[:-1])
 		conf += "\n"
 
 	return conf
@@ -277,9 +270,8 @@ def genMusiconholdconf(co, lo, srv):
 		conf += "; dn: %s\n" % (moh.dn)
 		try:
 			conf += genMusiconholdconfEntry(co, lo, srv, moh)
-		except:
-			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1])
+		except Exception:
+			conf += re.sub("(?m)^", ";", traceback.format_exc()[:-1])
 		conf += "\n"
 
 	return conf
@@ -290,8 +282,7 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 
 	# check if this phone is managed manually (not by ast4ucs)
 	if extenPhone.get("skipExtension") == "1":
-		return ";; Extension %s is managed manually.\n" % (
-				extenPhone["extension"])
+		return ";; Extension %s is managed manually.\n" % (extenPhone["extension"],)
 
 	from univention.admin.handlers.users import user
 	from univention.admin.handlers.asterisk import sipPhone, mailbox
@@ -311,22 +302,21 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 	try:
 		timeout = int(phoneUser["timeout"])
 		if timeout < 1 or timeout > 120:
-			raise Exception
-	except:
+			raise ValueError()
+	except ValueError:
 		timeout = 10
 
 	try:
 		ringdelay = int(phoneUser["ringdelay"])
 		if ringdelay < 1 or ringdelay > 120:
-			raise Exception
-	except:
+			raise ValueError()
+	except ValueError:
 		ringdelay = 0
 
 	channels = []
 	hints = []
 	for dn in phoneUser.get("phones", []):
-		phone = sipPhone.object(co, lo, extenPhone.position, dn,
-				extenPhone.superordinate)
+		phone = sipPhone.object(co, lo, extenPhone.position, dn, extenPhone.superordinate)
 		hints.append("SIP/%s" % phone["extension"])
 		if phone.get("forwarding"):
 			channels.append("Local/%s" % phone["forwarding"])
@@ -342,8 +332,7 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 	if channels:
 		if ringdelay:
 			for channel in channels[:-1]:
-				res.append("Dial(%s,%i,tT)" % (channel,
-						ringdelay))
+				res.append("Dial(%s,%i,tT)" % (channel, ringdelay))
 				res.append("Wait(0.5)")
 			res.append("Dial(%s,%i,tT)" % (channels[-1], timeout))
 		else:
@@ -360,10 +349,9 @@ def genExtSIPPhoneEntry(co, lo, agis, extenPhone):
 
 	resStr = ""
 	if hints:
-		resStr += "exten => %s,hint,%s\n" % (extension,
-				'&'.join(hints))
+		resStr += "exten => %s,hint,%s\n" % (extension, '&'.join(hints))
 	for i, data in enumerate(res):
-		resStr += "exten => %s,%i,%s\n" % (extension, i+1, data)
+		resStr += "exten => %s,%i,%s\n" % (extension, i + 1, data)
 
 	return resStr
 
@@ -463,8 +451,7 @@ def genExtensionsconf(co, lo, srv):
 			int(agi["priority"]),
 			"AGI(ast4ucs-%s)" % agi["name"]
 		))
-	sortkey = lambda x: x[0]
-	agis.sort(key=sortkey, reverse=True)
+	agis.sort(key=lambda x: x[0], reverse=True)
 	agis = [x[1] for x in agis]
 
 	conf = "; Automatisch generiert von Asterisk4UCS\n"
@@ -476,9 +463,8 @@ def genExtensionsconf(co, lo, srv):
 		conf += "; dn: %s\n" % (phone.dn)
 		try:
 			conf += genExtSIPPhoneEntry(co, lo, agis, phone)
-		except:
-			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1])
+		except Exception:
+			conf += re.sub("(?m)^", ";", traceback.format_exc()[:-1])
 		conf += "\n"
 
 	conf += "\n\n; ===== Konferenzräume =====\n\n"
@@ -486,9 +472,8 @@ def genExtensionsconf(co, lo, srv):
 		conf += "; dn: %s\n" % (room.dn)
 		try:
 			conf += genExtRoomEntry(co, lo, agis, room)
-		except:
-			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1])
+		except Exception:
+			conf += re.sub("(?m)^", ";", traceback.format_exc()[:-1])
 		conf += "\n"
 
 	conf += "\n\n; ===== Warteschleifen =====\n\n"
@@ -496,9 +481,8 @@ def genExtensionsconf(co, lo, srv):
 		conf += "; dn: %s\n" % (queue.dn)
 		try:
 			conf += genExtQueueEntry(co, lo, agis, queue)
-		except:
-			conf += re.sub("(?m)^", ";",
-				traceback.format_exc()[:-1])
+		except Exception:
+			conf += re.sub("(?m)^", ";", traceback.format_exc()[:-1])
 		conf += "\n"
 
 	conf += "\n\n; ===== Blockierte Vorwahlen =====\n\n"
@@ -580,11 +564,3 @@ def reverseFieldsSave(self):
 			obj.open()
 			obj.info.setdefault(foreignField, []).append(self.dn)
 			obj.modify()
-
-
-class AsteriskBase(univention.admin.handlers.simpleLdap):
-
-	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
-		if not superordinate and (dn or position):
-			superordinate = univention.admin.objects.get_superordinate(self.module, co, lo, dn or position.getDn())
-		super(AsteriskBase, self).__init__(co, lo, position, dn, superordinate, attributes)

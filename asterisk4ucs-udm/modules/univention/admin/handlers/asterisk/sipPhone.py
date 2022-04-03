@@ -21,14 +21,20 @@ import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.syntax
 from univention.admin.layout import Tab
-from univention.admin.handlers.asterisk import AsteriskBase
+from univention.admin.handlers import simpleLdap
 
 module = "asterisk/sipPhone"
 short_description = u"Asterisk4UCS-Management: IP-Telefon"
 operations = ['add', 'edit', 'remove', 'search', 'move']
-options = {}
+options = {
+	'default': univention.admin.option(
+		short_description=short_description,
+		default=True,
+		objectClasses=['ast4ucsPhone'],
+	),
+}
 
-childs = 0
+childs = False
 superordinate = "asterisk/server"
 
 layout = [
@@ -66,10 +72,10 @@ property_descriptions = {
 	"phonetype": univention.admin.property(
 		short_description="Telefontyp",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhonetype",
-                        attribute=['asterisk/phoneType: commonName'],
-                        value='asterisk/phoneType: dn'
-                ),
+			filter="objectClass=ast4ucsPhonetype",
+			attribute=['asterisk/phoneType: commonName'],
+			value='asterisk/phoneType: dn'
+		),
 	),
 	"profile": univention.admin.property(
 		short_description="Profil",
@@ -83,28 +89,28 @@ property_descriptions = {
 	"callgroups": univention.admin.property(
 		short_description="Callgroups",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhonegroup",
-                        attribute=['asterisk/phoneGroup: commonName'],
-                        value='asterisk/phoneGroup: dn'
-                ),
+			filter="objectClass=ast4ucsPhonegroup",
+			attribute=['asterisk/phoneGroup: commonName'],
+			value='asterisk/phoneGroup: dn'
+		),
 		multivalue=True,
 	),
 	"pickupgroups": univention.admin.property(
 		short_description="Pickupgroups",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsPhonegroup",
-                        attribute=['asterisk/phoneGroup: commonName'],
-                        value='asterisk/phoneGroup: dn'
-                ),
+			filter="objectClass=ast4ucsPhonegroup",
+			attribute=['asterisk/phoneGroup: commonName'],
+			value='asterisk/phoneGroup: dn'
+		),
 		multivalue=True,
 	),
 	"waitingloops": univention.admin.property(
 		short_description="Warteschleifen",
 		syntax=univention.admin.syntax.LDAP_Search(
-                        filter="objectClass=ast4ucsWaitingloop",
-                        attribute=['asterisk/waitingLoop: extension'],
-                        value='asterisk/waitingLoop: dn'
-                ),
+			filter="objectClass=ast4ucsWaitingloop",
+			attribute=['asterisk/waitingLoop: extension'],
+			value='asterisk/waitingLoop: dn'
+		),
 		multivalue=True,
 	),
 	"forwarding": univention.admin.property(
@@ -118,63 +124,32 @@ property_descriptions = {
 }
 
 mapping = univention.admin.mapping.mapping()
-mapping.register("extension", "ast4ucsExtensionExtension",
-	None, univention.admin.mapping.ListToString)
-
-mapping.register("ipaddress", "ast4ucsSipclientIp",
-	None, univention.admin.mapping.ListToString)
-mapping.register("macaddress", "ast4ucsSipclientMacaddr",
-	None, univention.admin.mapping.ListToString)
-mapping.register("hostname", "ast4ucsSipclientHostname",
-	None, univention.admin.mapping.ListToString)
-mapping.register("password", "ast4ucsSipclientSecret",
-	None, univention.admin.mapping.ListToString)
-
-mapping.register("phonetype", "ast4ucsPhonePhonetype",
-	None, univention.admin.mapping.ListToString)
-mapping.register("profile", "ast4ucsPhoneProfile",
-	None, univention.admin.mapping.ListToString)
+mapping.register("extension", "ast4ucsExtensionExtension", None, univention.admin.mapping.ListToString)
+mapping.register("ipaddress", "ast4ucsSipclientIp", None, univention.admin.mapping.ListToString)
+mapping.register("macaddress", "ast4ucsSipclientMacaddr", None, univention.admin.mapping.ListToString)
+mapping.register("hostname", "ast4ucsSipclientHostname", None, univention.admin.mapping.ListToString)
+mapping.register("password", "ast4ucsSipclientSecret", None, univention.admin.mapping.ListToString)
+mapping.register("phonetype", "ast4ucsPhonePhonetype", None, univention.admin.mapping.ListToString)
+mapping.register("profile", "ast4ucsPhoneProfile", None, univention.admin.mapping.ListToString)
 mapping.register("callgroups", "ast4ucsPhoneCallgroup")
 mapping.register("pickupgroups", "ast4ucsPhonePickupgroup")
 mapping.register("waitingloops", "ast4ucsPhoneWaitingloop")
-mapping.register("forwarding", "ast4ucsPhoneForwarding",
-	None, univention.admin.mapping.ListToString)
-mapping.register("skipExtension", "ast4ucsPhoneSkipextension",
-	None, univention.admin.mapping.ListToString)
+mapping.register("forwarding", "ast4ucsPhoneForwarding", None, univention.admin.mapping.ListToString)
+mapping.register("skipExtension", "ast4ucsPhoneSkipextension", None, univention.admin.mapping.ListToString)
 
 
-class object(AsteriskBase):
+class object(simpleLdap):
 	module = module
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsPhone']),
-				('ast4ucsSrvchildServer', self.superordinate.dn)]
+		return [('ast4ucsSrvchildServer', self.superordinate.dn)]
+
+	@classmethod
+	def lookup_filter_superordinate(cls, filter, superordinate):
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsSrvchildServer', superordinate.dn, escape=True))
+		return filter
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub',
-		unique=False, required=False, timeout=-1, sizelimit=0):
-	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "ast4ucsPhone")
-	])
-
-	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression(
-				'ast4ucsSrvchildServer', superordinate.dn))
-
-	if filter_s:
-		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p,
-			univention.admin.mapping.mapRewrite, arg=mapping)
-		filter.expressions.append(filter_p)
-
-	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique,
-			required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn,
-				superordinate=superordinate, attributes=attrs))
-	return res
-
-
-def identify(dn, attr, canonical=0):
-	return 'ast4ucsPhone' in attr.get('objectClass', [])
+lookup = object.lookup
+lookup_filter = object.lookup_filter
+identify = object.identify
