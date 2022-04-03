@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+
 from univention.management.console.log import MODULE
 import univention.config_registry
 import univention.admin.filter
@@ -563,11 +564,3 @@ def reverseFieldsSave(self):
 			obj.open()
 			obj.info.setdefault(foreignField, []).append(self.dn)
 			obj.modify()
-
-
-class AsteriskBase(univention.admin.handlers.simpleLdap):
-
-	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
-		if not superordinate and (dn or position):
-			superordinate = univention.admin.objects.get_superordinate(self.module, co, lo, dn or position.getDn())
-		super(AsteriskBase, self).__init__(co, lo, position, dn, superordinate, attributes)

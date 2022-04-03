@@ -54,29 +54,8 @@ class AsteriskUsersUserHook(simpleHook):
 			if mailboxUsers:
 				raise self.mailboxError(nameFromDn(mailboxdn), nameFromDn(mailboxUsers[0].dn))
 
-	def hook_open(self, module):
-		pass
-
 	def hook_ldap_pre_create(self, module):
 		self.checkFields(module)
 
 	def hook_ldap_pre_modify(self, module):
 		self.checkFields(module)
-
-	def hook_ldap_pre_remove(self, module):
-		pass
-
-	def hook_ldap_addlist(self, module, al=[]):
-		return al
-
-	def hook_ldap_modlist(self, module, ml=[]):
-		return ml
-
-	def hook_ldap_post_create(self, module):
-		pass
-
-	def hook_ldap_post_modify(self, module):
-		pass
-
-	def hook_ldap_post_remove(self, module):
-		pass

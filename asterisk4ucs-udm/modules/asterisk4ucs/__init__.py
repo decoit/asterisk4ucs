@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # coding=utf-8
 
 """
@@ -20,7 +20,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-import univention.admin.config
 import univention.admin.uldap
 import univention.admin.modules
 
@@ -35,16 +34,15 @@ class PhoneBookWrapper(object):
 		pbdn ist der DN des Telefonbuches im LDAP. (Kann z.B. per
 		"udm asterisk/phoneBook list" ermittelt werden)"""
 
-		self.co = univention.admin.config.config()
 		self.lo, self.pos = univention.admin.uldap.getAdminConnection()
 
 		univention.admin.modules.update()
 		self.udmPhonebook = univention.admin.modules.get("asterisk/phoneBook")
-		self.udmContact = univention.admin.modules.get("asterisk/contact")
 		univention.admin.modules.init(self.lo, self.pos, self.udmPhonebook)
+		self.udmContact = univention.admin.modules.get("asterisk/contact")
 		univention.admin.modules.init(self.lo, self.pos, self.udmContact)
 
-		self.pb = self.udmPhonebook.object(self.co, self.lo, None, pbdn)
+		self.pb = self.udmPhonebook.object(None, self.lo, None, pbdn)
 		self.pb.open()
 		if not self.pb.exists():
 			raise Exception("DN does not exist.")
@@ -57,7 +55,7 @@ class PhoneBookWrapper(object):
 	def empty(self):
 		"""Löscht alle Kontakte im Telefonbuch"""
 
-		contacts = self.udmContact.lookup(self.co, self.lo, None, superordinate=self.pb)
+		contacts = self.udmContact.lookup(None, self.lo, None, superordinate=self.pb)
 
 		for contact in contacts:
 			contact.remove()
@@ -76,7 +74,7 @@ class PhoneBookWrapper(object):
 		Strings.
 		Der Rückgabewert ist der DN des neuen Kontakts."""
 
-		contact = self.udmContact.object(self.co, self.lo, self.pb.position, None, self.pb)
+		contact = self.udmContact.object(None, self.lo, self.pb.position, None, self.pb)
 		contact.open()
 
 		if title:

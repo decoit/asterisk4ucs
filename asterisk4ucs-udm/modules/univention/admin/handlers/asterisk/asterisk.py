@@ -41,8 +41,8 @@ long_description = ''
 operations = ['search']
 default_containers = ["cn=asterisk"]
 
-childs = 0
-virtual = 1
+childs = False
+virtual = True
 
 modulesWithSuperordinates = {
 	"None": [

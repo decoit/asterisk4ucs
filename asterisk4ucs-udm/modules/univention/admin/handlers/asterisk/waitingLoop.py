@@ -19,8 +19,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import univention.admin.filter
 import univention.admin.handlers
-from univention.admin.handlers.asterisk import \
-	reverseFieldsLoad, reverseFieldsSave, AsteriskBase
+from univention.admin.handlers.asterisk import reverseFieldsLoad, reverseFieldsSave
+from univention.admin.handlers import simpleLdap
 import univention.admin.syntax
 from univention.admin.layout import Tab
 
@@ -28,6 +28,13 @@ module = "asterisk/waitingLoop"
 short_description = u"Asterisk4UCS-Management: Warteschlange"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
+options = {
+	'default': univention.admin.option(
+		short_description=short_description,
+		default=True,
+		objectClasses=['ast4ucsWaitingloop'],
+	),
+}
 
 childs = 0
 usewizard = 1
@@ -110,7 +117,7 @@ mapping.register("memberDelay", "ast4ucsWaitingloopMemberdelay", None, univentio
 mapping.register("delayMusic", "ast4ucsWaitingloopDelaymusic", None, univention.admin.mapping.ListToString)
 
 
-class object(AsteriskBase):
+class object(simpleLdap):
 	module = module
 
 	def __init__(self, co, lo, position, dn='', superordinate=None, attributes=None):
@@ -140,27 +147,14 @@ class object(AsteriskBase):
 		reverseFieldsSave(self)
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsWaitingloop']), ('ast4ucsSrvchildServer', self.superordinate.dn)]
+		return [('ast4ucsSrvchildServer', self.superordinate.dn)]
+
+	@classmethod
+	def lookup_filter_superordinate(cls, filter, superordinate):
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsSrvchildServer', superordinate.dn, escape=True))
+		return filter
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
-	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression('objectClass', "ast4ucsWaitingloop")
-	])
-
-	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression('ast4ucsSrvchildServer', superordinate.dn))
-
-	if filter_s:
-		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
-		filter.expressions.append(filter_p)
-
-	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique, required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn, superordinate=superordinate, attributes=attrs))
-	return res
-
-
-def identify(dn, attr, canonical=0):
-	return 'ast4ucsWaitingloop' in attr.get('objectClass', [])
+lookup = object.lookup
+lookup_filter = object.lookup_filter
+identify = object.identify

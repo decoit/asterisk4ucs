@@ -30,6 +30,13 @@ module = "asterisk/server"
 short_description = u"Asterisk4UCS-Management: Asterisk-Server"
 operations = ['add', 'edit', 'remove', 'search', 'move']
 options = {}
+options = {
+	'default': univention.admin.option(
+		short_description=short_description,
+		default=True,
+		objectClasses=['ast4ucsServer'],
+	),
+}
 
 childs = False
 
@@ -336,27 +343,7 @@ class object(univention.admin.handlers.simpleLdap):
 		number2name.setContent(open("/usr/lib/asterisk4ucs/number2name.agi").read())
 		number2name.create()
 
-	def _ldap_addlist(self):
-		return [('objectClass', ['ast4ucsServer'])]
 
-
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
-	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression(
-			'objectClass', "ast4ucsServer")
-	])
-	# logging.debug('server.py UDM 366: filter: %s', filter)
-	if filter_s:
-		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
-		filter.expressions.append(filter_p)
-
-	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique, required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn, superordinate=superordinate, attributes=attrs))
-	#logging.debug('server.py UDM 378: res: %s',res)
-	return res
-
-
-def identify(dn, attr, canonical=0):
-	return 'ast4ucsServer' in attr.get('objectClass', [])
+lookup = object.lookup
+lookup_filter = object.lookup_filter
+identify = object.identify

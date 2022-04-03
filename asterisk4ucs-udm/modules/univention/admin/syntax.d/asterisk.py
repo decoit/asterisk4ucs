@@ -1,4 +1,3 @@
-
 """
 Copyright (C) 2012 DECOIT GmbH <asterisk4ucs@decoit.de>
 
@@ -15,6 +14,10 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
+
+import re
+from univention.admin.syntax import select, integer, string
+import univention.admin.uexceptions
 
 
 class ast4ucsExtmodeSyntax(select):
@@ -35,7 +38,7 @@ class ast4ucsDurationSyntax(integer):
 		try:
 			number = int(text)
 			if number > 300 or number < 1:
-				raise ValueError
+				raise ValueError()
 		except ValueError:
 			raise univention.admin.uexceptions.valueError("Value must be a number between 1 and 120!")
 		return text

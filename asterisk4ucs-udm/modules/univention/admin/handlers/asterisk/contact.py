@@ -22,14 +22,20 @@ import univention.admin.handlers
 import univention.admin.syntax
 import univention.admin.uexceptions
 from univention.admin.layout import Tab
-from univention.admin.handlers.asterisk import AsteriskBase
+from univention.admin.handlers import simpleLdap
 
 module = "asterisk/contact"
 short_description = u"Asterisk4UCS-Management: Kontakt"
 operations = ['add', 'edit', 'remove', 'search', 'move']
-options = {}
+options = {
+	'default': univention.admin.option(
+		short_description=short_description,
+		default=True,
+		objectClasses=['phonebookContact'],
+	),
+}
 
-childs = 0
+childs = False
 superordinate = "asterisk/phoneBook"
 
 layout = [
@@ -98,7 +104,7 @@ class noNameError(univention.admin.uexceptions.insufficientInformation):
 	message = (u"Eines der Felder Vorname, Nachname und Organisation muss ausgefüllt sein.")
 
 
-class object(AsteriskBase):
+class object(simpleLdap):
 	module = module
 
 	def _ldap_pre_ready(self):
@@ -128,27 +134,14 @@ class object(AsteriskBase):
 		self.info["commonName"] = cn
 
 	def _ldap_addlist(self):
-		return [('objectClass', ['phonebookContact']), ('ast4ucsPbchildPhonebook', self.superordinate.dn)]
+		return [('ast4ucsPbchildPhonebook', self.superordinate.dn)]
+
+	@classmethod
+	def lookup_filter_superordinate(cls, filter, superordinate):
+		filter.expressions.append(univention.admin.filter.expression('ast4ucsPbchildPhonebook', superordinate.dn, escape=True))
+		return filter
 
 
-def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=False, required=False, timeout=-1, sizelimit=0):
-	filter = univention.admin.filter.conjunction('&', [
-		univention.admin.filter.expression('objectClass', "phonebookContact")
-	])
-
-	if superordinate:
-		filter.expressions.append(univention.admin.filter.expression('ast4ucsPbchildPhonebook', superordinate.dn))
-
-	if filter_s:
-		filter_p = univention.admin.filter.parse(filter_s)
-		univention.admin.filter.walk(filter_p, univention.admin.mapping.mapRewrite, arg=mapping)
-		filter.expressions.append(filter_p)
-
-	res = []
-	for dn, attrs in lo.search(unicode(filter), base, scope, [], unique, required, timeout, sizelimit):
-		res.append(object(co, lo, None, dn=dn, superordinate=superordinate, attributes=attrs))
-	return res
-
-
-def identify(dn, attr, canonical=0):
-	return 'phonebookContact' in attr.get('objectClass', [])
+lookup = object.lookup
+lookup_filter = object.lookup_filter
+identify = object.identify
